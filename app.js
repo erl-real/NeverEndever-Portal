@@ -46,26 +46,21 @@ async function logout() {
   document.getElementById('error').textContent = "";
 }
 
-// Save profile data
 async function saveProfile() {
-  const username = document.getElementById('username').value;
-  const bio = document.getElementById('bio').value;
-  const genre = document.getElementById('genre')?.value || null;
-  const instagram = document.getElementById('instagram')?.value || null;
-  const soundcloud = document.getElementById('soundcloud')?.value || null;
-  const profile_image_url = document.getElementById('profile_image_url')?.value || null;
-
   const user = (await supabase.auth.getUser()).data.user;
 
-  const { error } = await supabase.from('profiles').upsert({
+  const profile = {
     id: user.id,
-    username,
-    bio,
-    genre,
-    instagram,
-    soundcloud,
-    profile_image_url
-  });
+    username: document.getElementById('username').value,
+    bio: document.getElementById('bio').value,
+    genre: document.getElementById('genre').value,
+    instagram: document.getElementById('instagram').value,
+    soundcloud: document.getElementById('soundcloud').value,
+    profile_image_url: document.getElementById('profile_image_url').value,
+    elo_score: parseInt(document.getElementById('elo_score').value) || null
+  };
+
+  const { error } = await supabase.from('profiles').upsert(profile);
 
   if (error) {
     document.getElementById('error').textContent = error.message;
