@@ -3,180 +3,44 @@
 <head>
   <meta charset="UTF-8">
   <title>Artist Portal</title>
-  <style>
-    body {
-      background-color: #111;
-      color: #eee;
-      font-family: 'Segoe UI', sans-serif;
-    }
-    #app {
-      max-width: 640px;
-      margin: 24px auto;
-      padding: 24px;
-      border-radius: 12px;
-      box-shadow: 0 0 12px #6f00ff;
-      background-color: #111;
-    }
-    input, textarea {
-      padding: 8px;
-      border-radius: 6px;
-      border: none;
-    }
-    button {
-      padding: 8px 16px;
-      border-radius: 6px;
-      border: none;
-      cursor: pointer;
-    }
-    .btn-primary { background-color: #6f00ff; color: white; }
-    .btn-secondary { background-color: #00ff88; color: black; }
-    .btn-danger { background-color: #ff0055; color: white; }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div id="app">
-  <h2 style="color:#6f00ff;">🎧 Artist Portal</h2>
+  <h2>🎧 Artist Portal</h2>
 
   <!-- Auth panel -->
   <div id="auth-panel">
-    <form id="email-login-form" onsubmit="event.preventDefault(); emailLogin();" style="display:grid;gap:12px;">
+    <form id="email-login-form" onsubmit="event.preventDefault(); emailLogin();">
       <input id="email" type="email" placeholder="Email" required />
       <input id="password" type="password" placeholder="Password" required />
-      <div style="display:flex;gap:8px;">
-        <button type="submit" class="btn-primary">Log in</button>
-        <button type="button" onclick="emailSignup()" class="btn-secondary">Sign up</button>
-      </div>
+      <button type="submit" class="btn-primary">Log in</button>
+      <button type="button" onclick="emailSignup()" class="btn-secondary">Sign up</button>
     </form>
   </div>
 
   <!-- Session info -->
-  <div id="session-panel" style="display:none;margin-top:16px;">
-    <div id="user-email" style="margin-bottom:12px;"></div>
+  <div id="session-panel" style="display:none;">
+    <div id="user-email"></div>
     <button type="button" onclick="logout()" class="btn-danger">Log out</button>
   </div>
 
-  <hr style="margin:24px 0;border-color:#6f00ff;">
+  <hr>
 
   <!-- Profile form -->
-  <h3 style="color:#00ff88;">📝 Your Artist Profile</h3>
-  <form id="profile-form" onsubmit="event.preventDefault(); saveProfile();" style="display:none;grid-template-columns:1fr;gap:12px;">
+  <h3>📝 Your Artist Profile</h3>
+  <form id="profile-form" onsubmit="event.preventDefault(); saveProfile();" style="display:none;">
     <input id="username" type="text" placeholder="Stage Name" />
     <textarea id="bio" placeholder="Tell us your vibe..." rows="4"></textarea>
     <button type="submit" class="btn-primary">Save Profile</button>
-    <div id="status" style="color:#00ff88;"></div>
-    <div id="error" style="color:#ff0055;"></div>
+    <div id="status"></div>
+    <div id="error"></div>
   </form>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-  const { createClient } = supabase;
-  const supabaseClient = createClient(
-    "https://imqfnxtornlvglwvkspi.supabase.co",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImltcWZueHRvcm5sdmdsd3Zrc3BpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMxMzQyNjksImV4cCI6MjA3ODcxMDI2OX0.Is7G7NCKxTQDoefyitkfhREXAR8m8cBBTjohRiBKMs4"
-  );
-
-  function showAuth(show) {
-    document.getElementById("auth-panel").style.display = show ? "block" : "none";
-    document.getElementById("session-panel").style.display = show ? "none" : "block";
-    document.getElementById("profile-form").style.display = show ? "none" : "grid";
-  }
-  function setStatus(msg) { document.getElementById("status").textContent = msg || ""; }
-  function setError(msg) { document.getElementById("error").textContent = msg || ""; }
-  function setUserEmail(email) { document.getElementById("user-email").textContent = email ? "🎤 Signed in: " + email : ""; }
-
-  async function boot() {
-    const { data } = await supabaseClient.auth.getSession();
-    const session = data.session;
-    if (session?.user) {
-      setUserEmail(session.user.email);
-      showAuth(false);
-      await loadProfile();
-    } else {
-      showAuth(true);
-    }
-    supabaseClient.auth.onAuthStateChange((_event, session) => {
-      if (session?.user) {
-        setUserEmail(session.user.email);
-        showAuth(false);
-        loadProfile();
-      } else {
-        setUserEmail("");
-        setStatus(""); setError("");
-        showAuth(true);
-      }
-    });
-  }
-
-  async function emailLogin() {
-    setStatus(""); setError("");
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
-    const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-    if (error) setError(error.message); else setStatus("✅ Logged in.");
-  }
-
-  async function emailSignup() {
-    setStatus(""); setError("");
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
-    const { error } = await supabaseClient.auth.signUp({ email, password });
-    if (error) setError(error.message);
-    else setStatus("📩 Check your email to confirm. Then log in.");
-  }
-
-  async function logout() {
-    await supabaseClient.auth.signOut();
-    setStatus("👋 Logged out.");
-  }
-
-  async function loadProfile() {
-    setStatus("Loading profile..."); setError("");
-    const { data: userData } = await supabaseClient.auth.getUser();
-    const user = userData.user;
-    if (!user) return;
-
-    const { data, error } = await supabaseClient
-      .from("profiles")
-      .select("username, bio")
-      .eq("id", user.id)
-      .single();
-
-    if (error && error.code !== "PGRST116") {
-      setError(error.message);
-      setStatus("");
-      return;
-    }
-
-    document.getElementById("username").value = data?.username || "";
-    document.getElementById("bio").value = data?.bio || "";
-    setStatus("");
-  }
-
-  async function saveProfile() {
-    setStatus(""); setError("");
-    const { data: userData } = await supabaseClient.auth.getUser();
-    const user = userData.user;
-    if (!user) {
-      setError("You must be logged in.");
-      return;
-    }
-    const payload = {
-      id: user.id,
-      username: document.getElementById("username").value.trim(),
-      bio: document.getElementById("bio").value.trim(),
-      updated_at: new Date().toISOString()
-    };
-
-    const { error } = await supabaseClient
-      .from("profiles")
-      .upsert(payload, { onConflict: "id" });
-
-    if (error) setError(error.message);
-    else setStatus("🎉 Profile saved!");
-  }
-
-  boot();
-</script>
+<script src="supabaseClient.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
