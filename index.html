@@ -1,38 +1,70 @@
-<div id="app" style="max-width: 640px; margin: 24px auto; font-family: 'Segoe UI', sans-serif; background-color: #111; color: #eee; padding: 24px; border-radius: 12px; box-shadow: 0 0 12px #6f00ff;">
-  <h2 style="color: #6f00ff;">Artist Portal</h2>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Artist Portal</title>
+  <style>
+    body {
+      background-color: #111;
+      color: #eee;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    #app {
+      max-width: 640px;
+      margin: 24px auto;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 0 12px #6f00ff;
+      background-color: #111;
+    }
+    input, textarea {
+      padding: 8px;
+      border-radius: 6px;
+      border: none;
+    }
+    button {
+      padding: 8px 16px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-primary { background-color: #6f00ff; color: white; }
+    .btn-secondary { background-color: #00ff88; color: black; }
+    .btn-danger { background-color: #ff0055; color: white; }
+  </style>
+</head>
+<body>
+<div id="app">
+  <h2 style="color:#6f00ff;">🎧 Artist Portal</h2>
 
   <!-- Auth panel -->
   <div id="auth-panel">
-    <form id="email-login-form" style="display: grid; gap: 12px;" onsubmit="event.preventDefault(); emailLogin();">
-      <input id="email" type="email" placeholder="Email" required style="padding: 8px; border-radius: 6px; border: none;" />
-      <input id="password" type="password" placeholder="Password" required style="padding: 8px; border-radius: 6px; border: none;" />
-      <div style="display: flex; gap: 8px;">
-        <button type="submit" style="background-color: #6f00ff; color: white; border: none; padding: 8px 16px; border-radius: 6px;">Log in</button>
-        <button type="button" onclick="emailSignup()" style="background-color: #00ff88; color: black; border: none; padding: 8px 16px; border-radius: 6px;">Sign up</button>
+    <form id="email-login-form" onsubmit="event.preventDefault(); emailLogin();" style="display:grid;gap:12px;">
+      <input id="email" type="email" placeholder="Email" required />
+      <input id="password" type="password" placeholder="Password" required />
+      <div style="display:flex;gap:8px;">
+        <button type="submit" class="btn-primary">Log in</button>
+        <button type="button" onclick="emailSignup()" class="btn-secondary">Sign up</button>
       </div>
     </form>
-    <div style="margin-top: 12px;">
-      <button type="button" onclick="oauthLogin('github')" style="background-color: #333; color: #fff; border: 1px solid #6f00ff; padding: 8px 16px; border-radius: 6px;">GitHub Login</button>
-      <button type="button" onclick="oauthLogin('google')" style="background-color: #333; color: #fff; border: 1px solid #00ff88; padding: 8px 16px; border-radius: 6px;">Google Login</button>
-    </div>
   </div>
 
   <!-- Session info -->
-  <div id="session-panel" style="display: none; margin-top: 16px;">
-    <div id="user-email" style="margin-bottom: 12px;"></div>
-    <button type="button" onclick="logout()" style="background-color: #ff0055; color: white; border: none; padding: 8px 16px; border-radius: 6px;">Log out</button>
+  <div id="session-panel" style="display:none;margin-top:16px;">
+    <div id="user-email" style="margin-bottom:12px;"></div>
+    <button type="button" onclick="logout()" class="btn-danger">Log out</button>
   </div>
 
-  <hr style="margin: 24px 0; border-color: #6f00ff;">
+  <hr style="margin:24px 0;border-color:#6f00ff;">
 
   <!-- Profile form -->
-  <h3 style="color: #00ff88;">Your Artist Profile</h3>
-  <form id="profile-form" style="display: none; grid-template-columns: 1fr; gap: 12px;" onsubmit="event.preventDefault(); saveProfile();">
-    <input id="username" type="text" placeholder="Stage Name" style="padding: 8px; border-radius: 6px; border: none;" />
-    <textarea id="bio" placeholder="Tell us your vibe..." rows="4" style="padding: 8px; border-radius: 6px; border: none;"></textarea>
-    <button type="submit" style="background-color: #6f00ff; color: white; border: none; padding: 8px 16px; border-radius: 6px;">Save Profile</button>
-    <div id="status" style="color: #00ff88;"></div>
-    <div id="error" style="color: #ff0055;"></div>
+  <h3 style="color:#00ff88;">📝 Your Artist Profile</h3>
+  <form id="profile-form" onsubmit="event.preventDefault(); saveProfile();" style="display:none;grid-template-columns:1fr;gap:12px;">
+    <input id="username" type="text" placeholder="Stage Name" />
+    <textarea id="bio" placeholder="Tell us your vibe..." rows="4"></textarea>
+    <button type="submit" class="btn-primary">Save Profile</button>
+    <div id="status" style="color:#00ff88;"></div>
+    <div id="error" style="color:#ff0055;"></div>
   </form>
 </div>
 
@@ -63,7 +95,6 @@
     } else {
       showAuth(true);
     }
-
     supabaseClient.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
         setUserEmail(session.user.email);
@@ -71,8 +102,7 @@
         loadProfile();
       } else {
         setUserEmail("");
-        setStatus("");
-        setError("");
+        setStatus(""); setError("");
         showAuth(true);
       }
     });
@@ -82,25 +112,17 @@
     setStatus(""); setError("");
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value;
-    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+    const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
     if (error) setError(error.message); else setStatus("✅ Logged in.");
   }
+
   async function emailSignup() {
     setStatus(""); setError("");
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value;
-    const { data, error } = await supabaseClient.auth.signUp({ email, password });
+    const { error } = await supabaseClient.auth.signUp({ email, password });
     if (error) setError(error.message);
     else setStatus("📩 Check your email to confirm. Then log in.");
-  }
-
-  async function oauthLogin(provider) {
-    setStatus(""); setError("");
-    const { error } = await supabaseClient.auth.signInWithOAuth({
-      provider,
-      options: { redirectTo: window.location.href }
-    });
-    if (error) setError(error.message);
   }
 
   async function logout() {
@@ -150,14 +172,11 @@
       .from("profiles")
       .upsert(payload, { onConflict: "id" });
 
-    if (error) {
-      setError(error.message);
-    } else {
-      setStatus("🎉 Profile saved!");
-    }
+    if (error) setError(error.message);
+    else setStatus("🎉 Profile saved!");
   }
 
-  // Boot the app when the page loads
   boot();
 </script>
-
+</body>
+</html>
