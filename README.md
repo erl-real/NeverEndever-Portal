@@ -1,3 +1,5 @@
+https://docs.google.com/document/d/1-U9OHi55hidGQufDcnB9148OxhutzMHGD_xdZ_v9RW8/edit?usp=sharing
+
 # NeverEndever-Portal
 # Artist Portal
 
