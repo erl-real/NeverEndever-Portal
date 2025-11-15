@@ -71,19 +71,33 @@ async function saveProfile() {
 
 // Load profile data into form when user logs in
 async function loadProfile(userId) {
-  const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).single();
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', userId)
+    .single();
 
-  if (error) {
-    console.log("No profile yet or error:", error.message);
+  if (error || !data) {
+    console.log("No profile yet or error:", error?.message || "No data found");
     return;
   }
 
-  document.getElementById('username').value = data.username || "";
-  document.getElementById('bio').value = data.bio || "";
-  if (document.getElementById('genre')) document.getElementById('genre').value = data.genre || "";
-  if (document.getElementById('instagram')) document.getElementById('instagram').value = data.instagram || "";
-  if (document.getElementById('soundcloud')) document.getElementById('soundcloud').value = data.soundcloud || "";
-  if (document.getElementById('profile_image_url')) document.getElementById('profile_image_url').value = data.profile_image_url || "";
+  // Safely populate form fields
+  const setValue = (id, value) => {
+    const el = document.getElementById(id);
+    if (el) el.value = value || "";
+  };
+
+  setValue('username', data.username);
+  setValue('bio', data.bio);
+  setValue('genre', data.genre);
+  setValue('instagram', data.instagram);
+  setValue('soundcloud', data.soundcloud);
+  setValue('profile_image_url', data.profile_image_url);
+
+  // Handle elo_score separately (numeric field)
+  const eloField = document.getElementById('elo_score');
+  if (eloField) eloField.value = data.elo_score !== null ? data.elo_score : "";
 }
 
 // Helper: show session UI
