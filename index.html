@@ -28,19 +28,20 @@
 
   <hr>
 
-  <!-- Profile form -->
-  <h3>📝 Your Artist Profile</h3>
-  <form id="profile-form" onsubmit="event.preventDefault(); saveProfile();" style="display:none;">
-    <input id="username" type="text" placeholder="Stage Name" />
-    <textarea id="bio" placeholder="Tell us your vibe..." rows="4"></textarea>
-    <button type="submit" class="btn-primary">Save Profile</button>
-    <div id="status"></div>
-    <div id="error"></div>
-  </form>
-</div>
+<!-- Profile form -->
+<h3>📝 Your Artist Profile</h3>
+<form id="profile-form" onsubmit="event.preventDefault(); saveProfile();" style="display:none;grid-template-columns:1fr;gap:12px;">
+  <input id="username" type="text" placeholder="Stage Name" />
+  <textarea id="bio" placeholder="Tell us your vibe..." rows="4"></textarea>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabaseClient.js"></script>
-<script src="app.js"></script>
-</body>
-</html>
+  <!-- New fields -->
+  <input id="genre" type="text" placeholder="Genre" />
+  <input id="instagram" type="text" placeholder="Instagram handle" />
+  <input id="soundcloud" type="text" placeholder="SoundCloud link" />
+  <input id="profile_image_url" type="url" placeholder="Profile Image URL" />
+  <input id="elo_score" type="number" placeholder="ELO Score" />
+
+  <button type="submit" class="btn-primary">Save Profile</button>
+  <div id="status"></div>
+  <div id="error"></div>
+</form>
