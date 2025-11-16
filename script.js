@@ -23,8 +23,8 @@ window.addEventListener('click', (e) => {
 });
 // Initialize Supabase client
 const supabase = supabase.createClient(
-  "https://YOUR-PROJECT-REF.supabase.co",
-  "YOUR-ANON-KEY"
+  "https://imqfnxtornlvglwvkspi.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImltcWZueHRvcm5sdmdsd3Zrc3BpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMxMzQyNjksImV4cCI6MjA3ODcxMDI2OX0.Is7G7NCKxTQDoefyitkfhREXAR8m8cBBTjohRiBKMs4"
 );
 
 // Login
