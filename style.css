@@ -85,12 +85,31 @@
   font-size: 14px;
 }
 
-/* Hero Logo */
+.hero {
+  text-align: center;
+  padding: 60px 20px;
+}
+
 .hero-logo {
-  max-width: 300px;
+  max-width: 80%;
   height: auto;
   margin-bottom: 20px;
 }
+
+.hero h1 {
+  font-size: 2rem;
+}
+
+.hero p {
+  font-size: 1rem;
+  margin-bottom: 20px;
+}
+
+.cta {
+  font-size: 1rem;
+  padding: 10px 20px;
+}
+
 
 /* Feature Images */
 .feature-img {
