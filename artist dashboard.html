@@ -1,1 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Staff Dashboard | NeverEndEver</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <header class="site-header">
+    <div class="logo">NeverEndEver Staff</div>
+    <nav class="nav-bar">
+      <ul class="nav-list">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="dashboard.html">Artist Dashboard</a></li>
+      </ul>
+      <div class="auth-buttons">
+        <button id="logout">Logout</button>
+      </div>
+    </nav>
+  </header>
+
+  <section class="dashboard">
+    <div class="profile">
+      <h2>Staff Tools</h2>
+      <p>Welcome, <span id="staff-name">Loading...</span></p>
+    </div>
+
+    <div class="user-data">
+      <h3>User Management</h3>
+      <div id="user-list">Loading users...</div>
+
+      <h3>Content Moderation</h3>
+      <div id="content-list">Loading uploads...</div>
+
+      <h3>Analytics</h3>
+      <div id="analytics">Loading stats...</div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-bottom">
+      <small style="color:#aaa;">© 2025 NeverEndEver Staff Dashboard</small>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="script.js"></script>
+</body>
+</html>
 
