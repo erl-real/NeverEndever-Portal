@@ -21,3 +21,37 @@ window.addEventListener('click', (e) => {
     });
   }
 });
+// Initialize Supabase client
+const supabase = supabase.createClient(
+  "https://YOUR-PROJECT-REF.supabase.co",
+  "YOUR-ANON-KEY"
+);
+
+// Login
+document.getElementById('login-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('login-email').value;
+  const password = document.getElementById('login-password').value;
+
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) {
+    alert("Login failed: " + error.message);
+  } else {
+    alert("Logged in successfully!");
+    window.location.href = "dashboard.html"; // redirect to user data page
+  }
+});
+
+// Signup
+document.getElementById('signup-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('signup-email').value;
+  const password = document.getElementById('signup-password').value;
+
+  const { data, error } = await supabase.auth.signUp({ email, password });
+  if (error) {
+    alert("Signup failed: " + error.message);
+  } else {
+    alert("Signup successful! Please check your email for confirmation.");
+  }
+});
