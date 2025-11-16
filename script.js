@@ -21,10 +21,11 @@ window.addEventListener('click', (e) => {
     });
   }
 });
+
 // Initialize Supabase client
 const supabase = supabase.createClient(
   "https://imqfnxtornlvglwvkspi.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImltcWZueHRvcm5sdmdsd3Zrc3BpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMxMzQyNjksImV4cCI6MjA3ODcxMDI2OX0.Is7G7NCKxTQDoefyitkfhREXAR8m8cBBTjohRiBKMs4"
+  "YOUR-ANON-KEY-HERE" // replace with your anon key
 );
 
 // Login
@@ -38,7 +39,16 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
     alert("Login failed: " + error.message);
   } else {
     alert("Logged in successfully!");
-    window.location.href = "dashboard.html"; // redirect to user data page
+
+    // Check role metadata
+    const { data: { user } } = await supabase.auth.getUser();
+    const role = user?.user_metadata?.role || "artist"; // default to artist
+
+    if (role === "staff") {
+      window.location.href = "staff-dashboard.html";
+    } else {
+      window.location.href = "dashboard.html";
+    }
   }
 });
 
@@ -48,7 +58,15 @@ document.getElementById('signup-form').addEventListener('submit', async (e) => {
   const email = document.getElementById('signup-email').value;
   const password = document.getElementById('signup-password').value;
 
-  const { data, error } = await supabase.auth.signUp({ email, password });
+  // Default signup assigns "artist" role
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      data: { role: "artist" } // metadata field
+    }
+  });
+
   if (error) {
     alert("Signup failed: " + error.message);
   } else {
