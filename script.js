@@ -25,13 +25,17 @@ window.addEventListener('click', (e) => {
 // Initialize Supabase client
 const supabase = supabase.createClient(
   "https://imqfnxtornlvglwvkspi.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImltcWZueHRvcm5sdmdsd3Zrc3BpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMxMzQyNjksImV4cCI6MjA3ODcxMDI2OX0.Is7G7NCKxTQDoefyitkfhREXAR8m8cBBTjohRiBKMs4" // replace with your anon key
+  "YOUR-ANON-KEY-HERE" // replace with your anon key
 );
 
 // Load profile on dashboard
 async function loadProfile() {
-  const { data: { user } } = await supabase.auth.getUser();
+  console.log("loadProfile running...");
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
+  if (userError) console.error("Auth error:", userError.message);
+
   if (!user) {
+    console.warn("No user found, redirecting to login.");
     window.location.href = "login.html";
     return;
   }
@@ -42,7 +46,13 @@ async function loadProfile() {
   document.getElementById("avatar").src = user.user_metadata?.avatar_url || "https://via.placeholder.com/120";
 
   // Load profile data from DB
-  const { data: profile } = await supabase.from("profiles").select("*").eq("id", user.id).single();
+  const { data: profile, error: profileError } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", user.id)
+    .single();
+
+  if (profileError) console.error("Profile error:", profileError.message);
   if (profile) {
     document.getElementById("bio").value = profile.bio || "";
     document.getElementById("brand-color").value = profile.brand_color || "#b16eff";
@@ -55,7 +65,13 @@ async function loadProfile() {
   }
 
   // Load uploads
-  const { data: uploads } = await supabase.from("uploads").select("*").eq("user_id", user.id);
+  const { data: uploads, error: uploadsError } = await supabase
+    .from("uploads")
+    .select("*")
+    .eq("user_id", user.id);
+
+  if (uploadsError) console.error("Uploads error:", uploadsError.message);
+
   const list = document.getElementById("uploads-list");
   list.innerHTML = "";
   if (uploads && uploads.length > 0) {
@@ -73,7 +89,13 @@ async function loadProfile() {
   }
 
   // Load member extras
-  const { data: member } = await supabase.from("members").select("*").eq("id", user.id).single();
+  const { data: member, error: memberError } = await supabase
+    .from("members")
+    .select("*")
+    .eq("id", user.id)
+    .single();
+
+  if (memberError) console.error("Member error:", memberError.message);
   if (member && member.donate_url) {
     const donateLink = document.getElementById("donate-link");
     donateLink.href = member.donate_url;
@@ -102,6 +124,7 @@ document.getElementById("upload-form")?.addEventListener("submit", async (e) => 
   });
 
   if (error) {
+    console.error("Upload insert error:", error.message);
     alert("Error saving upload: " + error.message);
   } else {
     alert("Upload saved!");
@@ -129,6 +152,7 @@ document.getElementById("profile-edit-form")?.addEventListener("submit", async (
 
   const { error } = await supabase.from("profiles").upsert(updates);
   if (error) {
+    console.error("Profile upsert error:", error.message);
     alert("Error saving profile: " + error.message);
   } else {
     alert("Profile saved!");
@@ -146,6 +170,7 @@ document.getElementById("save-donate")?.addEventListener("click", async () => {
   });
 
   if (error) {
+    console.error("Member upsert error:", error.message);
     alert("Error saving donate link: " + error.message);
   } else {
     const donateLink = document.getElementById("donate-link");
@@ -157,11 +182,25 @@ document.getElementById("save-donate")?.addEventListener("click", async () => {
 
 // Staff tools
 async function loadStaffTools() {
-  const { count: userCount } = await supabase.from("auth.users").select("*", { count: "exact", head: true });
-  const { count: uploadCount } = await supabase.from("uploads").select("*", { count: "exact", head: true });
+  // Count uploads
+  const { count, error } = await supabase
+    .from("uploads")
+    .select("*", { count: "exact", head: true });
 
-  document.getElementById("total-users").textContent = userCount || "0";
-  document.getElementById("total-uploads").textContent = uploadCount || "0";
+  if (error) {
+    console.error("Upload count error:", error.message);
+  }
+  document.getElementById("total-uploads").textContent = count || "0";
+
+  // For total users, rely on profiles table instead of auth.users
+  const { count: profileCount, error: profileError } = await supabase
+    .from("profiles")
+    .select("*", { count: "exact", head: true });
+
+  if (profileError) {
+    console.error("Profile count error:", profileError.message);
+  }
+  document.getElementById("total-users").textContent = profileCount || "0";
 }
 
 // Logout
