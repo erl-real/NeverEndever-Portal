@@ -1,47 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Artist Portal</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NeverEndEver</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-<div id="app">
-  <h2>🎧 Artist Portal</h2>
+  <!-- Header -->
+  <header class="site-header">
+    <div class="logo">[LOGO HERE]</div>
+    <nav class="nav-bar">
+      <ul>
+        <li class="dropdown">
+          <button class="dropbtn">Menu 1</button>
+          <div class="dropdown-content">
+            <a href="#">Item A</a>
+            <a href="#">Item B</a>
+          </div>
+        </li>
+        <li class="dropdown">
+          <button class="dropbtn">Menu 2</button>
+          <div class="dropdown-content">
+            <a href="#">Item C</a>
+            <a href="#">Item D</a>
+          </div>
+        </li>
+      </ul>
+    </nav>
+  </header>
 
-  <!-- Auth panel -->
-  <div id="auth-panel">
-    <form id="email-login-form" onsubmit="event.preventDefault(); emailLogin();">
-      <input id="email" type="email" placeholder="Email" required />
-      <input id="password" type="password" placeholder="Password" required />
-      <button type="submit" class="btn-primary">Log in</button>
-      <button type="button" onclick="emailSignup()" class="btn-secondary">Sign up</button>
-    </form>
-  </div>
+  <!-- Hero Section -->
+  <section class="hero">
+    <h1>[TAGLINE HERE]</h1>
+    <p>[Short description or call to action]</p>
+    <button class="cta">[CTA Button]</button>
+  </section>
 
-  <!-- Session info -->
-  <div id="session-panel" style="display:none;">
-    <div id="user-email"></div>
-    <button type="button" onclick="logout()" class="btn-danger">Log out</button>
-  </div>
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="card">[Feature Block 1]</div>
+    <div class="card">[Feature Block 2]</div>
+    <div class="card">[Feature Block 3]</div>
+  </main>
 
-  <hr>
+  <!-- Footer -->
+  <footer class="site-footer">
+    <p>[Footer text or links]</p>
+  </footer>
 
-<!-- Profile form -->
-<h3>📝 Your Artist Profile</h3>
-<form id="profile-form" onsubmit="event.preventDefault(); saveProfile();" style="display:none;grid-template-columns:1fr;gap:12px;">
-  <input id="username" type="text" placeholder="Stage Name" />
-  <textarea id="bio" placeholder="Tell us your vibe..." rows="4"></textarea>
-
-  <!-- New fields -->
-  <input id="genre" type="text" placeholder="Genre" />
-  <input id="instagram" type="text" placeholder="Instagram handle" />
-  <input id="soundcloud" type="text" placeholder="SoundCloud link" />
-  <input id="profile_image_url" type="url" placeholder="Profile Image URL" />
-  <input id="elo_score" type="number" placeholder="ELO Score" />
-
-  <button type="submit" class="btn-primary">Save Profile</button>
-  <div id="status"></div>
-  <div id="error"></div>
-</form>
+  <script src="script.js"></script>
+</body>
+</html>
