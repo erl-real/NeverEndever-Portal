@@ -1,34 +1,91 @@
 body {
-  background-color: #111;
-  color: #eee;
-  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+  font-family: sans-serif;
+  background: #f5f5f5;
 }
 
-#app {
-  max-width: 640px;
-  margin: 24px auto;
-  padding: 24px;
-  border-radius: 12px;
-  box-shadow: 0 0 12px #6f00ff;
-  background-color: #111;
+.site-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  padding: 10px 20px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-input, textarea {
-  padding: 8px;
-  border-radius: 6px;
+.logo {
+  font-weight: bold;
+}
+
+.nav-bar ul {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+}
+
+.dropdown {
+  position: relative;
+}
+
+.dropbtn {
+  background: none;
   border: none;
+  cursor: pointer;
+  font-size: 16px;
 }
 
-button {
-  padding: 8px 16px;
-  border-radius: 6px;
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background: white;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  min-width: 120px;
+  z-index: 1;
+}
+
+.dropdown-content a {
+  display: block;
+  padding: 10px;
+  text-decoration: none;
+  color: black;
+}
+
+.dropdown-content a:hover {
+  background: #eee;
+}
+
+.hero {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.cta {
+  background: #007bff;
+  color: white;
   border: none;
+  padding: 10px 20px;
+  font-size: 16px;
   cursor: pointer;
 }
 
-.btn-primary { background-color: #6f00ff; color: white; }
-.btn-secondary { background-color: #00ff88; color: black; }
-.btn-danger { background-color: #ff0055; color: white; }
+.main-content {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  padding: 40px;
+}
 
-#status { color: #00ff88; }
-#error { color: #ff0055; }
+.card {
+  background: white;
+  padding: 20px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  width: 200px;
+  text-align: center;
+}
+
+.site-footer {
+  text-align: center;
+  padding: 20px;
+  background: #222;
+  color: white;
+}
