@@ -29,7 +29,7 @@ const supabase = supabase.createClient(
 );
 
 // Login
-document.getElementById('login-form').addEventListener('submit', async (e) => {
+document.getElementById('login-form')?.addEventListener('submit', async (e) => {
   e.preventDefault();
   const email = document.getElementById('login-email').value;
   const password = document.getElementById('login-password').value;
@@ -44,16 +44,13 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
     const { data: { user } } = await supabase.auth.getUser();
     const role = user?.user_metadata?.role || "artist"; // default to artist
 
-    if (role === "staff") {
-      window.location.href = "staff-dashboard.html";
-    } else {
-      window.location.href = "dashboard.html";
-    }
+    window.location.href = role === "staff" ? "dashboard.html" : "dashboard.html";
+    // staff tools are inside dashboard.html now, no separate file needed
   }
 });
 
 // Signup
-document.getElementById('signup-form').addEventListener('submit', async (e) => {
+document.getElementById('signup-form')?.addEventListener('submit', async (e) => {
   e.preventDefault();
   const email = document.getElementById('signup-email').value;
   const password = document.getElementById('signup-password').value;
@@ -73,3 +70,84 @@ document.getElementById('signup-form').addEventListener('submit', async (e) => {
     alert("Signup successful! Please check your email for confirmation.");
   }
 });
+
+// Load profile on dashboard
+async function loadProfile() {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    window.location.href = "login.html";
+    return;
+  }
+
+  // Artist info
+  document.getElementById("username").textContent = user.user_metadata?.username || "Anonymous";
+  document.getElementById("email").textContent = user.email;
+  document.getElementById("avatar").src = user.user_metadata?.avatar_url || "https://via.placeholder.com/120";
+
+  // Role check
+  const role = user.user_metadata?.role || "artist";
+  if (role === "staff") {
+    document.getElementById("staff-tools").style.display = "block";
+    loadStaffTools();
+  }
+}
+
+// Uploads form
+document.getElementById("upload-form")?.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const title = document.getElementById("song-title").value;
+  const link = document.getElementById("song-link").value;
+
+  const list = document.getElementById("uploads-list");
+  const li = document.createElement("li");
+  const a = document.createElement("a");
+  a.href = link;
+  a.textContent = title;
+  a.target = "_blank";
+  li.appendChild(a);
+  list.appendChild(li);
+
+  // TODO: Save to Supabase table later
+});
+
+// Profile edit form
+document.getElementById("profile-edit-form")?.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const bio = document.getElementById("bio").value;
+  const brandColor = document.getElementById("brand-color").value;
+  const twitter = document.getElementById("twitter").value;
+  const instagram = document.getElementById("instagram").value;
+  const soundcloud = document.getElementById("soundcloud").value;
+  const embed1 = document.getElementById("embed1").value;
+  const embed2 = document.getElementById("embed2").value;
+  const embed3 = document.getElementById("embed3").value;
+
+  alert("Profile saved! (Later we’ll store this in Supabase)");
+});
+
+// Member extras: donate link
+document.getElementById("save-donate")?.addEventListener("click", () => {
+  const donateUrl = document.getElementById("donate-url").value;
+  const donateLink = document.getElementById("donate-link");
+  donateLink.href = donateUrl;
+  donateLink.textContent = "Donate";
+});
+
+// Staff tools
+async function loadStaffTools() {
+  // Example stats placeholders
+  document.getElementById("total-users").textContent = "42"; // replace with Supabase query later
+  document.getElementById("total-uploads").textContent = "17"; // replace with Supabase query later
+}
+
+// Logout
+document.getElementById("logout")?.addEventListener("click", async () => {
+  await supabase.auth.signOut();
+  window.location.href = "index.html";
+});
+
+// Run on page load
+if (document.querySelector(".dashboard")) {
+  loadProfile();
+}
