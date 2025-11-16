@@ -28,49 +28,6 @@ const supabase = supabase.createClient(
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImltcWZueHRvcm5sdmdsd3Zrc3BpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMxMzQyNjksImV4cCI6MjA3ODcxMDI2OX0.Is7G7NCKxTQDoefyitkfhREXAR8m8cBBTjohRiBKMs4" // replace with your anon key
 );
 
-// Login
-document.getElementById('login-form')?.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const email = document.getElementById('login-email').value;
-  const password = document.getElementById('login-password').value;
-
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-  if (error) {
-    alert("Login failed: " + error.message);
-  } else {
-    alert("Logged in successfully!");
-
-    // Check role metadata
-    const { data: { user } } = await supabase.auth.getUser();
-    const role = user?.user_metadata?.role || "artist"; // default to artist
-
-    window.location.href = role === "staff" ? "dashboard.html" : "dashboard.html";
-    // staff tools are inside dashboard.html now, no separate file needed
-  }
-});
-
-// Signup
-document.getElementById('signup-form')?.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const email = document.getElementById('signup-email').value;
-  const password = document.getElementById('signup-password').value;
-
-  // Default signup assigns "artist" role
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      data: { role: "artist" } // metadata field
-    }
-  });
-
-  if (error) {
-    alert("Signup failed: " + error.message);
-  } else {
-    alert("Signup successful! Please check your email for confirmation.");
-  }
-});
-
 // Load profile on dashboard
 async function loadProfile() {
   const { data: { user } } = await supabase.auth.getUser();
@@ -84,6 +41,45 @@ async function loadProfile() {
   document.getElementById("email").textContent = user.email;
   document.getElementById("avatar").src = user.user_metadata?.avatar_url || "https://via.placeholder.com/120";
 
+  // Load profile data from DB
+  const { data: profile } = await supabase.from("profiles").select("*").eq("id", user.id).single();
+  if (profile) {
+    document.getElementById("bio").value = profile.bio || "";
+    document.getElementById("brand-color").value = profile.brand_color || "#b16eff";
+    document.getElementById("twitter").value = profile.twitter_url || "";
+    document.getElementById("instagram").value = profile.instagram_url || "";
+    document.getElementById("soundcloud").value = profile.soundcloud_url || "";
+    document.getElementById("embed1").value = profile.embed1 || "";
+    document.getElementById("embed2").value = profile.embed2 || "";
+    document.getElementById("embed3").value = profile.embed3 || "";
+  }
+
+  // Load uploads
+  const { data: uploads } = await supabase.from("uploads").select("*").eq("user_id", user.id);
+  const list = document.getElementById("uploads-list");
+  list.innerHTML = "";
+  if (uploads && uploads.length > 0) {
+    uploads.forEach(file => {
+      const li = document.createElement("li");
+      const a = document.createElement("a");
+      a.href = file.url;
+      a.textContent = file.title;
+      a.target = "_blank";
+      li.appendChild(a);
+      list.appendChild(li);
+    });
+  } else {
+    list.innerHTML = "<li>No uploads yet.</li>";
+  }
+
+  // Load member extras
+  const { data: member } = await supabase.from("members").select("*").eq("id", user.id).single();
+  if (member && member.donate_url) {
+    const donateLink = document.getElementById("donate-link");
+    donateLink.href = member.donate_url;
+    donateLink.textContent = "Donate";
+  }
+
   // Role check
   const role = user.user_metadata?.role || "artist";
   if (role === "staff") {
@@ -93,52 +89,79 @@ async function loadProfile() {
 }
 
 // Uploads form
-document.getElementById("upload-form")?.addEventListener("submit", (e) => {
+document.getElementById("upload-form")?.addEventListener("submit", async (e) => {
   e.preventDefault();
+  const { data: { user } } = await supabase.auth.getUser();
   const title = document.getElementById("song-title").value;
   const link = document.getElementById("song-link").value;
 
-  const list = document.getElementById("uploads-list");
-  const li = document.createElement("li");
-  const a = document.createElement("a");
-  a.href = link;
-  a.textContent = title;
-  a.target = "_blank";
-  li.appendChild(a);
-  list.appendChild(li);
+  const { error } = await supabase.from("uploads").insert({
+    user_id: user.id,
+    title,
+    url: link
+  });
 
-  // TODO: Save to Supabase table later
+  if (error) {
+    alert("Error saving upload: " + error.message);
+  } else {
+    alert("Upload saved!");
+    loadProfile(); // refresh list
+  }
 });
 
 // Profile edit form
-document.getElementById("profile-edit-form")?.addEventListener("submit", (e) => {
+document.getElementById("profile-edit-form")?.addEventListener("submit", async (e) => {
   e.preventDefault();
+  const { data: { user } } = await supabase.auth.getUser();
 
-  const bio = document.getElementById("bio").value;
-  const brandColor = document.getElementById("brand-color").value;
-  const twitter = document.getElementById("twitter").value;
-  const instagram = document.getElementById("instagram").value;
-  const soundcloud = document.getElementById("soundcloud").value;
-  const embed1 = document.getElementById("embed1").value;
-  const embed2 = document.getElementById("embed2").value;
-  const embed3 = document.getElementById("embed3").value;
+  const updates = {
+    id: user.id,
+    bio: document.getElementById("bio").value,
+    brand_color: document.getElementById("brand-color").value,
+    twitter_url: document.getElementById("twitter").value,
+    instagram_url: document.getElementById("instagram").value,
+    soundcloud_url: document.getElementById("soundcloud").value,
+    embed1: document.getElementById("embed1").value,
+    embed2: document.getElementById("embed2").value,
+    embed3: document.getElementById("embed3").value,
+    updated_at: new Date()
+  };
 
-  alert("Profile saved! (Later we’ll store this in Supabase)");
+  const { error } = await supabase.from("profiles").upsert(updates);
+  if (error) {
+    alert("Error saving profile: " + error.message);
+  } else {
+    alert("Profile saved!");
+  }
 });
 
 // Member extras: donate link
-document.getElementById("save-donate")?.addEventListener("click", () => {
+document.getElementById("save-donate")?.addEventListener("click", async () => {
+  const { data: { user } } = await supabase.auth.getUser();
   const donateUrl = document.getElementById("donate-url").value;
-  const donateLink = document.getElementById("donate-link");
-  donateLink.href = donateUrl;
-  donateLink.textContent = "Donate";
+
+  const { error } = await supabase.from("members").upsert({
+    id: user.id,
+    donate_url: donateUrl
+  });
+
+  if (error) {
+    alert("Error saving donate link: " + error.message);
+  } else {
+    const donateLink = document.getElementById("donate-link");
+    donateLink.href = donateUrl;
+    donateLink.textContent = "Donate";
+    alert("Donate link saved!");
+  }
 });
 
 // Staff tools
 async function loadStaffTools() {
-  // Example stats placeholders
-  document.getElementById("total-users").textContent = "42"; // replace with Supabase query later
-  document.getElementById("total-uploads").textContent = "17"; // replace with Supabase query later
+  const { count: userCount } = await supabase.from("auth.users").select("*", { count: "exact", head: true });
+  const { count: uploadCount } = await supabase.from("uploads").select("*", { count: "exact", head: true });
+
+  document.getElementById("total-users").textContent = userCount || "0";
+  document.getElementById("total-uploads").textContent = uploadCount || "0";
 }
 
 // Logout
