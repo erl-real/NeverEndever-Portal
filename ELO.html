@@ -1,1 +1,102 @@
+<!-- keep all your existing HTML/CSS/JS as-is -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  // Initialize Supabase client
+  const supabase = supabase.createClient(
+    "https://YOUR-PROJECT-REF.supabase.co",
+    "YOUR-ANON-KEY-HERE"
+  );
+
+  // ===== Profile / graphs =====
+  async function showProfile(name){
+    const nameIdx = cols.findIndex(c => c.toLowerCase() === 'name');
+    const totalIdx = cols.findIndex(c => c.toLowerCase() === 'total points');
+    const avgIdx   = cols.findIndex(c => c.toLowerCase() === 'average');
+    const artist = rows.find(r => r[nameIdx] === name);
+
+    document.getElementById('profile-name').textContent = name;
+    if (!artist) {
+      document.getElementById('profile-stats-card').style.display = 'none';
+      document.querySelector('#profile tbody').innerHTML =
+        '<tr><td colspan="4" class="muted">Artist not found in Master Ratings.</td></tr>';
+      return;
+    }
+
+    document.getElementById('profile-stats-card').style.display = 'block';
+
+    const songs = songData.filter(s => s.artist === name.trim());
+    const numericScores = songs.map(s => parseFloat(s.score)).filter(s => Number.isFinite(s));
+
+    const totalPoints = to2dpIfMetric('Total Points', artist[totalIdx]);
+    const average     = to2dpIfMetric('Average', artist[avgIdx]);
+    const submissions = songs.length;
+    const datesSorted = [...songs.map(s=>s.date).filter(Boolean)].sort();
+    const firstDate = datesSorted[0]||''; 
+    const lastDate = datesSorted[datesSorted.length-1]||'';
+    const best = numericScores.length? Math.max(...numericScores) : '';
+    const worst = numericScores.length? Math.min(...numericScores) : '';
+    const recentAvg = numericScores.length? 
+      (numericScores.slice(-3).reduce((a,b)=>a+b,0)/Math.min(3,numericScores.length)).toFixed(2) : '';
+    const prevAvg = numericScores.length>3? 
+      (numericScores.slice(-6,-3).reduce((a,b)=>a+b,0)/Math.min(3,Math.max(0,numericScores.length-3))).toFixed(2) : '';
+    const delta = (recentAvg && prevAvg)? (parseFloat(recentAvg)-parseFloat(prevAvg)).toFixed(2) : '';
+    const volatility = (function(){ 
+      if(numericScores.length<2) return ''; 
+      const m = numericScores.reduce((a,b)=>a+b,0)/numericScores.length; 
+      const v = numericScores.reduce((s,x)=> s+(x-m)*(x-m),0)/numericScores.length; 
+      return Math.sqrt(v).toFixed(2); 
+    })();
+
+    const statItems = [
+      ['Total Points', totalPoints],
+      ['Average', average],
+      ['Submissions', submissions],
+      ['Best', best],
+      ['Worst', worst],
+      ['Recent Avg (3)', recentAvg],
+      ['Δ vs prev 3', delta],
+      ['Volatility (σ)', volatility],
+      ['First Seen', firstDate],
+      ['Last Seen', lastDate]
+    ].map(([label,val])=> {
+      if(val!=='' && val!==undefined) {
+        const title = statExplanations[label] || '';
+        return `<div class="stat-item" title="${title}">
+                  <div class="stat-value">${val}</div>
+                  <div class="stat-label">${label}</div>
+                </div>`;
+      }
+      return '';
+    }).join('');
+    document.getElementById("profile-stats-grid").innerHTML = statItems;
+
+    // ===== NEW: Supabase profile integration (scaffolding) =====
+    try {
+      const { data: profile, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("artist_name", name)
+        .single();
+
+      if (error) {
+        console.warn("Supabase profile error:", error.message);
+      }
+      if (profile) {
+        // Inject a mini profile card above stats
+        const miniProfile = `
+          <div class="stats-card">
+            <h3>Artist Profile</h3>
+            <p><strong>Bio:</strong> ${profile.bio || "No bio yet."}</p>
+            <p><strong>Badges:</strong> ${profile.badges?.join(", ") || "None"}</p>
+            <p><strong>Inventory:</strong> ${profile.inventory?.length || 0} items</p>
+          </div>
+        `;
+        document.getElementById("profile-stats-card")
+          .insertAdjacentHTML("beforebegin", miniProfile);
+      }
+    } catch (err) {
+      console.error("Supabase query failed:", err);
+    }
+  }
+</script>
 
