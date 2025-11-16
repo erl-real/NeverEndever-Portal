@@ -64,3 +64,51 @@
   height: auto;
   border-radius: 8px;
 }
+/* Auth Section */
+.auth {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 20px;
+}
+
+.auth-container {
+  background: #222;
+  padding: 40px;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.auth-container h1, .auth-container h2 {
+  color: #b16eff;
+  margin-bottom: 20px;
+}
+
+.auth-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.auth-container input {
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+}
+
+.auth-container button {
+  background: #b16eff;
+  border: none;
+  padding: 10px;
+  color: #fff;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.auth-container button:hover {
+  background: #fff;
+  color: #b16eff;
+}
