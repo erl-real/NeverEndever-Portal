@@ -108,9 +108,9 @@ body {
 }
 
 .hero-logo {
-  max-width: 80%;
+  max-width: 300px;
   height: auto;
-  margin-bottom: 20px;
+  margin-bottom: 2rem;
 }
 
 .hero h1 {
