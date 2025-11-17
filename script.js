@@ -25,19 +25,16 @@ window.addEventListener('click', (e) => {
 // Initialize Supabase client (make sure @supabase/supabase-js is loaded in index.html)
 const supabaseClient = supabase.createClient(
   "https://imqfnxtornlvglwvkspi.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImltcWZueHRvcm5sdmdsd3Zrc3BpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMxMzQyNjksImV4cCI6MjA3ODcxMDI2OX0.Is7G7NCKxTQDoefyitkfhREXAR8m8cBBTjohRiBKMs4" // <-- replace with your full anon key
+  "YOUR_FULL_ANON_KEY" // <-- replace with your anon key
 );
-// Handle login
-document.getElementById("login-form").addEventListener("submit", async (e) => {
+
+// -------------------- LOGIN --------------------
+document.getElementById("login-form")?.addEventListener("submit", async (e) => {
   e.preventDefault();
   const email = document.getElementById("login-email").value;
   const password = document.getElementById("login-password").value;
 
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
-
+  const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
   if (error) {
     alert("Login failed: " + error.message);
   } else {
@@ -45,17 +42,13 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
   }
 });
 
-// Handle signup
-document.getElementById("signup-form").addEventListener("submit", async (e) => {
+// -------------------- SIGNUP --------------------
+document.getElementById("signup-form")?.addEventListener("submit", async (e) => {
   e.preventDefault();
   const email = document.getElementById("signup-email").value;
   const password = document.getElementById("signup-password").value;
 
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-  });
-
+  const { data, error } = await supabaseClient.auth.signUp({ email, password });
   if (error) {
     alert("Signup failed: " + error.message);
   } else {
@@ -63,13 +56,13 @@ document.getElementById("signup-form").addEventListener("submit", async (e) => {
   }
 });
 
-// Track auth state
-supabase.auth.onAuthStateChange((event, session) => {
+// -------------------- AUTH STATE --------------------
+supabaseClient.auth.onAuthStateChange((event, session) => {
   console.log("Auth event:", event);
   console.log("Session:", session);
 });
 
-// Load profile on dashboard
+// -------------------- DASHBOARD --------------------
 async function loadProfile() {
   console.log("loadProfile running...");
   const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
@@ -103,6 +96,11 @@ async function loadProfile() {
     document.getElementById("embed1").value = profile.embed1 || "";
     document.getElementById("embed2").value = profile.embed2 || "";
     document.getElementById("embed3").value = profile.embed3 || "";
+    if (profile.donate_url) {
+      const donateLink = document.getElementById("donate-link");
+      donateLink.href = profile.donate_url;
+      donateLink.textContent = "Donate";
+    }
   }
 
   // Load uploads
@@ -129,20 +127,6 @@ async function loadProfile() {
     list.innerHTML = "<li>No uploads yet.</li>";
   }
 
-  // Load member extras
-  const { data: member, error: memberError } = await supabaseClient
-    .from("members")
-    .select("*")
-    .eq("id", user.id)
-    .single();
-
-  if (memberError) console.error("Member error:", memberError.message);
-  if (member && member.donate_url) {
-    const donateLink = document.getElementById("donate-link");
-    donateLink.href = member.donate_url;
-    donateLink.textContent = "Donate";
-  }
-
   // Role check
   const role = user.user_metadata?.role || "artist";
   if (role === "staff") {
@@ -151,7 +135,7 @@ async function loadProfile() {
   }
 }
 
-// Uploads form
+// -------------------- UPLOADS --------------------
 document.getElementById("upload-form")?.addEventListener("submit", async (e) => {
   e.preventDefault();
   const { data: { user } } = await supabaseClient.auth.getUser();
@@ -173,7 +157,7 @@ document.getElementById("upload-form")?.addEventListener("submit", async (e) => 
   }
 });
 
-// Profile edit form
+// -------------------- PROFILE EDIT --------------------
 document.getElementById("profile-edit-form")?.addEventListener("submit", async (e) => {
   e.preventDefault();
   const { data: { user } } = await supabaseClient.auth.getUser();
@@ -188,6 +172,7 @@ document.getElementById("profile-edit-form")?.addEventListener("submit", async (
     embed1: document.getElementById("embed1").value,
     embed2: document.getElementById("embed2").value,
     embed3: document.getElementById("embed3").value,
+    donate_url: document.getElementById("donate-url")?.value || "",
     updated_at: new Date().toISOString()
   };
 
@@ -200,28 +185,7 @@ document.getElementById("profile-edit-form")?.addEventListener("submit", async (
   }
 });
 
-// Member extras: donate link
-document.getElementById("save-donate")?.addEventListener("click", async () => {
-  const { data: { user } } = await supabaseClient.auth.getUser();
-  const donateUrl = document.getElementById("donate-url").value;
-
-  const { error } = await supabaseClient.from("members").upsert({
-    id: user.id,
-    donate_url: donateUrl
-  });
-
-  if (error) {
-    console.error("Member upsert error:", error.message);
-    alert("Error saving donate link: " + error.message);
-  } else {
-    const donateLink = document.getElementById("donate-link");
-    donateLink.href = donateUrl;
-    donateLink.textContent = "Donate";
-    alert("Donate link saved!");
-  }
-});
-
-// Staff tools
+// -------------------- STAFF TOOLS --------------------
 async function loadStaffTools() {
   const { count, error } = await supabaseClient
     .from("uploads")
@@ -238,61 +202,16 @@ async function loadStaffTools() {
   document.getElementById("total-users").textContent = profileCount || "0";
 }
 
-// Logout
+// -------------------- LOGOUT --------------------
 document.getElementById("logout")?.addEventListener("click", async () => {
   await supabaseClient.auth.signOut();
   window.location.href = "index.html";
 });
 
-// Run on page load
-if (document.querySelector(".dashboard")) {
-  loadProfile();
-}
-
-// Handle sample form submission (Edge Function test)
-async function handleFormSubmit(event) {
-  event.preventDefault();
-  const nameInput = document.getElementById("name");
-  const name = nameInput ? nameInput.value : "Real";
-
-  try {
-    const response = await fetch(
-      "https://imqfnxtornlvglwvkspi.functions.supabase.co/basic-core-001",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImltcWZueHRvcm5sdmdsd3Zrc3BpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMxMzQyNjksImV4cCI6MjA3ODcxMDI2OX0.Is7G7NCKxTQDoefyitkfhREXAR8m8cBBTjohRiBKMs4" // <-- replace with your anon key
-        },
-        body: JSON.stringify({ name })
-      }
-    );
-
-    const data = await response.json();
-
-    const resultDiv = document.getElementById("functionResult");
-    if (resultDiv) {
-      resultDiv.textContent = data.message || JSON.stringify(data);
-    } else {
-      alert(data.message || JSON.stringify(data));
-    }
-  } catch (error) {
-    console.error("Error calling function:", error);
-    alert("Something went wrong.");
-  }
-}
-
-// Attach listeners once DOM is ready
+// -------------------- INIT --------------------
 document.addEventListener("DOMContentLoaded", () => {
-  // Test button
-  const testBtn = document.getElementById("testFunctionBtn");
-  if (testBtn) {
-    testBtn.addEventListener("click", handleFormSubmit);
-  }
-
-  // Sample form
-  const sampleForm = document.getElementById("sampleForm");
-  if (sampleForm) {
-    sampleForm.addEventListener("submit", handleFormSubmit);
+  if (document.querySelector(".dashboard")) {
+    loadProfile();
   }
 });
+
