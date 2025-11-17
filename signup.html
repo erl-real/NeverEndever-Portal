@@ -52,6 +52,18 @@
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImltcWZueHRvcm5sdmdsd3Zrc3BpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMxMzQyNjksImV4cCI6MjA3ODcxMDI2OX0.Is7G7NCKxTQDoefyitkfhREXAR8m8cBBTjohRiBKMs4"
     );
 
+    // Email validation helpers
+    function isValidEmail(email) {
+      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return re.test(email);
+    }
+
+    function isAllowedDomain(email) {
+      const allowed = ["gmail.com", "outlook.com", "neverendever.com"];
+      const domain = email.split("@")[1];
+      return allowed.includes(domain);
+    }
+
     // Toggle password visibility
     document.getElementById("toggle-signup-password").addEventListener("click", () => {
       const pwField = document.getElementById("signup-password");
@@ -70,9 +82,15 @@
       const email = document.getElementById("signup-email").value.trim();
       const password = document.getElementById("signup-password").value;
 
-      // Basic client-side validation
-      if (!email.includes("@")) {
+      // Client-side checks
+      if (!isValidEmail(email)) {
         status.textContent = "Please enter a valid email address.";
+        btn.disabled = false;
+        btn.textContent = "Sign Up";
+        return;
+      }
+      if (!isAllowedDomain(email)) {
+        status.textContent = "Only Gmail, Outlook, or NeverEndEver emails are allowed.";
         btn.disabled = false;
         btn.textContent = "Sign Up";
         return;
