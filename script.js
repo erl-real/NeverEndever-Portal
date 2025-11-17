@@ -460,12 +460,13 @@ window.addEventListener('click', (e) => {
   }
 });
 
-// Initialize Supabase client (make sure @supabase/supabase-js is loaded in index.html)
-const supabaseClient = supabase.createClient(
-  "https://imqfnxtornlvglwvkspi.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImltcWZueHRvcm5sdmdsd3Zrc3BpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMxMzQyNjksImV4cCI6MjA3ODcxMDI2OX0.Is7G7NCKxTQDoefyitkfhREXAR8m8cBBTjohRiBKMs4"
-);
+import { createClient } from "@supabase/supabase-js";
 
+// Pull values from environment
+const supabaseClient = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY
+);
 // -------------------- LOGIN --------------------
 document.getElementById("login-form")?.addEventListener("submit", async (e) => {
   e.preventDefault();
