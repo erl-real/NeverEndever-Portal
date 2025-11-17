@@ -11,7 +11,21 @@
 
   <!-- Styles -->
   <link rel="stylesheet" href="style.css" />
-
+<!-- Three.js Import Map -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js",
+      "three/examples/jsm/controls/OrbitControls": "https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/controls/OrbitControls.js",
+      "three/examples/jsm/loaders/GLTFLoader": "https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/loaders/GLTFLoader.js",
+      "three/examples/jsm/postprocessing/EffectComposer": "https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/postprocessing/EffectComposer.js",
+      "three/examples/jsm/postprocessing/RenderPass": "https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/postprocessing/RenderPass.js",
+      "three/examples/jsm/postprocessing/UnrealBloomPass": "https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/postprocessing/UnrealBloomPass.js"
+    }
+  }
+  </script>
+</head>
+<body>
   <!-- Supabase JS client -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -112,10 +126,41 @@ uv.x *= aspect;
 
   <!-- Fire overlay JS -->
   <script src="fire.js"></script>
+<!-- 🌐 WebGL Canvas for Three.js -->
+  <canvas class="webgl"></canvas>
 
+  <!-- Preloader -->
+  <div id="preloader" style="display: block;">
+    <p class="loader-info-text">Please wait while the model is loading...</p>
+  </div>
+
+  <!-- Scrollable UI -->
+  <main>
+    <header class="header">
+      <a href="#" class="logo"><img src="logo.svg" alt="Logo"></a>
+      <div class="nav-link-container">
+        <a href="">visit</a>
+        <a href="">exhibitions & events</a>
+        <a href="">collection</a>
+      </div>
+    </header>
+
+    <section class="banner-section">
+      <h1>delve into relics</h1>
+      <p>Welcome to the relics museum…</p>
+      <a href="#">plan your visit</a>
+    </section>
+
+    <section class="images-container">
+      
+      <!-- your image grid -->
+    </section>
+  </main>
+</body>
+</html>
   <!-- Footer -->
   <footer>
-    <!-- existing footer unchanged -->
+    <!-- replace footer links -->
   </footer>
 </body>
 </html>
