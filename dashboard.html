@@ -3,39 +3,96 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Dashboard | NeverEndEver</title>
-  <link rel="stylesheet" href="style.css"/>
+  <title>NeverEndEver Dashboard</title>
+
+  <!-- Boxicons -->
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="dashboard.css">
 </head>
 <body>
-  <!-- Header -->
-  <header class="site-header">
-    <div class="logo">NeverEndEver</div>
-    <nav class="nav-bar">
-      <ul class="nav-list">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="dashboard.html">Dashboard</a></li>
-      </ul>
-      <div class="auth-buttons">
-        <button id="logout">Logout</button>
-      </div>
-    </nav>
-  </header>
 
-  <!-- Dashboard -->
-  <section class="dashboard">
-    <h2>Loading dashboard...</h2>
+  <!-- SIDEBAR -->
+  <section id="sidebar">
+    <a href="#" class="brand">
+      <i class='bx bxs-music bx-lg'></i>
+      <span class="text">NeverEndEver</span>
+    </a>
+    <ul class="side-menu top">
+      <li class="active"><a href="dashboard.html"><i class='bx bxs-dashboard'></i><span class="text">Dashboard</span></a></li>
+      <li><a href="profile.html"><i class='bx bxs-user'></i><span class="text">Profile</span></a></li>
+      <li><a href="uploads.html"><i class='bx bxs-cloud-upload'></i><span class="text">Uploads</span></a></li>
+      <li><a href="community.html"><i class='bx bxs-group'></i><span class="text">Community</span></a></li>
+      <li><a href="staff.html"><i class='bx bxs-cog'></i><span class="text">Staff Tools</span></a></li>
+    </ul>
+    <ul class="side-menu bottom">
+      <li><a href="settings.html"><i class='bx bxs-cog bx-spin-hover'></i><span class="text">Settings</span></a></li>
+      <li><a href="#" id="logout-btn" class="logout"><i class='bx bx-power-off bx-burst-hover'></i><span class="text">Logout</span></a></li>
+    </ul>
   </section>
 
-  <!-- Footer -->
-  <footer>
-    <div class="footer-bottom">
-      <small style="color:#aaa;">© 2025 NeverEndEver Dashboard</small>
-    </div>
-  </footer>
+  <!-- CONTENT -->
+  <section id="content">
+    <!-- NAVBAR -->
+    <nav>
+      <i class='bx bx-menu'></i>
+      <span class="nav-link">Dashboard</span>
 
-  <!-- Supabase JS + your script -->
+      <!-- Notifications -->
+      <a href="#" class="notification" id="notificationIcon">
+        <i class='bx bxs-bell'></i>
+        <span class="num">0</span>
+      </a>
+
+      <!-- Profile -->
+      <a href="#" class="profile" id="profileIcon">
+        <img src="https://placehold.co/50x50.png" alt="Profile">
+      </a>
+      <div class="profile-menu" id="profileMenu">
+        <ul>
+          <li><span id="user-email"></span></li>
+          <li><a href="profile.html">My Profile</a></li>
+          <li><a href="settings.html">Settings</a></li>
+          <li><a href="#" id="logout-link">Log Out</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- MAIN -->
+    <main>
+      <div class="head-title">
+        <div class="left">
+          <h1>Welcome to NeverEndEver</h1>
+          <p>Your creative hub</p>
+        </div>
+      </div>
+
+      <ul class="box-info">
+        <li><i class='bx bxs-calendar-check'></i><span class="text"><h3>0</h3><p>New Posts</p></span></li>
+        <li><i class='bx bxs-group'></i><span class="text"><h3>0</h3><p>Community Members</p></span></li>
+        <li><i class='bx bxs-music'></i><span class="text"><h3>0</h3><p>Tracks Uploaded</p></span></li>
+      </ul>
+
+      <div class="table-data">
+        <div class="order">
+          <div class="head"><h3>Recent Activity</h3></div>
+          <p>Coming soon: activity feed from Supabase DB</p>
+        </div>
+        <div class="todo">
+          <div class="head"><h3>Todos</h3></div>
+          <ul class="todo-list">
+            <li class="not-completed"><p>Finish profile page</p></li>
+            <li class="not-completed"><p>Integrate uploads</p></li>
+          </ul>
+        </div>
+      </div>
+    </main>
+  </section>
+
+  <!-- Supabase + JS -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="script.js"></script>
+  <script src="dashboard.js"></script>
 </body>
 </html>
-
