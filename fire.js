@@ -102,7 +102,7 @@ function initShader() {
   // 🔑 Load your bare logo image into the shader
 createImageTexture(
   gl,
-  "",
+  "https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/28.png",
   function (tex) {
     textTexture = tex;
     resizeCanvas();
