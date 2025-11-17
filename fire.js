@@ -7,38 +7,20 @@ let animationProgress = 0.3;
 let uniforms;
 let textTexture;
 
-const textCanvas = document.createElement("canvas");
-const textCtx = textCanvas.getContext("2d");
-
-function createTextTexture(gl) {
-  textCanvas.width = 2048;
-  textCanvas.height = 1024;
-
-  textCtx.fillStyle = "white";
-  textCtx.fillRect(0, 0, textCanvas.width, textCanvas.height);
-
-  textCtx.fillStyle = "black";
-  textCtx.font = "bold 320px Arial";
-  textCtx.textAlign = "center";
-  textCtx.textBaseline = "middle";
-  textCtx.fillText("LOGO", textCanvas.width / 2, textCanvas.height / 2);
-
-  textTexture = gl.createTexture();
-  gl.bindTexture(gl.TEXTURE_2D, textTexture);
-  gl.texImage2D(
-    gl.TEXTURE_2D,
-    0,
-    gl.RGBA,
-    gl.RGBA,
-    gl.UNSIGNED_BYTE,
-    textCanvas
-  );
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-
-  gl.clearColor(1.0, 1.0, 1.0, 1.0);
-  gl.clear(gl.COLOR_BUFFER_BIT);
+// 🔑 Load an image as a WebGL texture
+function createImageTexture(gl, url, callback) {
+  const image = new Image();
+  image.crossOrigin = "anonymous"; // allow Supabase public URLs
+  image.onload = function () {
+    const texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    callback(texture);
+  };
+  image.src = url;
 }
 
 function initShader() {
@@ -117,7 +99,17 @@ function initShader() {
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
   gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
 
-  createTextTexture(gl);
+  // 🔑 Load your bare logo image into the shader
+  createImageTexture(
+    gl,
+    "https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/endever%20bare.png",
+    function (tex) {
+      textTexture = tex;
+      resizeCanvas();
+      render();
+    }
+  );
+
   return gl;
 }
 
@@ -157,5 +149,3 @@ function resizeCanvas() {
 }
 
 window.addEventListener("resize", resizeCanvas);
-resizeCanvas();
-render();
