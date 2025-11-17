@@ -213,3 +213,30 @@ document.getElementById("logout")?.addEventListener("click", async () => {
 if (document.querySelector(".dashboard")) {
   loadProfile();
 }
+async function handleFormSubmit(event) {
+  event.preventDefault();
+
+  const name = document.getElementById("name").value;
+
+  try {
+    const response = await fetch(
+      "https://imqfnxtornlvglwvkspi.functions.supabase.co/basic-core-001",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." // your anon key
+        },
+        body: JSON.stringify({ name })
+      }
+    );
+
+    const data = await response.json();
+
+    // Show response in the UI
+    alert(data.message); // or inject into a div
+  } catch (error) {
+    console.error("Error calling function:", error);
+    alert("Something went wrong.");
+  }
+}
