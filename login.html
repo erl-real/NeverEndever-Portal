@@ -1,58 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Login | NeverEndEver</title>
-  <link href="https://fonts.googleapis.com/css?family=Lexend:400,600,700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-  <!-- Header (reuse your site header) -->
   <header class="site-header">
     <div class="logo">NeverEndEver</div>
     <nav class="nav-bar">
       <ul>
         <li><a href="index.html">Home</a></li>
-        <li><a href="beat-battles.html">Beat Battles</a></li>
-        <li><a href="live.html">Live</a></li>
-        <li><a href="challenges.html">Challenges</a></li>
-        <li><a href="sounds.html">Sounds</a></li>
-        <li><a href="shop.html">Shop</a></li>
-        <li><a href="community.html">Community</a></li>
       </ul>
     </nav>
   </header>
 
-  <!-- Login/Signup Section -->
   <section class="auth">
-    <div class="auth-container">
-      <h1>Login</h1>
-      <form id="login-form">
-        <input type="email" id="login-email" placeholder="Email" required>
-        <input type="password" id="login-password" placeholder="Password" required>
-        <button type="submit">Login</button>
-      </form>
-
-      <h2>Sign Up</h2>
-      <form id="signup-form">
-        <input type="email" id="signup-email" placeholder="Email" required>
-        <input type="password" id="signup-password" placeholder="Password" required>
-        <button type="submit">Sign Up</button>
-      </form>
-    </div>
+    <h1>Login</h1>
+    <form id="login-form">
+      <input type="email" id="login-email" placeholder="Email" required>
+      <input type="password" id="login-password" placeholder="Password" required>
+      <button type="submit">Login</button>
+    </form>
+    <p>Don’t have an account? <a href="signup.html">Sign up here</a></p>
   </section>
 
-  <!-- Footer -->
   <footer>
-    <div class="footer-bottom">
-      <small style="color:#aaa;">© 2025 NeverEndEver. All rights reserved.</small>
-    </div>
+    <small>© 2025 NeverEndEver</small>
   </footer>
 
-  <!-- Supabase JS -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="script.js"></script>
 </body>
 </html>
+
 
