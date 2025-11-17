@@ -467,34 +467,8 @@ const supabaseClient = createClient(
   import.meta.env.VITE_SUPABASE_URL,
   import.meta.env.VITE_SUPABASE_ANON_KEY
 );
-// -------------------- LOGIN --------------------
-document.getElementById("login-form")?.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const email = document.getElementById("login-email").value;
-  const password = document.getElementById("login-password").value;
-
-  const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-  if (error) {
-    alert("Login failed: " + error.message);
-  } else {
-    window.location.href = "dashboard.html";
-  }
-});
-
-// -------------------- SIGNUP --------------------
-document.getElementById("signup-form")?.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const email = document.getElementById("signup-email").value;
-  const password = document.getElementById("signup-password").value;
-
-  const { data, error } = await supabaseClient.auth.signUp({ email, password });
-  if (error) {
-    alert("Signup failed: " + error.message);
-  } else {
-    alert("Signup successful! Check your email for confirmation.");
-  }
-});
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> 
+<script> const supabaseClient = supabase.createClient( "https://imqfnxtornlvglwvkspi.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImltcWZueHRvcm5sdmdsd3Zrc3BpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMxMzQyNjksImV4cCI6MjA3ODcxMDI2OX0.Is7G7NCKxTQDoefyitkfhREXAR8m8cBBTjohRiBKMs4" ); document.getElementById("toggle-password").addEventListener("click", () => { const pwField = document.getElementById("login-password"); pwField.type = pwField.type === "password" ? "text" : "password"; }); document.getElementById("login-form").addEventListener("submit", async (e) => { e.preventDefault(); const btn = document.getElementById("login-btn"); const status = document.getElementById("login-status"); btn.disabled = true; btn.textContent = "Logging in…"; status.textContent = ""; const email = document.getElementById("login-email").value.trim(); const password = document.getElementById("login-password").value; if (!email.includes("@")) { status.textContent = "Please enter a valid email address."; btn.disabled = false; btn.textContent = "Log In"; return; } const { error } = await supabaseClient.auth.signInWithPassword({ email, password }); if (error) { status.textContent = error.message; btn.disabled = false; btn.textContent = "Log In"; } else { status.textContent = "Success! Redirecting…"; window.location.href = "dashboard.html"; } }); </script>
 // -------------------- AUTH STATE --------------------
 supabaseClient.auth.onAuthStateChange((event, session) => {
   console.log("Auth event:", event);
