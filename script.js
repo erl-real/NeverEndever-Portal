@@ -22,10 +22,10 @@ window.addEventListener('click', (e) => {
   }
 });
 
-// Initialize Supabase client (make sure @supabase/supabase-js is loaded)
+// Initialize Supabase client (make sure @supabase/supabase-js is loaded in index.html)
 const supabaseClient = supabase.createClient(
   "https://imqfnxtornlvglwvkspi.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImltcWZueHRvcm5sdmdsd3Zrc3BpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMxMzQyNjksImV4cCI6MjA3ODcxMDI2OX0.Is7G7NCKxTQDoefyitkfhREXAR8m8cBBTjohRiBKMs4"
+  "YOUR-ANON-KEY-HERE" // <-- replace with your full anon key
 );
 
 // Load profile on dashboard
@@ -147,7 +147,7 @@ document.getElementById("profile-edit-form")?.addEventListener("submit", async (
     embed1: document.getElementById("embed1").value,
     embed2: document.getElementById("embed2").value,
     embed3: document.getElementById("embed3").value,
-    updated_at: new Date()
+    updated_at: new Date().toISOString()
   };
 
   const { error } = await supabaseClient.from("profiles").upsert(updates);
@@ -208,7 +208,50 @@ if (document.querySelector(".dashboard")) {
   loadProfile();
 }
 
-// Handle sample form submission
+// Handle sample form submission (Edge Function test)
 async function handleFormSubmit(event) {
   event.preventDefault();
-  const
+  const nameInput = document.getElementById("name");
+  const name = nameInput ? nameInput.value : "Real";
+
+  try {
+    const response = await fetch(
+      "https://imqfnxtornlvglwvkspi.functions.supabase.co/basic-core-001",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer YOUR-ANON-KEY-HERE" // <-- replace with your anon key
+        },
+        body: JSON.stringify({ name })
+      }
+    );
+
+    const data = await response.json();
+
+    const resultDiv = document.getElementById("functionResult");
+    if (resultDiv) {
+      resultDiv.textContent = data.message || JSON.stringify(data);
+    } else {
+      alert(data.message || JSON.stringify(data));
+    }
+  } catch (error) {
+    console.error("Error calling function:", error);
+    alert("Something went wrong.");
+  }
+}
+
+// Attach listeners once DOM is ready
+document.addEventListener("DOMContentLoaded", () => {
+  // Test button
+  const testBtn = document.getElementById("testFunctionBtn");
+  if (testBtn) {
+    testBtn.addEventListener("click", handleFormSubmit);
+  }
+
+  // Sample form
+  const sampleForm = document.getElementById("sampleForm");
+  if (sampleForm) {
+    sampleForm.addEventListener("submit", handleFormSubmit);
+  }
+});
