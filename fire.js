@@ -100,15 +100,15 @@ function initShader() {
   gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
 
   // 🔑 Load your bare logo image into the shader
-  createImageTexture(
-    gl,
-    "https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/endever%20bare.png",
-    function (tex) {
-      textTexture = tex;
-      resizeCanvas();
-      render();
-    }
-  );
+createImageTexture(
+  gl,
+  "https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/endever%20full.png",
+  function (tex) {
+    textTexture = tex;
+    resizeCanvas();
+    render();
+  }
+);
 
   return gl;
 }
