@@ -2,18 +2,13 @@
 document.querySelectorAll('.dropbtn').forEach(button => {
   button.addEventListener('click', () => {
     const dropdown = button.nextElementSibling;
-
-    // Close other dropdowns
     document.querySelectorAll('.dropdown-content').forEach(menu => {
       if (menu !== dropdown) menu.style.display = 'none';
     });
-
-    // Toggle current dropdown
     dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
   });
 });
 
-// Close dropdowns if clicking outside
 window.addEventListener('click', (e) => {
   if (!e.target.matches('.dropbtn')) {
     document.querySelectorAll('.dropdown-content').forEach(menu => {
@@ -25,7 +20,7 @@ window.addEventListener('click', (e) => {
 // Initialize Supabase client (make sure @supabase/supabase-js is loaded in index.html)
 const supabaseClient = supabase.createClient(
   "https://imqfnxtornlvglwvkspi.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImltcWZueHRvcm5sdmdsd3Zrc3BpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMxMzQyNjksImV4cCI6MjA3ODcxMDI2OX0.Is7G7NCKxTQDoefyitkfhREXAR8m8cBBTjohRiBKMs4"
+  "YOUR_FULL_ANON_KEY" // <-- use anon key only
 );
 
 // -------------------- LOGIN --------------------
@@ -62,14 +57,18 @@ supabaseClient.auth.onAuthStateChange((event, session) => {
   console.log("Session:", session);
 });
 
+// -------------------- SESSION CHECK --------------------
+async function getCurrentSession() {
+  const { data: { session }, error } = await supabaseClient.auth.getSession();
+  if (error) console.error("Session error:", error.message);
+  return session;
+}
+
 // -------------------- DASHBOARD --------------------
 async function loadProfile() {
-  console.log("loadProfile running...");
-  const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
-  if (userError) console.error("Auth error:", userError.message);
-
+  const session = await getCurrentSession();
+  const user = session?.user;
   if (!user) {
-    console.warn("No user found, redirecting to login.");
     window.location.href = "login.html";
     return;
   }
@@ -79,7 +78,7 @@ async function loadProfile() {
   document.getElementById("email").textContent = user.email;
   document.getElementById("avatar").src = user.user_metadata?.avatar_url || "https://via.placeholder.com/120";
 
-  // Load profile data from DB
+  // Profile data
   const { data: profile, error: profileError } = await supabaseClient
     .from("profiles")
     .select("*")
@@ -103,7 +102,7 @@ async function loadProfile() {
     }
   }
 
-  // Load uploads
+  // Uploads
   const { data: uploads, error: uploadsError } = await supabaseClient
     .from("uploads")
     .select("*")
@@ -138,7 +137,8 @@ async function loadProfile() {
 // -------------------- UPLOADS --------------------
 document.getElementById("upload-form")?.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const { data: { user } } = await supabaseClient.auth.getUser();
+  const session = await getCurrentSession();
+  const user = session?.user;
   const title = document.getElementById("song-title").value;
   const link = document.getElementById("song-link").value;
 
@@ -149,18 +149,18 @@ document.getElementById("upload-form")?.addEventListener("submit", async (e) => 
   });
 
   if (error) {
-    console.error("Upload insert error:", error.message);
     alert("Error saving upload: " + error.message);
   } else {
     alert("Upload saved!");
-    loadProfile(); // refresh list
+    loadProfile();
   }
 });
 
 // -------------------- PROFILE EDIT --------------------
 document.getElementById("profile-edit-form")?.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const { data: { user } } = await supabaseClient.auth.getUser();
+  const session = await getCurrentSession();
+  const user = session?.user;
 
   const updates = {
     id: user.id,
@@ -178,7 +178,6 @@ document.getElementById("profile-edit-form")?.addEventListener("submit", async (
 
   const { error } = await supabaseClient.from("profiles").upsert(updates);
   if (error) {
-    console.error("Profile upsert error:", error.message);
     alert("Error saving profile: " + error.message);
   } else {
     alert("Profile saved!");
@@ -187,18 +186,14 @@ document.getElementById("profile-edit-form")?.addEventListener("submit", async (
 
 // -------------------- STAFF TOOLS --------------------
 async function loadStaffTools() {
-  const { count, error } = await supabaseClient
+  const { count } = await supabaseClient
     .from("uploads")
     .select("*", { count: "exact", head: true });
-
-  if (error) console.error("Upload count error:", error.message);
   document.getElementById("total-uploads").textContent = count || "0";
 
-  const { count: profileCount, error: profileError } = await supabaseClient
+  const { count: profileCount } = await supabaseClient
     .from("profiles")
     .select("*", { count: "exact", head: true });
-
-  if (profileError) console.error("Profile count error:", profileError.message);
   document.getElementById("total-users").textContent = profileCount || "0";
 }
 
@@ -214,4 +209,5 @@ document.addEventListener("DOMContentLoaded", () => {
     loadProfile();
   }
 });
+
 
