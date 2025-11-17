@@ -1,0 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400;500&display=swap');
+
+:root {
+  --color-v: #7f71fe;
+  --color-b: #1d015a;
+}
+
+body.auth-page.login {
+  margin: 40px;
+  background-color: var(--color-b);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.6);
+  font-family: 'Raleway', sans-serif;
+}
