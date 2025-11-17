@@ -8,7 +8,19 @@
 </head>
 <body>
   <header class="site-header">
-    <div class="logo">NeverEndEver</div>
+    <!-- Logo with SVG (from attached layout) -->
+    <div class="logo">
+      <a href="index.html">
+        <svg width="93" height="38" viewBox="0 0 93 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="45" cy="17" r="10" stroke="#776EF6" stroke-width="4"/>
+          <circle cx="45" cy="17" r="2" fill="#776EF6"/>
+          <path d="M76.0809 8.27901L84.1939 21.9707C85.3788 23.9705 83.9374 26.5 81.6129 26.5H65.3871C63.0626 26.5 61.6212 23.9705 62.8062 21.9707L70.9191 8.279C72.081 6.31809 74.919 6.31809 76.0809 8.27901Z" stroke="#776EF6" stroke-width="4"/>
+          <rect x="4" y="5" width="24" height="4" rx="2" fill="#776EF6"/>
+          <rect x="4" y="25" width="24" height="4" rx="2" fill="#776EF6"/>
+          <path d="M6.00001 6.99947L5.99999 11.8609C5.99998 14.4773 8.01701 16.6513 10.626 16.8469L21.3739 17.653C23.9829 17.8487 25.9999 20.0227 25.9999 22.639L25.9999 26.9991" stroke="#776EF6" stroke-width="4"/>
+        </svg>
+      </a>
+    </div>
     <nav class="nav-bar">
       <ul>
         <li><a href="index.html">Home</a></li>
@@ -17,27 +29,29 @@
   </header>
 
   <section class="auth">
-    <h1>Login</h1>
+    <h1>Account Login</h1>
     <form id="login-form" autocomplete="on">
       <div class="form-group">
+        <label for="login-email">Email</label>
         <input type="email" id="login-email" placeholder="Email" autocomplete="email" required>
       </div>
       <div class="form-group password-group">
+        <label for="login-password">Password</label>
         <input type="password" id="login-password" placeholder="Password" autocomplete="current-password" required>
         <button type="button" id="toggle-password" aria-label="Show password">👁</button>
       </div>
-      <button type="submit" id="login-btn">Login</button>
+      <div class="form-group">
+        <input type="checkbox" id="remember-me">
+        <label for="remember-me">Remember Me</label>
+        <a href="#" class="forgot-link">Forgot Password?</a>
+      </div>
+      <button type="submit" id="login-btn">Log In</button>
       <div id="login-status" class="status-message"></div>
     </form>
 
-    <div class="oauth-options">
-      <p>Coming soon:</p>
-      <button disabled class="oauth-btn">Google</button>
-      <button disabled class="oauth-btn">Discord</button>
-      <button disabled class="oauth-btn">GitHub</button>
+    <div class="auth-links">
+      <p>Don’t have an account? <a href="signup.html">Register</a></p>
     </div>
-
-    <p>Don’t have an account? <a href="signup.html">Sign up here</a></p>
   </section>
 
   <footer>
@@ -46,19 +60,16 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    // Initialize Supabase client
     const supabaseClient = supabase.createClient(
       "https://imqfnxtornlvglwvkspi.supabase.co",
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImltcWZueHRvcm5sdmdsd3Zrc3BpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMxMzQyNjksImV4cCI6MjA3ODcxMDI2OX0.Is7G7NCKxTQDoefyitkfhREXAR8m8cBBTjohRiBKMs4"
+      "YOUR_ANON_KEY"
     );
 
-    // Toggle password visibility
     document.getElementById("toggle-password").addEventListener("click", () => {
       const pwField = document.getElementById("login-password");
       pwField.type = pwField.type === "password" ? "text" : "password";
     });
 
-    // Handle login
     document.getElementById("login-form").addEventListener("submit", async (e) => {
       e.preventDefault();
       const btn = document.getElementById("login-btn");
@@ -70,11 +81,10 @@
       const email = document.getElementById("login-email").value.trim();
       const password = document.getElementById("login-password").value;
 
-      // Basic client-side validation
       if (!email.includes("@")) {
         status.textContent = "Please enter a valid email address.";
         btn.disabled = false;
-        btn.textContent = "Login";
+        btn.textContent = "Log In";
         return;
       }
 
@@ -83,7 +93,7 @@
       if (error) {
         status.textContent = error.message;
         btn.disabled = false;
-        btn.textContent = "Login";
+        btn.textContent = "Log In";
       } else {
         status.textContent = "Success! Redirecting…";
         window.location.href = "dashboard.html";
@@ -92,4 +102,3 @@
   </script>
 </body>
 </html>
-
