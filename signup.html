@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Sign Up | NeverEndEver</title>
+  <title>Signup | NeverEndEver</title>
   <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
@@ -18,14 +18,26 @@
 
   <section class="auth">
     <h1>Sign Up</h1>
-    <form id="signup-form">
-      <input type="text" id="artist-name" placeholder="Artist Name" required>
-      <input type="text" id="genre" placeholder="Genre" required>
-      <input type="email" id="signup-email" placeholder="Email" required>
-      <input type="password" id="signup-password" placeholder="Password" required>
-      <button type="submit">Sign Up</button>
+    <form id="signup-form" autocomplete="on">
+      <div class="form-group">
+        <input type="email" id="signup-email" placeholder="Email" autocomplete="email" required>
+      </div>
+      <div class="form-group password-group">
+        <input type="password" id="signup-password" placeholder="Password (min 6 chars)" autocomplete="new-password" required>
+        <button type="button" id="toggle-signup-password" aria-label="Show password">👁</button>
+      </div>
+      <button type="submit" id="signup-btn">Sign Up</button>
+      <div id="signup-status" class="status-message"></div>
     </form>
-    <p>Already have an account? <a href="login.html">Log in here</a></p>
+
+    <div class="oauth-options">
+      <p>Coming soon:</p>
+      <button disabled class="oauth-btn">Google</button>
+      <button disabled class="oauth-btn">Discord</button>
+      <button disabled class="oauth-btn">GitHub</button>
+    </div>
+
+    <p>Already have an account? <a href="login.html">Login here</a></p>
   </section>
 
   <footer>
@@ -33,6 +45,56 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="script.js"></script>
+  <script>
+    // Initialize Supabase client
+    const supabaseClient = supabase.createClient(
+      "https://YOUR_PROJECT.supabase.co",
+      "YOUR_ANON_KEY"
+    );
+
+    // Toggle password visibility
+    document.getElementById("toggle-signup-password").addEventListener("click", () => {
+      const pwField = document.getElementById("signup-password");
+      pwField.type = pwField.type === "password" ? "text" : "password";
+    });
+
+    // Handle signup
+    document.getElementById("signup-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById("signup-btn");
+      const status = document.getElementById("signup-status");
+      btn.disabled = true;
+      btn.textContent = "Signing up…";
+      status.textContent = "";
+
+      const email = document.getElementById("signup-email").value.trim();
+      const password = document.getElementById("signup-password").value;
+
+      // Basic client-side validation
+      if (!email.includes("@")) {
+        status.textContent = "Please enter a valid email address.";
+        btn.disabled = false;
+        btn.textContent = "Sign Up";
+        return;
+      }
+      if (password.length < 6) {
+        status.textContent = "Password must be at least 6 characters.";
+        btn.disabled = false;
+        btn.textContent = "Sign Up";
+        return;
+      }
+
+      const { error } = await supabaseClient.auth.signUp({ email, password });
+
+      if (error) {
+        status.textContent = error.message;
+        btn.disabled = false;
+        btn.textContent = "Sign Up";
+      } else {
+        status.textContent = "Signup successful! Check your email to confirm your account.";
+        btn.textContent = "Signed Up";
+      }
+    });
+  </script>
 </body>
 </html>
