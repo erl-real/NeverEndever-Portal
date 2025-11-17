@@ -28,11 +28,12 @@
   <section class="hero-section">
     <div class="hero-content">
       <!-- This logo stays visible after the fire overlay fades -->
-      <img 
-        src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/endever%20logo%20single.png" 
-        alt="Never EndEver Logo" 
-        class="hero-logo"
-      />
+<img 
+  src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/med%20logo%203.png" 
+  alt="Never EndEver Logo" 
+  class="hero-logo"
+/>
+
       <h1 class="hero-title">THE FUTURE OF MUSIC PLATFORMS IS COMING</h1>
       <p class="hero-subtitle">Submit For Music Events, Meet and Collaborate with Other Artist, See Where You Rank In ELO, and Get Help with Your Next Project.</p>
     </div>
@@ -80,8 +81,9 @@
     }
     void main() {
       vec2 uv = vUv;
-      uv.x *= min(1., u_resolution.x / u_resolution.y);
-      uv.y *= min(1., u_resolution.y / u_resolution.x);
+float aspect = u_resolution.x / u_resolution.y;
+uv.x *= aspect;
+
 
       vec2 screenUv = vUv * 0.5 + 0.5;
       screenUv.y = 1.0 - screenUv.y;
