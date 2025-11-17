@@ -22,16 +22,16 @@ window.addEventListener('click', (e) => {
   }
 });
 
-// Initialize Supabase client
-const supabase = supabase.createClient(
+// Initialize Supabase client (make sure @supabase/supabase-js is loaded)
+const supabaseClient = supabase.createClient(
   "https://imqfnxtornlvglwvkspi.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImltcWZueHRvcm5sdmdsd3Zrc3BpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMxMzQyNjksImV4cCI6MjA3ODcxMDI2OX0.Is7G7NCKxTQDoefyitkfhREXAR8m8cBBTjohRiBKMs4" // replace with your anon key
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImltcWZueHRvcm5sdmdsd3Zrc3BpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMxMzQyNjksImV4cCI6MjA3ODcxMDI2OX0.Is7G7NCKxTQDoefyitkfhREXAR8m8cBBTjohRiBKMs4"
 );
 
 // Load profile on dashboard
 async function loadProfile() {
   console.log("loadProfile running...");
-  const { data: { user }, error: userError } = await supabase.auth.getUser();
+  const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
   if (userError) console.error("Auth error:", userError.message);
 
   if (!user) {
@@ -46,7 +46,7 @@ async function loadProfile() {
   document.getElementById("avatar").src = user.user_metadata?.avatar_url || "https://via.placeholder.com/120";
 
   // Load profile data from DB
-  const { data: profile, error: profileError } = await supabase
+  const { data: profile, error: profileError } = await supabaseClient
     .from("profiles")
     .select("*")
     .eq("id", user.id)
@@ -65,7 +65,7 @@ async function loadProfile() {
   }
 
   // Load uploads
-  const { data: uploads, error: uploadsError } = await supabase
+  const { data: uploads, error: uploadsError } = await supabaseClient
     .from("uploads")
     .select("*")
     .eq("user_id", user.id);
@@ -89,7 +89,7 @@ async function loadProfile() {
   }
 
   // Load member extras
-  const { data: member, error: memberError } = await supabase
+  const { data: member, error: memberError } = await supabaseClient
     .from("members")
     .select("*")
     .eq("id", user.id)
@@ -113,11 +113,11 @@ async function loadProfile() {
 // Uploads form
 document.getElementById("upload-form")?.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const { data: { user } } = await supabase.auth.getUser();
+  const { data: { user } } = await supabaseClient.auth.getUser();
   const title = document.getElementById("song-title").value;
   const link = document.getElementById("song-link").value;
 
-  const { error } = await supabase.from("uploads").insert({
+  const { error } = await supabaseClient.from("uploads").insert({
     user_id: user.id,
     title,
     url: link
@@ -135,7 +135,7 @@ document.getElementById("upload-form")?.addEventListener("submit", async (e) => 
 // Profile edit form
 document.getElementById("profile-edit-form")?.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const { data: { user } } = await supabase.auth.getUser();
+  const { data: { user } } = await supabaseClient.auth.getUser();
 
   const updates = {
     id: user.id,
@@ -150,7 +150,7 @@ document.getElementById("profile-edit-form")?.addEventListener("submit", async (
     updated_at: new Date()
   };
 
-  const { error } = await supabase.from("profiles").upsert(updates);
+  const { error } = await supabaseClient.from("profiles").upsert(updates);
   if (error) {
     console.error("Profile upsert error:", error.message);
     alert("Error saving profile: " + error.message);
@@ -161,10 +161,10 @@ document.getElementById("profile-edit-form")?.addEventListener("submit", async (
 
 // Member extras: donate link
 document.getElementById("save-donate")?.addEventListener("click", async () => {
-  const { data: { user } } = await supabase.auth.getUser();
+  const { data: { user } } = await supabaseClient.auth.getUser();
   const donateUrl = document.getElementById("donate-url").value;
 
-  const { error } = await supabase.from("members").upsert({
+  const { error } = await supabaseClient.from("members").upsert({
     id: user.id,
     donate_url: donateUrl
   });
@@ -182,30 +182,24 @@ document.getElementById("save-donate")?.addEventListener("click", async () => {
 
 // Staff tools
 async function loadStaffTools() {
-  // Count uploads
-  const { count, error } = await supabase
+  const { count, error } = await supabaseClient
     .from("uploads")
     .select("*", { count: "exact", head: true });
 
-  if (error) {
-    console.error("Upload count error:", error.message);
-  }
+  if (error) console.error("Upload count error:", error.message);
   document.getElementById("total-uploads").textContent = count || "0";
 
-  // For total users, rely on profiles table instead of auth.users
-  const { count: profileCount, error: profileError } = await supabase
+  const { count: profileCount, error: profileError } = await supabaseClient
     .from("profiles")
     .select("*", { count: "exact", head: true });
 
-  if (profileError) {
-    console.error("Profile count error:", profileError.message);
-  }
+  if (profileError) console.error("Profile count error:", profileError.message);
   document.getElementById("total-users").textContent = profileCount || "0";
 }
 
 // Logout
 document.getElementById("logout")?.addEventListener("click", async () => {
-  await supabase.auth.signOut();
+  await supabaseClient.auth.signOut();
   window.location.href = "index.html";
 });
 
@@ -213,30 +207,8 @@ document.getElementById("logout")?.addEventListener("click", async () => {
 if (document.querySelector(".dashboard")) {
   loadProfile();
 }
+
+// Handle sample form submission
 async function handleFormSubmit(event) {
   event.preventDefault();
-
-  const name = document.getElementById("name").value;
-
-  try {
-    const response = await fetch(
-      "https://imqfnxtornlvglwvkspi.functions.supabase.co/basic-core-001",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." // your anon key
-        },
-        body: JSON.stringify({ name })
-      }
-    );
-
-    const data = await response.json();
-
-    // Show response in the UI
-    alert(data.message); // or inject into a div
-  } catch (error) {
-    console.error("Error calling function:", error);
-    alert("Something went wrong.");
-  }
-}
+  const
