@@ -23,84 +23,7 @@
 
   <!-- Dashboard -->
   <section class="dashboard">
-    <!-- Profile -->
-    <div class="profile">
-      <img id="avatar" src="https://via.placeholder.com/120" alt="User Avatar" class="avatar"/>
-      <h2 id="username">Loading...</h2>
-      <p id="email">Loading...</p>
-    </div>
-
-    <!-- Uploads -->
-    <div class="user-data">
-      <h3>Your Uploads</h3>
-      <form id="upload-form">
-        <input type="text" id="song-title" placeholder="Song Title" required>
-        <input type="url" id="song-link" placeholder="Song Link (URL)" required>
-        <button type="submit">Add Song</button>
-      </form>
-      <ul id="uploads-list">
-        <li>No uploads yet.</li>
-      </ul>
-    </div>
-
-    <!-- Editable Profile -->
-    <div class="profile-edit">
-      <h3>Edit Your Profile</h3>
-      <form id="profile-edit-form">
-        <label>Bio:</label>
-        <textarea id="bio" placeholder="Tell us about yourself"></textarea>
-
-        <label>Brand Color:</label>
-        <input type="color" id="brand-color">
-
-        <label>Social Links:</label>
-        <input type="url" id="twitter" placeholder="Twitter URL">
-        <input type="url" id="instagram" placeholder="Instagram URL">
-        <input type="url" id="soundcloud" placeholder="SoundCloud URL">
-
-        <label>Embed Videos/Artwork (up to 3):</label>
-        <input type="url" id="embed1" placeholder="YouTube/Vimeo/Artwork URL">
-        <input type="url" id="embed2" placeholder="YouTube/Vimeo/Artwork URL">
-        <input type="url" id="embed3" placeholder="YouTube/Vimeo/Artwork URL">
-
-        <button type="submit">Save Profile</button>
-      </form>
-    </div>
-
-    <!-- Member Extras -->
-    <div class="member-extras">
-      <h3>Support Me</h3>
-      <input type="url" id="donate-url" placeholder="Donate Link (PayPal/Ko-fi)">
-      <button id="save-donate">Save Donate Link</button>
-      <p><a id="donate-link" href="#" target="_blank">Donate</a></p>
-
-      <h3>Inventory</h3>
-      <p>Coming soon…</p>
-    </div>
-
-    <!-- Staff Tools (hidden unless role=staff) -->
-    <div id="staff-tools" style="display:none;">
-      <h2>Staff Tools</h2>
-
-      <h3>Stats</h3>
-      <div id="stats">
-        <p>Total Users: <span id="total-users">Loading...</span></p>
-        <p>Total Uploads: <span id="total-uploads">Loading...</span></p>
-      </div>
-
-      <h3>Roadmap</h3>
-      <ul id="roadmap">
-        <li>Forums & Comments</li>
-        <li>Item Trading System</li>
-        <li>Event Management (future)</li>
-      </ul>
-
-      <h3>Tasks</h3>
-      <ul id="tasks">
-        <li><input type="checkbox"> Review site design</li>
-        <li><input type="checkbox"> Test login/signup flow</li>
-      </ul>
-    </div>
+    <h2>Loading dashboard...</h2>
   </section>
 
   <!-- Footer -->
@@ -110,7 +33,7 @@
     </div>
   </footer>
 
-  <!-- Supabase JS -->
+  <!-- Supabase JS + your script -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="script.js"></script>
 </body>
