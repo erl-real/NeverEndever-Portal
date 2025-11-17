@@ -27,6 +27,47 @@ const supabaseClient = supabase.createClient(
   "https://imqfnxtornlvglwvkspi.supabase.co",
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImltcWZueHRvcm5sdmdsd3Zrc3BpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMxMzQyNjksImV4cCI6MjA3ODcxMDI2OX0.Is7G7NCKxTQDoefyitkfhREXAR8m8cBBTjohRiBKMs4" // <-- replace with your full anon key
 );
+// Handle login
+document.getElementById("login-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const email = document.getElementById("login-email").value;
+  const password = document.getElementById("login-password").value;
+
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+
+  if (error) {
+    alert("Login failed: " + error.message);
+  } else {
+    window.location.href = "dashboard.html";
+  }
+});
+
+// Handle signup
+document.getElementById("signup-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const email = document.getElementById("signup-email").value;
+  const password = document.getElementById("signup-password").value;
+
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+  });
+
+  if (error) {
+    alert("Signup failed: " + error.message);
+  } else {
+    alert("Signup successful! Check your email for confirmation.");
+  }
+});
+
+// Track auth state
+supabase.auth.onAuthStateChange((event, session) => {
+  console.log("Auth event:", event);
+  console.log("Session:", session);
+});
 
 // Load profile on dashboard
 async function loadProfile() {
