@@ -1,146 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Relics Museum</title>
+  <title>NeverEndEver</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="style.css">
-  <!-- your importmap here -->
-</head>
 
-<script type="importmap">
-{
-    "imports": {
-        "three": "https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js",
-        "three/examples/jsm/controls/OrbitControls": "https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/controls/OrbitControls.js",
-        "three/examples/jsm/loaders/GLTFLoader": "https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/loaders/GLTFLoader.js",
-        "three/examples/jsm/postprocessing/EffectComposer": "https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/postprocessing/EffectComposer.js",
-        "three/examples/jsm/postprocessing/RenderPass": "https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/postprocessing/RenderPass.js",
-        "three/examples/jsm/postprocessing/UnrealBloomPass": "https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/postprocessing/UnrealBloomPass.js"
+  <!-- Emerald Button Styles (kept inline as requested) -->
+  <style>
+    .emerald-button {
+      position: relative;
+      z-index: 0;
+      display: inline-block;
+      font-family: "Montserrat", Helvetica, sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      padding: 0.75em 1.25em;
+      padding-right: 1em;
+      background: transparent;
+      color: #2e3b8f;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.35);
+      text-transform: uppercase;
+      letter-spacing: 2.5px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: filter 0.2s ease, transform 0.2s ease;
+      filter: brightness(0.95);
+      border: none;
     }
-}
-</script>
- <!-- GSAP + plugins -->
-<script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/SplitText.min.js"></script>
+    .emerald-button::before {
+      content: "";
+      position: absolute;
+      top: -2px; left: -2px; right: -2px; bottom: -2px;
+      background: linear-gradient(90deg, #1a1b4d, #2e3b8f, #4b5edc, #7f6fff, #c259ff, #7f6fff, #4b5edc);
+      z-index: -1;
+      background-size: 300% 100%;
+      transition: background-position 0.8s ease;
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask-composite: exclude;
+      -webkit-mask-composite: destination-out;
+      padding: 2px;
+      box-sizing: border-box;
+    }
+    .emerald-button:hover::before { background-position: 100% 0; }
+    .emerald-button:active { transform: translateY(2px) scale(0.98); filter: brightness(0.85); }
+    .emerald-button::after {
+      content: "";
+      position: absolute; top: 0; bottom: 0; right: 1em;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1em; color: #ffffff;
+      transition: transform 0.3s ease, color 0.3s ease;
+      pointer-events: none;
+    }
+    .emerald-button:hover::after { animation: bounceright 0.4s alternate ease-in-out infinite; color: #2e3b8f; }
+    @keyframes bounceright { from { transform: translateX(0); } to { transform: translateX(4px); } }
 
-<!-- dat.GUI -->
-<script type="module" src="https://cdn.jsdelivr.net/npm/dat.gui@0.7.9/build/dat.gui.module.js"></script>
+    .emerald-heading {
+      background: linear-gradient(90deg,#144d32,#1f7a54,#2f9e6f,#53d19b);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
 
-<!-- Your Three.js scene -->
-<script type="module" src="scene.js"></script>
 
-<!-- Burn overlay shader logic -->
-<script src="fire.js"></script>
+  </style>
 
-<canvas class="webgl"></canvas>
-    <div id="preloader" style="display: block;">
-        <!-- <div class="loder-parent">
-            <div id="loader"></div>
-        </div> -->
-        <!-- <p class="loader-text" id="loading-text">Loading</p> -->
-        <p class="loader-info-text">Please wait while the model is loading...</p>
+  <!-- Importmap -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js",
+      "three/examples/jsm/controls/OrbitControls": "https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/controls/OrbitControls.js",
+      "three/examples/jsm/loaders/GLTFLoader": "https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/loaders/GLTFLoader.js",
+      "three/examples/jsm/postprocessing/EffectComposer": "https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/postprocessing/EffectComposer.js",
+      "three/examples/jsm/postprocessing/RenderPass": "https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/postprocessing/RenderPass.js",
+      "three/examples/jsm/postprocessing/UnrealBloomPass": "https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/postprocessing/UnrealBloomPass.js"
+    }
+  }
+  </script>
+
+  <!-- GSAP -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
+
+  <!-- dat.GUI -->
+  <script type="module" src="https://cdn.jsdelivr.net/npm/dat.gui@0.7.9/build/dat.gui.module.js"></script>
+
+  <!-- Supabase (required for auth.js) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <!-- Three.js canvas -->
+  <canvas class="webgl"></canvas>
+
+  <!-- Preloader -->
+  <div id="preloader" style="display: block;">
+    <div class="loder-parent">
+      <div id="loader"></div>
     </div>
- 
-    <main>
-        <header class="header">
-            <a href="#" class="logo">
-                <img src="https://webprojects.cloud/r&d/roman-structure/images/Logo.svg" alt="Logo">
-            </a>
-            <div class="nav-link-container">
-                <button>
-                    <img src="https://webprojects.cloud/r&d/roman-structure/images/search-icon.svg" alt="search">
-                </button>
-                <a href="">visit</a>
-                <a href="">exhibitions & events</a>
-                <a href="">collection</a>
-                <button class="toggle-btn">
-                    <img src="https://webprojects.cloud/r&d/roman-structure/images/menu_icon.svg" alt="menu_icon">
-                </button>
-            </div>
-        </header>
-        <section>
-            <div class="banner-section">
-                <h1>delve into relics</h1>
-                <p>Welcome to the relics museum, where history and art come to life. Explore our diverse collection of
-                    artifacts, paintings, and sculptures, each with its own unique story to tell, Plan your visit and
-                    book tickets online.</p>
-                <a href="#">
-                    plan your visit
-                    <img src="https://webprojects.cloud/r&d/roman-structure/images/arrow-green.svg" alt="arrow">
-                </a>
-            </div>
-        </section>
-        <section class="images-container">
-            <div class="img">
-                <div class="img-main">
-                    <img src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/realisrareofnc.png" alt="real">
-                </div>
-            </div>
-            <div class="img">
-                <div class="img-main">
-                    <img src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/KXT.png" alt="kxtxxx">
-                </div>
-            </div>
-            <div class="img">
-                <div class="img-main">
-                    <img src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/fu2.png" alt="FU2">
-                </div>
-            </div>
-            <div class="img">
-                <div class="img-main">
-                    <img src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/chxrli3.png" alt="charlie">
-                </div>
-            </div>
-            <div class="img">
-                <div class="img-main">
-                    <img src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/cmplxcnt.png" alt="cmplxcnt">
-                </div>
-            </div>
-            <div class="img">
-                <div class="img-main">
-                    <img src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/zeek.png" alt="zeek">
-                </div>
-            </div>
-            <div class="img">
-                <div class="img-main">
-                    <img src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/swillow.png" alt="swillow">
-                </div>
-            </div>
- 
-            <div class="img">
-                <div class="img-main">
-                    <img src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/boid.png" alt="who tf is betty boid">
-                </div>
-            </div>
-            <div class="img">
-                <div class="img-main">
-                    <img src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/beat%20tape%201.jpg" alt="tape">
-                </div>
-            </div>
- 
-            <div class="img">
-                <div class="img-main">
-                    <img src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/10.png" alt="temp">
-                </div>
-            </div>
-            <div class="img">
-                <div class="img-main">
-                    <img src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/6.png" alt="temp">
-                </div>
-            </div>
-            <div class="img">
-                <div class="img-main">
-                    <img src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/9.png" alt="temp">
-                </div>
-            </div>
-            <div class="img">
-                <div class="img-main">
-                    <img src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/Sigil_Vol.1_-_EndEver_Art-Tape.png" alt="temp">
-                </div>
-            </div>
-            <div class="img">
-                <div class="img-main">
-                    <img src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/wdsss.png" alt="temp">
-                </div>
-            </div>
-        </section>
-    </main>
+    <p class="loader-info-text">loading...</p>
+  </div>
+
+<main>
+  <header class="header">
+    <a href="#" class="logo">
+      <img src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/endever%20logo%20home%20header.png" alt="Logo">
+    </a>
+    <div class="nav-link-container">
+      <a href="">Home</a>
+      <a href="">ELO</a>
+      <a href="">Store</a>
+
+      <!-- Toggle button for dropdown -->
+      <button class="toggle-btn" id="menu-toggle">
+        <img src="https://webprojects.cloud/r&d/roman-structure/images/menu_icon.svg" alt="menu_icon">
+      </button>
+    </div>
+
+    <!-- Dropdown menu (initially hidden) -->
+    <div class="dropdown-menu hidden" id="dropdown">
+      <a href="#">About</a>
+      <a href="#">Contact</a>
+      <a href="#">Support</a>
+    </div>
+  </header>
+</main>
+
+
+   <section>
+    <div class="banner-section">
+      <h1>THE FUTURE OF MUSIC PLATFORMS IS COMING</h1>
+      <p>Submit For Music Events, Meet and Collaborate with Other Artist, See Where You Rank In ELO, and Get Help with Your Next Project.</p>
+      <a href="#">
+
+      </a>
+    </div>
+  </section>
+
+   <!-- Auth Buttons -->
+<div class="centered-buttons splash-auth">
+  <!-- Log In Link -->
+  <a
+    class="emerald-button"
+    href="login.html">
+    Log In
+  </a>
+
+  <!-- Sign Up Link -->
+  <a
+    class="emerald-button"
+    href="signup.html">
+    Sign Up Now
+  </a>
+</div>
+
+    <!-- Media grid -->
+    <section class="images-container">
+      <div class="img"><div class="img-main"><img src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/realisrareofnc.png" alt="real"></div></div>
+      <div class="img"><div class="img-main"><img src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/KXT.png" alt="kxtxxx"></div></div>
+      <div class="img"><div class="img-main"><img src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/fu2.png" alt="FU2"></div></div>
+      <div class="img"><div class="img-main"><img src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/chxrli3.png" alt="charlie"></div></div>
+      <div class="img"><div class="img-main"><img src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/cmplxcnt.png" alt="cmplxcnt"></div></div>
+      <div class="img"><div class="img-main"><img src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/zeek.png" alt="zeek"></div></div>
+      <div class="img"><div class="img-main"><img src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/swillow.png" alt="swillow"></div></div>
+      <div class="img"><div class="img-main"><img src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/boid.png" alt="who tf is betty boid"></div></div>
+      <div class="img"><div class="img-main"><img src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/beat%20tape%201.jpg" alt="tape"></div></div>
+      <div class="img"><div class="img-main"><img src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/10.png" alt="temp"></div></div>
+      <div class="img"><div class="img-main"><img src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/6.png" alt="temp"></div></div>
+      <div class="img"><div class="img-main"><img src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/9.png" alt="temp"></div></div>
+      <div class="img"><div class="img-main"><img src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/Sigil_Vol.1_-_EndEver_Art-Tape.png" alt="temp"></div></div>
+      <div class="img"><div class="img-main"><img src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/wdsss.png" alt="temp"></div></div>
+    </section>
+  </main>
+
+  <!-- Three.js Scene -->
+  <script type="module" src="scene.js"></script>
+  <!-- Burn overlay shader -->
+  <script src="fire.js"></script>
+</body>
+<script>
+  const toggleBtn = document.getElementById('menu-toggle');
+  const dropdown = document.getElementById('dropdown');
+
+  toggleBtn.addEventListener('click', () => {
+    dropdown.classList.toggle('hidden');
+  });
+
+  window.addEventListener('click', (e) => {
+    if (!toggleBtn.contains(e.target) && !dropdown.contains(e.target)) {
+      dropdown.classList.add('hidden');
+    }
+  });
+</script>
+
+</html>

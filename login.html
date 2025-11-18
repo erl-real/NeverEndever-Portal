@@ -4,40 +4,40 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Login | NeverEndEver</title>
-  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="login.css"/>
 </head>
-<body>
+<body class="auth-page login">
   <header class="site-header">
-    <!-- Logo with SVG (from attached layout) -->
-    <div class="logo">
-      <a href="index.html">
-        <svg width="93" height="38" viewBox="0 0 93 38" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="45" cy="17" r="10" stroke="#776EF6" stroke-width="4"/>
-          <circle cx="45" cy="17" r="2" fill="#776EF6"/>
-          <path d="M76.0809 8.27901L84.1939 21.9707C85.3788 23.9705 83.9374 26.5 81.6129 26.5H65.3871C63.0626 26.5 61.6212 23.9705 62.8062 21.9707L70.9191 8.279C72.081 6.31809 74.919 6.31809 76.0809 8.27901Z" stroke="#776EF6" stroke-width="4"/>
-          <rect x="4" y="5" width="24" height="4" rx="2" fill="#776EF6"/>
-          <rect x="4" y="25" width="24" height="4" rx="2" fill="#776EF6"/>
-          <path d="M6.00001 6.99947L5.99999 11.8609C5.99998 14.4773 8.01701 16.6513 10.626 16.8469L21.3739 17.653C23.9829 17.8487 25.9999 20.0227 25.9999 22.639L25.9999 26.9991" stroke="#776EF6" stroke-width="4"/>
-        </svg>
-      </a>
-    </div>
-    <nav class="nav-bar">
-      <ul>
-        <li><a href="index.html">Home</a></li>
-      </ul>
-    </nav>
+<div class="bg">
+
+
   </header>
 
+<div class="box">
+    <div class="logo">
+      <a href="index.html" aria-label="NeverEndEver home">
+        <img 
+          src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/med%20logo%201.png" 
+          alt="NeverEndEver logo" 
+          width="93" 
+          height="93">
+      </a>
+    <nav class="nav-bar">
+      <ul>
+<a href="index.html">Home</a>
+      </ul>
+    </nav>
+</div>
   <section class="auth">
     <h1>Account Login</h1>
     <form id="login-form" autocomplete="on">
       <div class="form-group">
         <label for="login-email">Email</label>
-        <input type="email" id="login-email" placeholder="Email" autocomplete="email" required>
+        <input class="inp" type="email" id="login-email" placeholder="Email" autocomplete="email" required>
       </div>
       <div class="form-group password-group">
         <label for="login-password">Password</label>
-        <input type="password" id="login-password" placeholder="Password" autocomplete="current-password" required>
+        <input class="inp" type="password" id="login-password" placeholder="Password" autocomplete="current-password" required>
         <button type="button" id="toggle-password" aria-label="Show password">👁</button>
       </div>
       <div class="form-group">
@@ -45,7 +45,7 @@
         <label for="remember-me">Remember Me</label>
         <a href="#" class="forgot-link">Forgot Password?</a>
       </div>
-      <button type="submit" id="login-btn">Log In</button>
+      <button class="btn" type="submit" id="login-btn">Log In</button>
       <div id="login-status" class="status-message"></div>
     </form>
 
@@ -58,10 +58,9 @@
     <small>© 2025 NeverEndEver</small>
   </footer>
 
-<!-- Supabase library -->
-<script type="module" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<!-- Your app logic -->
-<script type="module" src="script.js"></script>
-
+  <!-- Load Supabase library -->
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Load your app logic -->
+  <script type="module" src="script.js"></script>
 </body>
 </html>
