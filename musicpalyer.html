@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Neon Radio Player</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Fonts + Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+  <style>
+    :root{
+      --bg-app:#0a0a0e;           /* matte dashboard base */
+      --bg-panel:#101218;         /* panel inset */
+      --chrome:#1a1c22;           /* subtle chrome edge */
+      --noise:rgba(255,255,255,0.03);
+      --accent:#00f5d4;           /* cyan neon */
+      --accent2:#9d4edd;          /* purple neon */
+      --text:#f0f0f0;
+      --muted:#9ca3af;
+      --shadow:0 18px 40px rgba(0,0,0,0.55);
+      --radius:14px;
+    }
+
+    html,body{height:100%}
+    body{
+      margin:0;
+      background:
+        radial-gradient(1200px 500px at 20% 0%, #0c0c12 0%, #07070a 35%, #050507 100%),
+        #000;
+      color:var(--text);
+      font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      display:flex; align-items:center; justify-content:center;
+      padding:32px;
+    }
+
+    /* subtle texture layer */
+    .texture{
+      position:fixed; inset:0; pointer-events:none;
+      background-image:
+        linear-gradient(0deg, rgba(255,255,255,0.02) 0.5px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 0.5px, transparent 1px);
+      background-size: 6px 6px, 6px 6px;
+      opacity:.25;
+      mix-blend-mode:soft-light;
+      z-index:0;
+    }
+
+    .player{
+      width: min(980px, 92vw);
+      background: linear-gradient(180deg, var(--bg-panel) 0%, #0c0d13 100%);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      position:relative;
+      z-index:1;
+      padding:18px;
+      border:1px solid rgba(255,255,255,0.06);
+    }
+
+    /* chrome bezel frame */
+    .player::before{
+      content:"";
+      position:absolute; inset:-1px;
+      border-radius: calc(var(--radius) + 2px);
+      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0));
+      mix-blend-mode:overlay; opacity:.15; pointer-events:none;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 240px; /* info + art on right */
+      gap:18px;
+    }
+
+    /* Top-left (title/artist) */
+    .track-head{
+      display:flex; align-items:flex-start; justify-content:space-between;
+      padding:8px 12px 8px 12px;
+      border-radius: 12px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.0));
+      border:1px solid rgba(255,255,255,0.06);
+    }
+    .track-title{
+      font-weight:700; font-size:1.25rem; letter-spacing:-0.2px;
+    }
+    .track-artist{
+      margin-top:4px; color:var(--muted); font-weight:600; font-size:.95rem;
+    }
+    .badge{
+      padding:6px 10px; border-radius:999px; font-size:.75rem; font-weight:700;
+      background: rgba(157, 78, 221, 0.12);
+      color:#c4a5f7; border:1px solid rgba(157,78,221,0.3);
+    }
+
+    /* Right-side album art */
+    .art-wrap{
+      position:relative;
+      border-radius: 12px;
+      background: #0e0f15;
+      border:1px solid rgba(255,255,255,0.06);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03);
+      display:flex; align-items:center; justify-content:center;
+      overflow:hidden;
+    }
+    .art{
+      width:100%; aspect-ratio:1; object-fit:cover;
+      filter: contrast(1.02) saturate(1.06);
+    }
+    .art-chrome{
+      position:absolute; inset:0; pointer-events:none;
+      background: radial-gradient(120% 60% at 100% 50%, rgba(255,255,255,0.08) 0%, transparent 50%),
+                  linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0));
+      mix-blend-mode:overlay;
+    }
+
+    /* YouTube-like neon progress bar */
+    .progress{
+      margin-top:16px;
+      padding:12px 14px;
+      border-radius: 12px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.012), rgba(255,255,255,0));
+      border:1px solid rgba(255,255,255,0.06);
+    }
+    .time-row{
+      display:flex; justify-content:space-between; align-items:center;
+      font-size:.85rem; color:var(--muted);
+      margin-bottom:8px;
+    }
+    .bar{
+      position:relative; height:8px; border-radius:999px; overflow:hidden;
+      background: linear-gradient(180deg, #12131a, #0d0e14);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
+    }
+    .bar-fill{
+      position:absolute; left:0; top:0; bottom:0; width:0%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      box-shadow:
+        0 0 16px var(--accent),
+        0 0 28px var(--accent2);
+      transition: width .15s ease;
+    }
+    .bar:hover .bar-fill{
+      filter: brightness(1.08) saturate(1.06);
+    }
+    .bar-scrub{
+      position:absolute; top:50%; transform:translate(-50%, -50%);
+      width:14px; height:14px; border-radius:50%;
+      background: #101218; border:2px solid var(--accent);
+      box-shadow: 0 0 16px var(--accent);
+      transition: left .15s ease;
+    }
+
+    /* Controls */
+    .controls{
+      margin-top:16px;
+      display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+      padding:10px 12px;
+      border-radius: 12px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.012), rgba(255,255,255,0));
+      border:1px solid rgba(255,255,255,0.06);
+    }
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      gap:8px; padding:10px 14px; border-radius:10px;
+      color:var(--text); background:#12141b;
+      border:1px solid rgba(255,255,255,0.08);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+      cursor:pointer; transition: all .15s ease;
+    }
+    .btn:hover{ color:#000; background: var(--accent); border-color: var(--accent); }
+    .btn i{ font-size:1rem; }
+    .btn.primary{
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      color:#000; font-weight:700; border:none;
+      box-shadow: 0 10px 30px rgba(0,245,212,0.25);
+    }
+    .btn.primary:hover{ filter:brightness(1.06); }
+
+    /* Volume */
+    .volume{
+      margin-left:auto; display:flex; align-items:center; gap:10px;
+      color:var(--muted); font-size:.9rem;
+    }
+    .vol-slider{
+      width:160px; height:8px; border-radius:999px; position:relative; overflow:hidden;
+      background: linear-gradient(180deg, #12131a, #0d0e14);
+      border:1px solid rgba(255,255,255,0.06);
+    }
+    .vol-fill{
+      position:absolute; inset:0; width:60%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      box-shadow: 0 0 16px var(--accent), 0 0 28px var(--accent2);
+      transition: width .15s ease;
+    }
+
+    /* Responsive */
+    @media (max-width: 820px){
+      .grid{ grid-template-columns: 1fr; }
+      .volume{ width:100%; margin-left:0; justify-content:flex-end; }
+    }
+  </style>
+</head>
+<body>
+  <div class="texture"></div>
+
+  <div class="player" id="radio">
+    <div class="grid">
+      <!-- Left panel: info and controls -->
+      <div>
+        <div class="track-head">
+          <div>
+            <div class="track-title" id="title">Sierra Leone</div>
+            <div class="track-artist" id="artist">Mt Eden Dubstep</div>
+          </div>
+          <span class="badge" id="badge">Playlist • Bass</span>
+        </div>
+
+        <div class="progress">
+          <div class="time-row">
+            <span id="time-current">0:00</span>
+            <span id="time-total">5:17</span>
+          </div>
+          <div class="bar" id="bar">
+            <div class="bar-fill" id="bar-fill"></div>
+            <div class="bar-scrub" id="bar-scrub" style="left:0%"></div>
+          </div>
+        </div>
+
+        <div class="controls">
+          <button class="btn primary" id="btn-play"><i class="fa-solid fa-play"></i> Play</button>
+          <button class="btn" id="btn-pause"><i class="fa-solid fa-pause"></i> Pause</button>
+          <button class="btn" id="btn-prev"><i class="fa-solid fa-backward"></i> Prev</button>
+          <button class="btn" id="btn-next"><i class="fa-solid fa-forward"></i> Next</button>
+
+          <div class="volume">
+            <i class="fa-solid fa-volume-high"></i>
+            <div class="vol-slider" id="vol">
+              <div class="vol-fill" id="vol-fill"></div>
+            </div>
+            <span id="vol-val">60%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right panel: album art -->
+      <div class="art-wrap">
+        <img class="art" id="art" src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=600&auto=format&fit=crop" alt="Album art"/>
+        <div class="art-chrome"></div>
+      </div>
+    </div>
+
+    <!-- Hidden audio element -->
+    <audio id="audio" preload="metadata">
+      <source src="https://www.kozco.com/tech/piano2-CoolEdit.mp3" type="audio/mpeg"/>
+    </audio>
+  </div>
+
+  <script>
+    const audio      = document.getElementById('audio');
+    const btnPlay    = document.getElementById('btn-play');
+    const btnPause   = document.getElementById('btn-pause');
+    const btnPrev    = document.getElementById('btn-prev');
+    const btnNext    = document.getElementById('btn-next');
+    const barFill    = document.getElementById('bar-fill');
+    const barScrub   = document.getElementById('bar-scrub');
+    const timeCurrent= document.getElementById('time-current');
+    const timeTotal  = document.getElementById('time-total');
+    const vol        = document.getElementById('vol');
+    const volFill    = document.getElementById('vol-fill');
+    const volVal     = document.getElementById('vol-val');
+
+    const tracks = [
+      {
+        title: 'Sierra Leone',
+        artist: 'Mt Eden Dubstep',
+        src: 'https://www.kozco.com/tech/piano2-CoolEdit.mp3',
+        art: 'https://images.unsplash.com/photo-1499428665502-503f6c608263?q=80&w=600&auto=format&fit=crop'
+      },
+      {
+        title: 'First Of The Year (Equinox)',
+        artist: 'Skrillex',
+        src: 'https://www.kozco.com/tech/LRMonoPhase4.mp3',
+        art: 'https://images.unsplash.com/photo-1516280440614-37939bbacd81?q=80&w=600&auto=format&fit=crop'
+      }
+    ];
+    let index = 0;
+
+    function loadTrack(i){
+      const t = tracks[i];
+      document.getElementById('title').textContent  = t.title;
+      document.getElementById('artist').textContent = t.artist;
+      document.getElementById('art').src            = t.art;
+      audio.src = t.src;
+      audio.load();
+    }
+    loadTrack(index);
+
+    function fmt(s){
+      const m = Math.floor(s/60);
+      const r = Math.floor(s%60);
+      return `${m}:${r<10?'0':''}${r}`;
+    }
+
+    audio.addEventListener('loadedmetadata', ()=>{
+      timeTotal.textContent = fmt(audio.duration || 0);
+    });
+
+    audio.addEventListener('timeupdate', ()=>{
+      const p = (audio.currentTime / (audio.duration || 1)) * 100;
+      barFill.style.width = `${p}%`;
+      barScrub.style.left = `${p}%`;
+      timeCurrent.textContent = fmt(audio.currentTime);
+    });
+
+    btnPlay.addEventListener('click', ()=> audio.play());
+    btnPause.addEventListener('click', ()=> audio.pause());
+    btnPrev.addEventListener('click', ()=>{
+      index = (index - 1 + tracks.length) % tracks.length;
+      loadTrack(index); audio.play();
+    });
+    btnNext.addEventListener('click', ()=>{
+      index = (index + 1) % tracks.length;
+      loadTrack(index); audio.play();
+    });
+
+    // scrub
+    document.getElementById('bar').addEventListener('click', (e)=>{
+      const rect = e.currentTarget.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const pct = Math.min(Math.max(x / rect.width, 0), 1);
+      audio.currentTime = pct * (audio.duration || 0);
+    });
+
+    // volume
+    vol.addEventListener('click', (e)=>{
+      const rect = vol.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const pct = Math.min(Math.max(x / rect.width, 0), 1);
+      audio.volume = pct;
+      volFill.style.width = `${pct*100}%`;
+      volVal.textContent = `${Math.round(pct*100)}%`;
+    });
+  </script>
+</body>
+</html>
