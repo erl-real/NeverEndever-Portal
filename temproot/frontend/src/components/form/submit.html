@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HTML Form Attributes Professional Showcase</title>
+    
+  </head>
+  <body>
+    <header class="header">
+      <div class="header-content">
+        <div class="header-badge">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+          >
+            <path d="M9 11l3 3L22 4"></path>
+            <path
+              d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"
+            ></path>
+          </svg>
+          HTML5 Form Attributes
+        </div>
+        <h1 class="header-title">30 HTML Form Attributes</h1>
+        <p class="header-subtitle">
+          A complete example of HTML forms attributes that shows how they work with validation, work well on mobile, and give users a better experience.
+        </p>
+
+        <div class="header-stats">
+          <div class="stat-item">
+            <div class="stat-value">30</div>
+            <div class="stat-label">Native Attributes</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">100%</div>
+            <div class="stat-label">Browser Support</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">0 KB</div>
+            <div class="stat-label">JavaScript Required</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container">
+      <div class="grid">
+        <!-- Validation Card -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24">
+                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+            <div class="card-header-content">
+              <h2 class="card-title">Form Validation</h2>
+              <p class="card-subtitle">
+                Built-in input validation and constraints
+              </p>
+            </div>
+          </div>
+
+          <div class="tags">
+            <span class="tag">required</span>
+            <span class="tag">pattern</span>
+            <span class="tag">minlength</span>
+            <span class="tag">maxlength</span>
+          </div>
+
+          <form>
+            <div class="form-group">
+              <label for="username" class="form-label form-label-required"
+                >Username</label
+              >
+              <input
+                type="text"
+                id="username"
+                class="form-input"
+                placeholder="Enter username"
+                required
+                minlength="3"
+                maxlength="20"
+                pattern="[A-Za-z0-9_]+"
+                title="Only letters, numbers, and underscores allowed"
+                autocomplete="username"
+              />
+              <div class="form-hint">3-20 characters, alphanumeric only</div>
+            </div>
+
+            <div class="form-group">
+              <label for="email1" class="form-label form-label-required"
+                >Email Address</label
+              >
+              <input
+                type="email"
+                id="email1"
+                class="form-input"
+                placeholder="name@company.com"
+                required
+                autocomplete="email"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="pin" class="form-label form-label-required"
+                >Security PIN</label
+              >
+              <input
+                type="text"
+                id="pin"
+                class="form-input"
+                placeholder="4-digit PIN"
+                pattern="[0-9]{4}"
+                title="Enter exactly 4 digits"
+                inputmode="numeric"
+                required
+              />
+            </div>
+
+            <div class="button-group">
+              <button type="submit" class="button button-primary">
+                Submit Form
+              </button>
+              <button
+                type="submit"
+                formnovalidate
+                class="button button-secondary"
+              >
+                Save Draft
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Autocomplete Card -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24">
+                <path d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+              </svg>
+            </div>
+            <div class="card-header-content">
+              <h2 class="card-title">Smart Autofill</h2>
+              <p class="card-subtitle">Browser-powered autocomplete</p>
+            </div>
+          </div>
+
+          <div class="tags">
+            <span class="tag">autocomplete</span>
+            <span class="tag">autofocus</span>
+          </div>
+
+          <form>
+            <div class="info-box">
+              <div class="info-box-content">
+                The first input receives automatic focus on page load. Browser
+                suggests previously saved information.
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="fullname" class="form-label">Full Name</label>
+              <input
+                type="text"
+                id="fullname"
+                class="form-input"
+                placeholder="John Doe"
+                autocomplete="name"
+                autofocus
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="phone" class="form-label">Phone Number</label>
+              <input
+                type="tel"
+                id="phone"
+                class="form-input"
+                placeholder="+1 (555) 000-0000"
+                autocomplete="tel"
+                inputmode="tel"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="address" class="form-label">Street Address</label>
+              <input
+                type="text"
+                id="address"
+                class="form-input"
+                placeholder="123 Main Street"
+                autocomplete="street-address"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="city" class="form-label">City</label>
+              <input
+                type="text"
+                id="city"
+                class="form-input"
+                placeholder="New York"
+                autocomplete="address-level2"
+              />
+            </div>
+
+            <button type="submit" class="button button-primary">
+              Save Information
+            </button>
+          </form>
+        </div>
+
+        <!-- Mobile Keyboards -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24">
+                <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+                <line x1="12" y1="18" x2="12.01" y2="18"></line>
+              </svg>
+            </div>
+            <div class="card-header-content">
+              <h2 class="card-title">Mobile Optimization</h2>
+              <p class="card-subtitle">Context-aware keyboards</p>
+            </div>
+          </div>
+
+          <div class="tags">
+            <span class="tag">inputmode</span>
+            <span class="tag">enterkeyhint</span>
+            <span class="tag">autocapitalize</span>
+          </div>
+
+          <form>
+            <div class="info-box">
+              <div class="info-box-content">
+                Different keyboard layouts appear automatically on mobile
+                devices based on input type.
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="price" class="form-label">Price</label>
+              <input
+                type="text"
+                id="price"
+                class="form-input"
+                placeholder="99.99"
+                inputmode="decimal"
+                enterkeyhint="next"
+              />
+              <div class="form-hint">Decimal keyboard on mobile devices</div>
+            </div>
+
+            <div class="form-group">
+              <label for="quantity" class="form-label">Quantity</label>
+              <input
+                type="text"
+                id="quantity"
+                class="form-input"
+                placeholder="10"
+                inputmode="numeric"
+                enterkeyhint="next"
+              />
+              <div class="form-hint">Numeric keyboard on mobile devices</div>
+            </div>
+
+            <div class="form-group">
+              <label for="website" class="form-label">Website URL</label>
+              <input
+                type="text"
+                id="website"
+                class="form-input"
+                placeholder="example.com"
+                inputmode="url"
+                enterkeyhint="go"
+                autocapitalize="none"
+              />
+              <div class="form-hint">URL keyboard with domain shortcuts</div>
+            </div>
+
+            <div class="form-group">
+              <label for="search" class="form-label">Search Query</label>
+              <input
+                type="search"
+                id="search"
+                class="form-input"
+                placeholder="Search products..."
+                enterkeyhint="search"
+              />
+              <div class="form-hint">Enter key displays "Search"</div>
+            </div>
+
+            <button type="submit" class="button button-primary">
+              Continue
+            </button>
+          </form>
+        </div>
+
+        <!-- Number Controls -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24">
+                <line x1="4" y1="9" x2="20" y2="9"></line>
+                <line x1="4" y1="15" x2="20" y2="15"></line>
+                <line x1="10" y1="3" x2="8" y2="21"></line>
+                <line x1="16" y1="3" x2="14" y2="21"></line>
+              </svg>
+            </div>
+            <div class="card-header-content">
+              <h2 class="card-title">Number & Date Controls</h2>
+              <p class="card-subtitle">Value constraints and ranges</p>
+            </div>
+          </div>
+
+          <div class="tags">
+            <span class="tag">min</span>
+            <span class="tag">max</span>
+            <span class="tag">step</span>
+          </div>
+
+          <form>
+            <div class="form-group">
+              <label for="age" class="form-label">Age</label>
+              <input
+                type="number"
+                id="age"
+                class="form-input"
+                placeholder="25"
+                min="18"
+                max="100"
+              />
+              <div class="form-hint">Value must be between 18 and 100</div>
+            </div>
+
+            <div class="form-group">
+              <label for="amount" class="form-label">Amount</label>
+              <input
+                type="number"
+                id="amount"
+                class="form-input"
+                placeholder="0.00"
+                min="0"
+                step="0.01"
+              />
+              <div class="form-hint">Increments of 0.01 for currency</div>
+            </div>
+
+            <div class="form-group">
+              <label for="date" class="form-label">Select Date</label>
+              <input
+                type="date"
+                id="date"
+                class="form-input"
+                min="2025-01-01"
+                max="2025-12-31"
+              />
+              <div class="form-hint">Date range limited to 2025</div>
+            </div>
+
+            <div class="form-group">
+              <label for="time" class="form-label">Time Slot</label>
+              <input
+                type="time"
+                id="time"
+                class="form-input"
+                min="09:00"
+                max="17:00"
+                step="900"
+              />
+              <div class="form-hint">
+                Business hours: 9 AM - 5 PM, 15-minute intervals
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="volume" class="form-label">Volume Level</label>
+              <input
+                type="range"
+                id="volume"
+                name="volume"
+                min="0"
+                max="100"
+                step="5"
+                value="50"
+              />
+              <div class="range-output" id="volumeValue">50</div>
+            </div>
+
+            <button type="submit" class="button button-primary">
+              Apply Settings
+            </button>
+          </form>
+        </div>
+
+        <!-- File Uploads -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+            </div>
+            <div class="card-header-content">
+              <h2 class="card-title">File Upload Controls</h2>
+              <p class="card-subtitle">
+                File type restrictions and multiple selection
+              </p>
+            </div>
+          </div>
+
+          <div class="tags">
+            <span class="tag">accept</span>
+            <span class="tag">multiple</span>
+            <span class="tag">capture</span>
+          </div>
+
+          <form>
+            <div class="form-group">
+              <label for="images" class="form-label">Image Files</label>
+              <input
+                type="file"
+                id="images"
+                class="form-input"
+                accept="image/*"
+                multiple
+                style="padding: 10px; cursor: pointer"
+              />
+              <div class="form-hint">Accepts multiple image files</div>
+            </div>
+
+            <div class="form-group">
+              <label for="documents" class="form-label">Documents</label>
+              <input
+                type="file"
+                id="documents"
+                class="form-input"
+                accept=".pdf,.doc,.docx"
+                style="padding: 10px; cursor: pointer"
+              />
+              <div class="form-hint">PDF, DOC, or DOCX files only</div>
+            </div>
+
+            <div class="form-group">
+              <label for="camera" class="form-label">Camera Capture</label>
+              <input
+                type="file"
+                id="camera"
+                class="form-input"
+                accept="image/*"
+                capture="environment"
+                style="padding: 10px; cursor: pointer"
+              />
+              <div class="form-hint">Opens camera on mobile devices</div>
+            </div>
+
+            <button type="submit" class="button button-primary">
+              Upload Files
+            </button>
+          </form>
+        </div>
+
+        <!-- Form Button Overrides -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24">
+                <rect x="3" y="3" width="7" height="7"></rect>
+                <rect x="14" y="3" width="7" height="7"></rect>
+                <rect x="14" y="14" width="7" height="7"></rect>
+                <rect x="3" y="14" width="7" height="7"></rect>
+              </svg>
+            </div>
+            <div class="card-header-content">
+              <h2 class="card-title">Button Overrides</h2>
+              <p class="card-subtitle">Different actions per button</p>
+            </div>
+          </div>
+
+          <div class="tags">
+            <span class="tag">formaction</span>
+            <span class="tag">formmethod</span>
+            <span class="tag">formtarget</span>
+            <span class="tag">formnovalidate</span>
+          </div>
+
+          <form action="/save" method="get">
+            <div class="info-box">
+              <div class="info-box-content">
+                Each button can submit to different endpoints with different
+                methods and targets without JavaScript.
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="article" class="form-label">Article Title</label>
+              <input
+                type="text"
+                id="article"
+                class="form-input"
+                placeholder="Enter article title"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="content" class="form-label">Content</label>
+              <textarea
+                id="content"
+                class="form-textarea"
+                placeholder="Write your content here..."
+                rows="4"
+              ></textarea>
+            </div>
+
+            <div class="button-group">
+              <button type="submit" class="button button-primary">
+                Save (GET)
+              </button>
+              <button
+                type="submit"
+                formaction="/preview"
+                formtarget="_blank"
+                class="button button-secondary"
+              >
+                Preview in New Tab
+              </button>
+              <button
+                type="submit"
+                formmethod="post"
+                formaction="/publish"
+                class="button button-secondary"
+              >
+                Publish (POST)
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Datalist -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="M21 21l-4.35-4.35"></path>
+              </svg>
+            </div>
+            <div class="card-header-content">
+              <h2 class="card-title">Smart Suggestions</h2>
+              <p class="card-subtitle">Datalist autocomplete options</p>
+            </div>
+          </div>
+
+          <div class="tags">
+            <span class="tag">list</span>
+            <span class="tag">datalist</span>
+          </div>
+
+          <form>
+            <div class="info-box">
+              <div class="info-box-content">
+                Start typing to see suggestions. Users can select from the list
+                or enter custom values.
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="browser" class="form-label">Browser Preference</label>
+              <input
+                type="text"
+                id="browser"
+                class="form-input"
+                list="browsers"
+                placeholder="Type or select browser..."
+              />
+              <datalist id="browsers">
+                <option value="Chrome"></option>
+                <option value="Firefox"></option>
+                <option value="Safari"></option>
+                <option value="Edge"></option>
+                <option value="Opera"></option>
+              </datalist>
+            </div>
+
+            <div class="form-group">
+              <label for="country" class="form-label">Country</label>
+              <input
+                type="text"
+                id="country"
+                class="form-input"
+                list="countries"
+                placeholder="Type or select country..."
+              />
+              <datalist id="countries">
+                <option value="United States"></option>
+                <option value="United Kingdom"></option>
+                <option value="Canada"></option>
+                <option value="Australia"></option>
+                <option value="Germany"></option>
+                <option value="France"></option>
+                <option value="Japan"></option>
+                <option value="India"></option>
+              </datalist>
+            </div>
+
+            <button type="submit" class="button button-primary">
+              Save Preferences
+            </button>
+          </form>
+        </div>
+
+        <!-- Textarea Features -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24">
+                <polyline points="4 7 4 4 20 4 20 7"></polyline>
+                <line x1="9" y1="20" x2="15" y2="20"></line>
+                <line x1="12" y1="4" x2="12" y2="20"></line>
+              </svg>
+            </div>
+            <div class="card-header-content">
+              <h2 class="card-title">Textarea Controls</h2>
+              <p class="card-subtitle">Text area configuration options</p>
+            </div>
+          </div>
+
+          <div class="tags">
+            <span class="tag">rows</span>
+            <span class="tag">cols</span>
+            <span class="tag">wrap</span>
+            <span class="tag">spellcheck</span>
+          </div>
+
+          <form>
+            <div class="form-group">
+              <label for="comment" class="form-label">Comment</label>
+              <textarea
+                id="comment"
+                class="form-textarea"
+                rows="4"
+                cols="50"
+                wrap="soft"
+                spellcheck="true"
+                minlength="10"
+                maxlength="500"
+                placeholder="Write your comment here (min 10, max 500 characters)..."
+                enterkeyhint="send"
+              ></textarea>
+              <div class="form-hint">
+                Spellcheck enabled for natural language content
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="code" class="form-label">Code Snippet</label>
+              <textarea
+                id="code"
+                class="form-textarea"
+                rows="4"
+                cols="50"
+                wrap="soft"
+                spellcheck="false"
+                placeholder="Paste your code here..."
+                autocapitalize="none"
+              ></textarea>
+              <div class="form-hint">Spellcheck disabled for code input</div>
+            </div>
+
+            <button type="submit" class="button button-primary">Submit</button>
+          </form>
+        </div>
+
+        <!-- Special Attributes -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+              </svg>
+            </div>
+            <div class="card-header-content">
+              <h2 class="card-title">Special Attributes</h2>
+              <p class="card-subtitle">Additional form features</p>
+            </div>
+          </div>
+
+          <div class="tags">
+            <span class="tag">readonly</span>
+            <span class="tag">disabled</span>
+            <span class="tag">dirname</span>
+            <span class="tag">size</span>
+          </div>
+
+          <form>
+            <div class="form-group">
+              <label for="orderid" class="form-label">Order ID</label>
+              <input
+                type="text"
+                id="orderid"
+                class="form-input"
+                value="ORD-123456"
+                readonly
+              />
+              <div class="form-hint">Read-only field, value is submitted</div>
+            </div>
+
+            <div class="form-group">
+              <label for="status" class="form-label">Processing Status</label>
+              <input
+                type="text"
+                id="status"
+                class="form-input"
+                value="Processing..."
+                disabled
+              />
+              <div class="form-hint">
+                Disabled field, value is not submitted
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="rtltext" class="form-label"
+                >Text with Direction</label
+              >
+              <input
+                type="text"
+                id="rtltext"
+                class="form-input"
+                dirname="rtltext.dir"
+                placeholder="Enter text (try Arabic or Hebrew)"
+              />
+              <div class="form-hint">
+                Submits both value and text direction (ltr/rtl)
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="zipcode" class="form-label">Zip Code</label>
+              <input
+                type="text"
+                id="zipcode"
+                class="form-input"
+                size="10"
+                placeholder="12345"
+                maxlength="10"
+              />
+              <div class="form-hint">Size attribute controls visible width</div>
+            </div>
+
+            <button type="submit" class="button button-primary">Submit</button>
+          </form>
+        </div>
+
+        <!-- Form Association -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24">
+                <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 00-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 010 7.75"></path>
+              </svg>
+            </div>
+            <div class="card-header-content">
+              <h2 class="card-title">External Form Elements</h2>
+              <p class="card-subtitle">
+                Form association and validation control
+              </p>
+            </div>
+          </div>
+
+          <div class="tags">
+            <span class="tag">form</span>
+            <span class="tag">novalidate</span>
+          </div>
+
+          <form id="mainForm" action="/submit" novalidate>
+            <div class="info-box">
+              <div class="info-box-content">
+                Form validation is disabled. The email input below is outside
+                the form element but linked via form attribute.
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="formname" class="form-label form-label-required"
+                >Name</label
+              >
+              <input
+                type="text"
+                id="formname"
+                class="form-input"
+                placeholder="Enter your name"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="formemail" class="form-label form-label-required"
+                >Email</label
+              >
+              <input
+                type="email"
+                id="formemail"
+                class="form-input"
+                placeholder="name@company.com"
+                required
+              />
+            </div>
+
+            <button type="submit" class="button button-primary">
+              Submit Form
+            </button>
+          </form>
+
+          <div class="form-group" style="margin-top: 24px">
+            <label for="externalemail" class="form-label"
+              >External Email Field</label
+            >
+            <input
+              type="email"
+              id="externalemail"
+              class="form-input"
+              form="mainForm"
+              placeholder="linked@example.com"
+            />
+            <div class="form-hint">
+              This input is outside the form but linked to it
+            </div>
+          </div>
+
+          <button type="submit" form="mainForm" class="button button-secondary">
+            External Submit Button
+          </button>
+        </div>
+
+        <!-- Multiple Emails -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+                ></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+              </svg>
+            </div>
+            <div class="card-header-content">
+              <h2 class="card-title">Multiple Values</h2>
+              <p class="card-subtitle">Multiple email addresses</p>
+            </div>
+          </div>
+
+          <div class="tags">
+            <span class="tag">multiple</span>
+          </div>
+
+          <form>
+            <div class="info-box">
+              <div class="info-box-content">
+                Enter multiple email addresses separated by commas. Each email
+                is validated individually.
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="recipients" class="form-label form-label-required"
+                >Email Recipients</label
+              >
+              <input
+                type="email"
+                id="recipients"
+                class="form-input"
+                multiple
+                placeholder="john@example.com, jane@example.com"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="cclist" class="form-label">CC Recipients</label>
+              <input
+                type="email"
+                id="cclist"
+                class="form-input"
+                multiple
+                placeholder="Optional CC recipients"
+              />
+            </div>
+
+            <button type="submit" class="button button-primary">
+              Send Email
+            </button>
+          </form>
+        </div>
+
+        <!-- Complete Registration Form -->
+        <div class="card" style="grid-column: 1 / -1">
+          <div class="card-header">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24">
+                <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"></path>
+                <circle cx="8.5" cy="7" r="4"></circle>
+                <line x1="20" y1="8" x2="20" y2="14"></line>
+                <line x1="23" y1="11" x2="17" y2="11"></line>
+              </svg>
+            </div>
+            <div class="card-header-content">
+              <h2 class="card-title">Complete Registration Form</h2>
+              <p class="card-subtitle">
+                All attributes combined in a comprehensive example
+              </p>
+            </div>
+          </div>
+
+          <div class="tags">
+            <span class="tag">All 30 Attributes</span>
+          </div>
+
+          <form>
+            <div class="grid">
+              <div>
+                <div class="form-group">
+                  <label for="regname" class="form-label form-label-required"
+                    >Full Name</label
+                  >
+                  <input
+                    type="text"
+                    id="regname"
+                    class="form-input"
+                    placeholder="John Doe"
+                    required
+                    minlength="3"
+                    autocomplete="name"
+                    autocapitalize="words"
+                    autofocus
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="regemail" class="form-label form-label-required"
+                    >Email Address</label
+                  >
+                  <input
+                    type="email"
+                    id="regemail"
+                    class="form-input"
+                    placeholder="name@company.com"
+                    required
+                    autocomplete="email"
+                    autocapitalize="none"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="regphone" class="form-label">Phone Number</label>
+                  <input
+                    type="tel"
+                    id="regphone"
+                    class="form-input"
+                    placeholder="+1 (555) 000-0000"
+                    autocomplete="tel"
+                    inputmode="tel"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="regdob" class="form-label form-label-required"
+                    >Date of Birth</label
+                  >
+                  <input
+                    type="date"
+                    id="regdob"
+                    class="form-input"
+                    required
+                    autocomplete="bday"
+                    min="1924-01-01"
+                    max="2007-01-01"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <div class="form-group">
+                  <label for="regaddress" class="form-label"
+                    >Street Address</label
+                  >
+                  <input
+                    type="text"
+                    id="regaddress"
+                    class="form-input"
+                    placeholder="123 Main Street"
+                    autocomplete="street-address"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="regcity" class="form-label">City</label>
+                  <input
+                    type="text"
+                    id="regcity"
+                    class="form-input"
+                    placeholder="New York"
+                    autocomplete="address-level2"
+                    list="cities"
+                  />
+                  <datalist id="cities">
+                    <option value="New York"></option>
+                    <option value="Los Angeles"></option>
+                    <option value="Chicago"></option>
+                    <option value="Houston"></option>
+                    <option value="Phoenix"></option>
+                  </datalist>
+                </div>
+
+                <div class="form-group">
+                  <label for="regzip" class="form-label">Postal Code</label>
+                  <input
+                    type="text"
+                    id="regzip"
+                    class="form-input"
+                    placeholder="12345"
+                    autocomplete="postal-code"
+                    pattern="[0-9]{5}"
+                    title="Enter 5-digit zip code"
+                    inputmode="numeric"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="regbio" class="form-label">Bio</label>
+                  <textarea
+                    id="regbio"
+                    class="form-textarea"
+                    placeholder="Tell us about yourself..."
+                    rows="4"
+                    maxlength="200"
+                    spellcheck="true"
+                  ></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="checkbox-group">
+                <input type="checkbox" id="terms" required />
+                <label for="terms" class="form-label" style="margin: 0"
+                  >I agree to the terms and conditions</label
+                >
+              </div>
+            </div>
+
+            <div class="button-group">
+              <button type="submit" class="button button-primary">
+                Create Account
+              </button>
+              <button
+                type="submit"
+                formnovalidate
+                class="button button-secondary"
+              >
+                Save as Draft
+              </button>
+              <button type="reset" class="button button-secondary">
+                Clear Form
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>
