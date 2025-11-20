@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="default">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Profile — Quan Ha</title>
+  <link rel="stylesheet" href="profile.css"/>
+  <script defer src="profile.js"></script>
+</head>
+<body>
+  <!-- Page wrapper -->
+  <div id="app" class="app">
+
+    <!-- Banner -->
+    <header id="banner" class="banner" data-block="banner" draggable="false">
+      <img id="bannerImage" class="banner-image" src="" alt="Profile banner"/>
+      <div class="banner-overlay"></div>
+
+      <!-- Profile header -->
+      <div class="profile-header">
+        <div class="pfp-wrap" data-block="pfp" draggable="false">
+          <img id="profileAvatar" class="pfp" src="" alt="Profile picture"/>
+        </div>
+        <div class="profile-meta">
+          <h1 id="profileName" class="profile-name">Quan Ha</h1>
+          <p id="profileHandle" class="profile-handle">@quan_ha</p>
+        </div>
+      </div>
+
+      <!-- Tabs (exactly as seen under banner) -->
+      <nav class="tabs" aria-label="Profile navigation">
+        <button class="tab active" data-tab="timeline">Timeline</button>
+        <button class="tab" data-tab="about">About</button>
+        <button class="tab" data-tab="friends">Friends</button>
+        <button class="tab" data-tab="photos">Photos</button>
+        <button class="tab" data-tab="more">More</button>
+      </nav>
+    </header>
+
+    <!-- Content grid: left intro and main content -->
+    <main class="content">
+      <!-- Left column -->
+      <aside class="left-col">
+        <section class="card intro-card" data-block="intro" draggable="true">
+          <h2 class="card-title">Introduction</h2>
+          <ul class="intro-list">
+            <li><span class="label">Occupation:</span> <span id="introOccupation">Product Designer at Bravebist</span></li>
+            <li><span class="label">Location:</span> <span id="introLocation">Hanoi, Vietnam</span></li>
+            <li><span class="label">Player name:</span> <span id="introPlayer">Quan Ha</span></li>
+          </ul>
+        </section>
+
+        <section class="card event-card" data-block="event" draggable="true">
+          <div class="event-date">
+            <span class="month">Jan</span>
+            <span class="day">1</span>
+          </div>
+          <div class="event-photo">
+            <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=1200&auto=format&fit=crop" alt="Concert crowd"/>
+          </div>
+        </section>
+
+        <!-- Widgets -->
+        <section class="card widget-card" data-block="widgets" draggable="true">
+          <h2 class="card-title">Widgets</h2>
+          <div class="widget-row">
+            <div class="widget" data-widget="instagram">
+              <div class="widget-header">
+                <h3>Instagram</h3>
+                <button class="widget-action" data-action="configure">Configure</button>
+              </div>
+              <div class="widget-body">
+                <p class="widget-note">Connect via oEmbed or a simple media grid. Placeholder preview shown.</p>
+                <div class="insta-grid">
+                  <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=400&auto=format&fit=crop" alt="Insta 1"/>
+                  <img src="https://images.unsplash.com/photo-1520975916090-3105956dac38?q=80&w=400&auto=format&fit=crop" alt="Insta 2"/>
+                  <img src="https://images.unsplash.com/photo-1499028344343-cd173ffc68a9?q=80&w=400&auto=format&fit=crop" alt="Insta 3"/>
+                </div>
+              </div>
+            </div>
+
+            <div class="widget" data-widget="youtube">
+              <div class="widget-header">
+                <h3>YouTube</h3>
+                <button class="widget-action" data-action="configure">Configure</button>
+              </div>
+              <div class="widget-body">
+                <p class="widget-note">Embed latest uploads via channel ID or handle. Placeholder embed below.</p>
+                <div class="yt-embed">
+                  <iframe
+                    title="YouTube placeholder"
+                    src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen
+                    loading="lazy"></iframe>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Analytics (tab content placeholder, visible when tab selected) -->
+        <section class="card analytics-card hidden" data-block="analytics" draggable="true">
+          <h2 class="card-title">Analytics</h2>
+          <ul class="analytics-list">
+            <li>
+              <span class="label">YouTube channel stats:</span>
+              <span>Placeholder: latest views, subs, top video (free sample via public oEmbed for titles + view parsing from page as fallback)</span>
+            </li>
+            <li>
+              <span class="label">Instagram basic media count:</span>
+              <span>Placeholder: recent posts count (scraping avoided; show cached counts or manual input until API keys)</span>
+            </li>
+            <li>
+              <span class="label">Spotify artist info:</span>
+              <span>Placeholder: popularity, followers — show demo values; swap to official API when available</span>
+            </li>
+            <li>
+              <span class="label">Site engagement:</span>
+              <span>Profile visits, link clicks, widget opens (local counters stored per user)</span>
+            </li>
+          </ul>
+          <div class="analytics-examples">
+            <div class="kpi"><span class="kpi-label">Visits (7d)</span><span class="kpi-value" data-kpi="visits">–</span></div>
+            <div class="kpi"><span class="kpi-label">Link clicks (7d)</span><span class="kpi-value" data-kpi="clicks">–</span></div>
+            <div class="kpi"><span class="kpi-label">Top referrer</span><span class="kpi-value" data-kpi="referrer">–</span></div>
+          </div>
+        </section>
+      </aside>
+
+      <!-- Main column -->
+      <section class="main-col">
+        <!-- Status composer (non-editable on public profile) -->
+        <section class="card composer-card" data-block="composer" draggable="true">
+          <div class="composer">
+            <input type="text" class="composer-input" placeholder="What's on your mind?" disabled />
+            <div class="composer-actions">
+              <button class="btn" disabled>Photo/Video</button>
+              <button class="btn" disabled>Tag People</button>
+              <button class="btn" disabled>Check In</button>
+              <button class="btn" disabled>Mood</button>
+              <button class="btn primary" disabled>Share</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Timeline feed -->
+        <section class="card feed-card" data-block="timeline" draggable="true">
+          <article class="post">
+            <header class="post-header">
+              <img class="post-pfp" src="" alt="Quan Ha avatar"/>
+              <div>
+                <h3 class="post-author">Quan Ha</h3>
+                <p class="post-meta">create new album • 6 hours ago</p>
+              </div>
+            </header>
+            <p class="post-text">“When the bass drops, so do my problems.”</p>
+          </article>
+        </section>
+
+        <!-- Tabbed content containers -->
+        <section class="tabbed-section" data-tab-content="timeline"></section>
+        <section class="tabbed-section hidden" data-tab-content="about">
+          <div class="card">
+            <h2 class="card-title">About</h2>
+            <p>Designer, player, and music lover. This section can include bio, interests, links, and more.</p>
+          </div>
+        </section>
+        <section class="tabbed-section hidden" data-tab-content="friends">
+          <div class="card">
+            <h2 class="card-title">Friends</h2>
+            <p>Friends list placeholder. Cards will load with avatars and names.</p>
+          </div>
+        </section>
+        <section class="tabbed-section hidden" data-tab-content="photos">
+          <div class="card">
+            <h2 class="card-title">Photos</h2>
+            <div class="photo-grid">
+              <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?q=80&w=600&auto=format&fit=crop" alt="Photo 1"/>
+              <img src="https://images.unsplash.com/photo-1508739826987-b79cd8b7da12?q=80&w=600&auto=format&fit=crop" alt="Photo 2"/>
+              <img src="https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?q=80&w=600&auto=format&fit=crop" alt="Photo 3"/>
+            </div>
+          </div>
+        </section>
+        <section class="tabbed-section hidden" data-tab-content="more">
+          <div class="card">
+            <h2 class="card-title">More</h2>
+            <p>Additional sections and links can live here.</p>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <!-- Edit Mode Toolbar (hidden on public profile; enable via JS flag) -->
+    <div id="editToolbar" class="edit-toolbar hidden" aria-hidden="true">
+      <button id="toggleDrag" class="btn">Toggle Drag</button>
+      <button id="pageSettings" class="btn">Page Settings</button>
+      <span class="hint">Right-click any block for its settings.</span>
+    </div>
+
+    <!-- Generic Settings Popup -->
+    <div id="settingsPopup" class="popup hidden" role="dialog" aria-modal="true" aria-label="Settings">
+      <div class="popup-titlebar">
+        <h3 id="popupTitle">Settings</h3>
+        <button class="popup-close" aria-label="Close">✕</button>
+      </div>
+      <div class="popup-body">
+        <!-- Dynamic content injected by JS -->
+      </div>
+      <div class="popup-actions">
+        <button class="btn primary" data-popup-action="save">Save</button>
+        <button class="btn" data-popup-action="cancel">Cancel</button>
+      </div>
+    </div>
+
+    <!-- Context menu for blocks -->
+    <div id="blockMenu" class="context-menu hidden" role="menu">
+      <button data-menu-action="open-settings">Settings…</button>
+      <button data-menu-action="duplicate">Duplicate</button>
+      <button data-menu-action="remove">Remove</button>
+    </div>
+
+  </div>
+</body>
+</html>
