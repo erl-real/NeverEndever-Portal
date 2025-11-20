@@ -1,0 +1,231 @@
+@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@400;600&display=swap");
+
+:root {
+  --bg: #0a0c10;
+  --card-bg: rgba(20, 25, 35, 0.9);
+  --accent: #00f5ff;
+  --text: #fafbfd;
+  --text-dim: #c6c7cc;
+  --radius: 20px;
+  --shadow: 0 10px 30px rgba(0, 255, 255, 0.2);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Inter", sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 40px;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 30px;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.card {
+  perspective: 1000px;
+  cursor: pointer;
+  position: relative;
+  transform-style: preserve-3d;
+}
+
+.card-inner {
+  position: relative;
+  width: 100%;
+  min-height: 360px;
+  transform-style: preserve-3d;
+  border-radius: var(--radius);
+  transition: transform 0.7s cubic-bezier(0.4, 0.2, 0.2, 1);
+}
+
+.card.flipped .card-inner {
+  transform: rotateY(180deg);
+}
+
+.card-face {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius);
+  background: var(--card-bg);
+  box-shadow: var(--shadow);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+  transition: box-shadow 0.3s, filter 0.3s;
+}
+
+.card-face::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius);
+  box-shadow: 0 0 12px rgba(0, 255, 255, 0.25),
+    0 0 25px rgba(0, 255, 255, 0.15) inset;
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+
+.card:hover .card-face::before,
+.card.flipped .card-face::before {
+  opacity: 1;
+  animation: pulse 2s infinite alternate;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 12px rgba(0, 255, 255, 0.25),
+      0 0 25px rgba(0, 255, 255, 0.15) inset;
+  }
+  50% {
+    box-shadow: 0 0 22px rgba(0, 255, 255, 0.4),
+      0 0 35px rgba(0, 255, 255, 0.25) inset;
+  }
+  100% {
+    box-shadow: 0 0 12px rgba(0, 255, 255, 0.25),
+      0 0 25px rgba(0, 255, 255, 0.15) inset;
+  }
+}
+
+.card-front h2 {
+  font-family: "Orbitron", sans-serif;
+  font-size: 1.6rem;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+}
+
+.card-front p {
+  font-size: 1rem;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+
+.one {
+  background: url("https://iili.io/KSTN6ps.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.two {
+  background: url("https://iili.io/KSTNsjf.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.three {
+  background: url("https://iili.io/KSTNLQ4.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.four {
+  background: url("https://iili.io/KST8L1R.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.card-back {
+  transform: rotateY(180deg);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card-back h3 {
+  font-family: "Orbitron", sans-serif;
+  font-size: 1.4rem;
+  color: var(--accent);
+  margin-bottom: 1rem;
+}
+
+ul.features {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+ul.features li {
+  margin-bottom: 0.6rem;
+  padding-left: 1.4rem;
+  position: relative;
+  color: var(--text-dim);
+  font-size: 0.95rem;
+}
+
+ul.features li::before {
+  content: "⚡";
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+}
+
+.cta-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 1.5rem;
+}
+
+.cta-buttons a {
+  flex: 1;
+  text-align: center;
+  text-decoration: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.cta-buttons a.primary {
+  background: var(--accent);
+  color: #000;
+}
+
+.cta-buttons a.primary:hover {
+  background: #00ffff;
+}
+
+.cta-buttons a.secondary {
+  border: 1px solid var(--accent);
+  color: var(--accent);
+}
+
+.cta-buttons a.secondary:hover {
+  background: rgba(0, 255, 255, 0.1);
+}
+
+@media (max-width: 768px) {
+  body {
+    padding: 20px;
+  }
+  .card-inner {
+    min-height: 300px;
+  }
+  .card-face {
+    padding: 18px;
+  }
+  .card-front h2 {
+    font-size: 1.3rem;
+  }
+  .card-back h3 {
+    font-size: 1.2rem;
+  }
+  ul.features li {
+    font-size: 0.9rem;
+  }
+}
