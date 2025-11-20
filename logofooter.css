@@ -1,0 +1,123 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: system-ui, sans-serif;
+  font-size: 1rem;
+  line-height: 1.8;
+  padding: 3rem;
+  color: #070707;
+  background: fixed linear-gradient(transparent, #fff 90%),
+    fixed
+      repeating-linear-gradient(
+        #efefef,
+        #efefef 1px,
+        transparent 1px,
+        transparent 40px
+      ),
+    fixed
+      repeating-linear-gradient(
+        to right,
+        #efefef,
+        #efefef px,
+        transparent 0px,
+        transparent 0px
+      )
+      white;
+}
+
+h1 {
+  font-size: 1.75rem;
+  text-align: center;
+}
+
+h2 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-align: center;
+  margin-block-end: 4rem;
+}
+
+.social {
+  display: flex;
+  justify-content: center;
+  flex-flow: wrap;
+  gap: 1rem;
+  list-style: none;
+}
+
+.social li {
+  position: relative;
+  flex-basis: 4.5rem;
+}
+
+.social li::after {
+  position: absolute;
+  /* content: "Tooltip"; */
+  content: attr(data-tooltip);
+  inset: -45% auto auto 50%;
+  z-index: -1;
+  translate: -50%;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.875rem;
+  color: #fff;
+  /* background: #070707; */
+  background: var(--bg, #070707);
+  border-radius: 0.25rem;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  /* transition: all 0.3s ease-in-out; */
+  transition: inset 0.4s cubic-bezier(0.47, 2, 0.41, 1.5),
+    visibility 0.3s ease-in-out, opacity 0.2s ease-in-out;
+}
+
+.social li:has(a:hover, a:focus-visible)::after {
+  opacity: 1;
+  visibility: visible;
+  inset-block-start: -60%;
+}
+
+.social a {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  aspect-ratio: 1;
+  font-size: 1.75rem;
+  color: #070707;
+  border: 1px solid;
+  border-radius: 100%;
+  text-decoration: none;
+  outline: none;
+  overflow: hidden;
+  transition: color 0.3s ease-in-out;
+}
+
+.social a > i {
+  position: relative;
+  z-index: 1;
+}
+
+.social a::after {
+  position: absolute;
+  content: "";
+  inset: 100% 0 0;
+  /* background: #070707; */
+  background: var(--bg, #070707);
+  pointer-events: none;
+  transition: inset 0.3s ease-in-out;
+}
+
+.social a:hover,
+.social a:focus-visible {
+  color: #fff;
+}
+
+.social a:hover::after,
+.social a:focus-visible::after {
+  inset-block-start: 0;
+}
