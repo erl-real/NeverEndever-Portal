@@ -106,7 +106,9 @@ h2 {
   position: absolute;
   content: "";
   inset: 100% 0 0;
-  /* background: #070707; */
+  /* background: #070707;
+  Watch this tutorial on YouTube for this whole widget
+ https://youtu.be/Kd03Y4DgC9M */
   background: var(--bg, #070707);
   pointer-events: none;
   transition: inset 0.3s ease-in-out;
