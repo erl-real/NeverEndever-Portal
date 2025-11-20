@@ -1,0 +1,170 @@
+body, html {
+  margin: 0; padding: 20px 0;
+  min-height: 100vh;
+  background: #222;
+  display: flex; justify-content: center; align-items: center;
+  box-sizing: border-box;
+  overflow: auto;
+    margin: auto;
+      flex-direction: column;
+    gap: 25px;
+}
+  .block {
+    border-radius: 10px;
+    box-shadow: 0 0 10px #00000019;
+    width: 420px;
+    height: 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+    font-size: 1.2rem;
+    background-position: 0% 50%;
+    background-size: 200% 100%;
+    transition: background-position 0.7s ease;
+    cursor: default;
+  }
+
+.block:hover {
+  background-position: 100% 50%; /* Et non plus une animation */
+}
+
+.block img{
+   height: 150px;
+  width: 300px;
+  object-fit: cover;
+  position: absolute;
+  z-index:1;
+  filter: grayscale(1);
+  mix-blend-mode: lighten;
+}
+
+.block span{
+    display: block !important;
+    font-family: pirata one;
+    font-size: 40px;
+    color: white;
+    line-height: 28px;
+  z-index: 4;
+}
+
+.block span:nth-child(2) {
+    text-shadow: 0 0 4px #00000054;
+}
+
+.clone{
+  mix-blend-mode: soft-light;
+}
+
+.clone.bottom{
+  color: black;
+}
+  /* Hover : dégradé linéaire léger qui glisse */
+  .block:hover {
+    animation: slideGradient 4s ease-in-out infinite alternate;
+  }
+
+  @keyframes slideGradient {
+        0% { background-position: 50% 50%; }
+        50% { background-position: 0% 50%; }
+        100% { background-position: 100% 50%; }
+  }
+
+/* --- COULEUR PAR FUSION LOGIQUE --- */
+
+.helonia {
+  background: linear-gradient(to left, lightgreen, #A36ECF);
+}
+
+.lelicy {
+  background: linear-gradient(to left, lightcoral, #b95bb3);
+}
+
+.maede {
+  background: linear-gradient(to left, darkred, #7288e7);
+}
+
+.luwell {
+  background: linear-gradient(to left, crimson, #73b3d8);
+}
+
+.charne {
+  background: linear-gradient(to left, darkorange, transparent);
+}
+
+.elea {
+  background: linear-gradient(to left, purple, transparent);
+}
+
+.feliwell {
+  background: linear-gradient(to left, crimson, #4a86e8);
+}
+
+.arcisse {
+  background: linear-gradient(to left, skyblue, #AF96E1);
+}
+
+.abellia {
+  background: linear-gradient(to left, #9FCFBF, #4BBFA4);
+}
+
+.dalix {
+  background: linear-gradient(to left, #A72F48, #4a86e8);
+}
+
+.setis {
+  background: linear-gradient(to left, #C74C7D, #626FC4);
+}
+
+.leony {
+  background: linear-gradient(to left, #597735, #cb89e2);
+}
+
+.junki {
+  background: linear-gradient(to left, #FFD582, #97b5e9);
+}
+
+.asmel {
+  background: linear-gradient(to left, #FF7969, #ccaee3);
+}
+
+.jarmeille {
+  background: linear-gradient(to left, #FF4381, #D783D6);
+}
+
+.roween {
+  background: linear-gradient(to right, #5C6BC0, #56909b);
+}
+
+.caddie {
+  background: linear-gradient(to left, #9270FC, #ee952a);
+}
+
+.mirleen {
+  background: linear-gradient(to left, #850035, #74b0cd);
+}
+
+.cirak {
+  background: linear-gradient(to left, goldenrod, #8b88c1);
+}
+
+.siren {
+  background: linear-gradient(to left, royalblue, #91cfda);
+}
+
+.belor {
+  background: linear-gradient(to left, #E56800, #89bfd3);
+}
+
+.caval {
+  background: linear-gradient(to left, #D48522, #3727aa);
+}
+
+.scarren {
+  background: linear-gradient(to left, #14493D, #a73e41);
+}
+
+.selial {
+  background: linear-gradient(to left, #DA002F, #89bfd3);
+}
