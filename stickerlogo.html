@@ -1,0 +1,79 @@
+<svg height="0" width="0">
+    <defs>
+
+      <filter id=pointLight>
+        <feGaussianBlur stdDeviation="1" result="blur" />
+        <feSpecularLighting result="spec" in="blur" specularExponent="100" specularConstant="0.1" lightingColor="white">
+          <fePointLight x=100 y=100 z="300" />
+        </feSpecularLighting>
+        <feComposite in="spec" in2="SourceGraphic" operator="screen" result="lit" />
+        <feComposite in="lit" in2="SourceAlpha" operator="in" />
+      </filter>
+
+      <filter id=pointLightFlipped>
+        <feGaussianBlur stdDeviation="10" result="blur" />
+        <feSpecularLighting result="spec" in="blur" specularExponent="100" specularConstant="0.7" lightingColor="white">
+          <fePointLight x=100 y=100 z="300" id="fePointLightFlipped" />
+        </feSpecularLighting>
+        <feComposite in="spec" in2="SourceGraphic" operator="screen" result="lit" />
+        <feComposite in="lit" in2="SourceAlpha" operator="in" />
+      </filter>
+
+      <filter id="dropShadow">
+        <feDropShadow dx="2" dy="4" stdDeviation="3" flood-color="black" flood-opacity="0.6" />
+      </filter>
+
+      <!-- STROKE EFFECT (1/2) -->
+      <!-- Uncomment the outerStroke filter to add a stroke effect -->
+      <!-- Set the stroke size by changing the radius value in feMorphology -->
+      <!-- For strokes to work, you need to update expandAndFill filter too -->
+
+      <!-- <filter id="outerStroke">
+                <feMorphology operator="dilate" radius="10" in="SourceAlpha" result="expanded" />
+                <feColorMatrix in="expanded" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1 0"
+                result="whiteExpanded" />
+                <feComposite operator="xor" in="whiteExpanded" in2="SourceAlpha" result="outerStroke" />
+                <feComposite operator="over" in="SourceGraphic" in2="outerStroke" />
+            </filter> -->
+
+      <filter id="expandAndFill">
+        <feOffset dx="0" dy="0" in="SourceAlpha" result="shape" />
+        <!-- STROKE EFFECT (2/2) -->
+        <!-- Uncomment the feMorphology filter to add a stroke effect -->
+        <!-- <feMorphology operator="dilate" radius="10" in="SourceAlpha" result="shape" /> -->
+
+        <feFlood flood-color="rgb(179, 179, 179)" result="flood" />
+        <feComposite operator="in" in="flood" in2="shape" />
+      </filter>
+    </defs>
+  </svg>
+
+  <style>
+
+  </style>
+
+  <main style="width: 100dvw; height: 100dvh; display: flex; justify-content: center; align-items: center;">
+    <div class="draggable">
+      <div class="sticker-container">
+
+        <div class="sticker-main">
+          <div class="sticker-lighting">
+            <img src="data:image/svg+xml,%3Csvg width='206' height='182' viewBox='0 0 206 182' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M161.727 42L162.582 42.0107C166.857 42.116 171.078 43.0092 175.033 44.6475C179.252 46.395 183.086 48.9555 186.315 52.1846C189.544 55.4136 192.105 59.2479 193.853 63.4668C195.6 67.6856 196.5 72.207 196.5 76.7734V122.922H179.407V139.984H133.259V139.983C128.691 139.984 124.168 139.087 119.947 137.34C115.727 135.592 111.892 133.03 108.662 129.8C105.432 126.57 102.871 122.735 101.123 118.515C99.3755 114.294 98.4765 109.771 98.4775 105.203V59.0625H115.578V42H161.727ZM34.3604 53.375L35.4111 54.7139L70.0625 98.8467V53.375H94.1172V123.768C94.1172 138.437 75.5934 144.84 66.5332 133.309V133.308L8.24707 59.082L7.5 58.1309V53.375H34.3604ZM139.562 115.922H172.445V83.0322L139.562 115.922ZM122.54 98.9072L155.385 66.0625H122.54V98.9072Z' fill='black' stroke='white' stroke-width='7' /%3E%3C/svg%3E" alt="v0 logo" class="sticker-image" draggable="false" oncontextmenu="return false" />
+          </div>
+        </div>
+
+        <div class="shadow">
+          <div class="flap">
+            <img src="data:image/svg+xml,%3Csvg width='206' height='182' viewBox='0 0 206 182' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M161.727 42L162.582 42.0107C166.857 42.116 171.078 43.0092 175.033 44.6475C179.252 46.395 183.086 48.9555 186.315 52.1846C189.544 55.4136 192.105 59.2479 193.853 63.4668C195.6 67.6856 196.5 72.207 196.5 76.7734V122.922H179.407V139.984H133.259V139.983C128.691 139.984 124.168 139.087 119.947 137.34C115.727 135.592 111.892 133.03 108.662 129.8C105.432 126.57 102.871 122.735 101.123 118.515C99.3755 114.294 98.4765 109.771 98.4775 105.203V59.0625H115.578V42H161.727ZM34.3604 53.375L35.4111 54.7139L70.0625 98.8467V53.375H94.1172V123.768C94.1172 138.437 75.5934 144.84 66.5332 133.309V133.308L8.24707 59.082L7.5 58.1309V53.375H34.3604ZM139.562 115.922H172.445V83.0322L139.562 115.922ZM122.54 98.9072L155.385 66.0625H122.54V98.9072Z' fill='black' stroke='white' stroke-width='7' /%3E%3C/svg%3E" alt="v0 logo" class="shadow-image" draggable="false" oncontextmenu="return false" />
+          </div>
+        </div>
+
+        <div class="flap">
+          <div class="flap-lighting">
+            <img src="data:image/svg+xml,%3Csvg width='206' height='182' viewBox='0 0 206 182' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M161.727 42L162.582 42.0107C166.857 42.116 171.078 43.0092 175.033 44.6475C179.252 46.395 183.086 48.9555 186.315 52.1846C189.544 55.4136 192.105 59.2479 193.853 63.4668C195.6 67.6856 196.5 72.207 196.5 76.7734V122.922H179.407V139.984H133.259V139.983C128.691 139.984 124.168 139.087 119.947 137.34C115.727 135.592 111.892 133.03 108.662 129.8C105.432 126.57 102.871 122.735 101.123 118.515C99.3755 114.294 98.4765 109.771 98.4775 105.203V59.0625H115.578V42H161.727ZM34.3604 53.375L35.4111 54.7139L70.0625 98.8467V53.375H94.1172V123.768C94.1172 138.437 75.5934 144.84 66.5332 133.309V133.308L8.24707 59.082L7.5 58.1309V53.375H34.3604ZM139.562 115.922H172.445V83.0322L139.562 115.922ZM122.54 98.9072L155.385 66.0625H122.54V98.9072Z' fill='black' stroke='white' stroke-width='7' /%3E%3C/svg%3E" alt="v0 logo" class="flap-image" draggable="false" oncontextmenu="return false" />
+          </div>
+        </div>
+
+      </div>
+    </div>
+</main>
