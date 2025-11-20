@@ -1,0 +1,108 @@
+/* Basic page setup */
+body, html {
+  margin: 0;                       /* Remove default margin */
+  padding: 0;                      /* Remove default padding */
+  overflow: hidden;                /* Prevent scrollbars */
+  height: 100%;                    /* Full height of viewport */
+  background-color: #111;          /* Dark background color */
+  display: flex;                   /* Use flexbox layout */
+  justify-content: center;         /* Center content horizontally */
+  align-items: center;             /* Center content vertically */
+  user-select: none;               /* Disable text selection */
+}
+
+/* Container that centers the entire slider vertically and horizontally */
+.slider-wrapper-container {
+  display: flex;                   /* Flex container */
+  justify-content: center;         /* Center horizontally */
+  align-items: center;             /* Center vertically */
+  height: 100vh;                   /* Full viewport height */
+  width: 100%;                    /* Full width */
+}
+
+/* Slider container centered and positioned relatively */
+.slider-container {
+  position: relative;              /* Changed from fixed to relative for better centering */
+  width: 100%;                    /* Full width */
+  overflow: hidden;               /* Hide anything outside container */
+  display: flex;                  /* Flex container to center slider */
+  justify-content: center;        /* Center horizontally */
+  align-items: center;            /* Center vertically */
+  height: 100vh;                  /* Full viewport height */
+}
+
+/* Horizontal track holding all slider items side-by-side */
+.slider {
+  display: flex;                  /* Arrange children horizontally */
+  margin-left: 0;                 /* Removed margin-left to avoid shifting */
+}
+
+/* Wrapper around each slider item, adds padding and border */
+.slider-wrapper {
+  padding: 30px 40px;             /* Padding inside wrapper */
+  border: 1px solid #444;         /* Border for visual separation */
+  box-sizing: border-box;         /* Include padding and border in size */
+  flex-shrink: 0;                 /* Prevent shrinking */
+  display: flex;                  /* Flex container */
+  align-items: center;            /* Center children vertically */
+  justify-content: center;        /* Center children horizontally */
+  margin-right: 20px;             /* Spacing between items */
+}
+
+/* The actual slider card content */
+.slider-item {
+  width: 360px;                   /* Fixed width */
+  height: 260px;                  /* Fixed height */
+  background-color: #222;         /* Dark background color */
+  color: white;                   /* Text color */
+  font-size: 48px;                /* Large font size */
+  display: flex;                  /* Flex container */
+  align-items: center;            /* Center content vertically */
+  justify-content: center;        /* Center content horizontally */
+  font-family: Arial, sans-serif; /* Font family */
+  cursor: default;                /* Default mouse cursor */
+  position: relative;             /* Context for absolute children */
+  overflow: hidden;               /* Hide overflow inside card */
+  transition: transform 0.3s ease; /* Smooth transform transitions */
+}
+
+/* Hover bubble element */
+.bubble {
+  position: absolute;             /* Positioned relative to slider-item */
+  top: 50%;                      /* Center vertically */
+  left: 50%;                     /* Center horizontally */
+  width: 0;                      /* Start with zero size */
+  height: 0;                     /* Start with zero size */
+  background-color: #FF2000;      /* Bright red bubble color */
+  border-radius: 50%;            /* Make bubble round */
+  transform: translate(-50%, -50%); /* Center bubble exactly */
+  pointer-events: none;          /* Don't interfere with mouse events */
+  opacity: 0;                    /* Start invisible */
+  display: flex;                 /* Flex container for text */
+  justify-content: center;       /* Center text horizontally */
+  align-items: center;           /* Center text vertically */
+  color: #ebebeb;                /* Light grey text */
+  font-family: Arial, sans-serif; /* Font family */
+  font-size: 12px;               /* Small font size */
+  transition: width 0.3s, height 0.3s, opacity 0.3s; /* Animate size and visibility */
+  z-index: 2;                   /* Above slider-item content */
+}
+
+/* Show the bubble on hover */
+.slider-item:hover .bubble {
+  opacity: 1;                    /* Make bubble visible */
+  width: 100px;                  /* Expand width */
+  height: 100px;                 /* Expand height */
+}
+
+/* Text inside the bubble scales up */
+.bubble span {
+  pointer-events: none;          /* Ignore mouse events on text */
+  transition: transform 0.3s, font-size 0.3s; /* Animate scale and size */
+}
+
+/* Scale up text on bubble hover */
+.slider-item:hover .bubble span {
+  transform: scale(1.2);         /* Slightly enlarge text */
+  font-size: 14px;               /* Increase font size */
+}
