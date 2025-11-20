@@ -215,7 +215,7 @@ canvas.webgl {
   animation: spin 2s linear infinite;
 }
 #loader:before {
-  content: "";
+  content: "q";
   position: absolute;
   top: 5px; left: 5px; right: 5px; bottom: 5px;
   border-radius: 50%;
@@ -224,7 +224,7 @@ canvas.webgl {
   animation: spin 3s linear infinite;
 }
 #loader:after {
-  content: "";
+  content: "q";
   position: absolute;
   top: 15px; left: 15px; right: 15px; bottom: 15px;
   border-radius: 50%;

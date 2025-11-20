@@ -441,3 +441,191 @@ gsap.to(split.chars, {
   stagger: 0.05,
   ease: "sine.inOut"
 });
+function setupFibonacciSpiral() {
+    const c = document.getElementById("anim9");
+    if (!c) return;
+    c.innerHTML = "";
+    const wrap = document.createElement("div");
+    wrap.className = "fibonacci-container";
+    c.appendChild(wrap);
+    const cd = document.createElement("div");
+    cd.className = "dot";
+    cd.style.width = cd.style.height = "6px";
+    cd.style.left = "calc(50% - 3px)";
+    cd.style.top = "calc(50% - 3px)";
+    cd.style.background = "rgba(255,255,255,0.9)";
+    wrap.appendChild(cd);
+    const golden = Math.PI * (3 - Math.sqrt(5)),
+      N = 100,
+      scale = 0.8;
+    for (let i = 0; i < N; i++) {
+      const angle = i * golden,
+        rad = scale * Math.sqrt(i) * 4;
+      const x = Math.cos(angle) * rad,
+        y = Math.sin(angle) * rad;
+      const sz = 3 - (i / N) * 1.5;
+      if (sz < 1) continue;
+      const d = document.createElement("div");
+      d.className = "fibonacci-dot";
+      d.style.width = d.style.height = `${sz}px`;
+      d.style.left = `calc(50% + ${x}px - ${sz / 2}px)`;
+      d.style.top = `calc(50% + ${y}px - ${sz / 2}px)`;
+      d.style.animationDelay = `${(i / N) * 3}s`;
+      d.style.background = `rgba(255,255,255,${(90 - (i / N) * 60) / 100})`;
+      wrap.appendChild(d);
+    }
+  }
+
+  function setupHalftoneGradient() {
+    const c = document.getElementById("anim10");
+    if (!c) return;
+    c.innerHTML = "";
+    const w = document.createElement("div");
+    w.className = "halftone-container";
+    c.appendChild(w);
+    const radii = [20, 40, 60, 80];
+    radii.forEach((radius, i) => {
+      const count = 12 + i * 8,
+        size = 6 - i;
+      for (let j = 0; j < count; j++) {
+        const d = document.createElement("div");
+        d.className = "halftone-dot";
+        d.style.width = d.style.height = `${size}px`;
+        const angle = (j / count) * 2 * Math.PI;
+        const x = Math.cos(angle) * radius,
+          y = Math.sin(angle) * radius;
+        d.style.left = `calc(50% + ${x}px - ${size / 2}px)`;
+        d.style.top = `calc(50% + ${y}px - ${size / 2}px)`;
+        d.style.animationDelay = `${(i * 0.3 + j / count).toFixed(2)}s`;
+        d.style.background = `rgba(255,255,255,${(90 - i * 15) / 100})`;
+        w.appendChild(d);
+      }
+    });
+  }
+
+  function setupSilverSpiral() {
+    const c = document.getElementById("anim11");
+    if (!c) return;
+    c.innerHTML = "";
+    const w = document.createElement("div");
+    w.className = "silver-container";
+    c.appendChild(w);
+    const N = 120,
+      angleStep = Math.PI * (2 - Math.sqrt(2)),
+      scale = 1.2;
+    for (let i = 0; i < N; i++) {
+      const angle = i * angleStep,
+        rad = scale * Math.sqrt(i) * 6;
+      const size = 4 - (i / N) * 2;
+      if (size < 1) continue;
+      const d = document.createElement("div");
+      d.className = "silver-dot";
+      d.style.width = d.style.height = `${size}px`;
+      d.style.left = `calc(50% + ${Math.cos(angle) * rad}px - ${size / 2}px)`;
+      d.style.top = `calc(50% + ${Math.sin(angle) * rad}px - ${size / 2}px)`;
+      d.style.animationDelay = `${(i / N) * 2}s`;
+      w.appendChild(d);
+    }
+  }
+
+  // 12. Sunflower Spiral (perfect SVG + SMIL)
+  function setupFibonacciConcentric() {
+    const c = document.getElementById("anim12");
+    if (!c) return;
+    c.innerHTML = "";
+    const N = 200;
+    const SIZE = 180;
+    const DOT_RADIUS = 2;
+    const MARGIN = 4;
+    const CENTER = SIZE / 2;
+    const MAX_RADIUS = CENTER - MARGIN - DOT_RADIUS;
+    const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5));
+    const DURATION = 3;
+    const svgNS = "http://www.w3.org/2000/svg";
+
+    const svg = document.createElementNS(svgNS, "svg");
+    svg.setAttribute("width", SIZE);
+    svg.setAttribute("height", SIZE);
+    svg.setAttribute("viewBox", `0 0 ${SIZE} ${SIZE}`);
+    c.appendChild(svg);
+
+    for (let i = 0; i < N; i++) {
+      const idx = i + 0.5;
+      const frac = idx / N;
+      const r = Math.sqrt(frac) * MAX_RADIUS;
+      const theta = idx * GOLDEN_ANGLE;
+      const x = CENTER + r * Math.cos(theta);
+      const y = CENTER + r * Math.sin(theta);
+
+      const circle = document.createElementNS(svgNS, "circle");
+      circle.setAttribute("cx", x);
+      circle.setAttribute("cy", y);
+      circle.setAttribute("r", DOT_RADIUS);
+      circle.setAttribute("fill", "#fff");
+      circle.setAttribute("opacity", "0.6");
+      svg.appendChild(circle);
+
+      // radius pulse
+      const animR = document.createElementNS(svgNS, "animate");
+      animR.setAttribute("attributeName", "r");
+      animR.setAttribute(
+        "values",
+        `${DOT_RADIUS * 0.5};${DOT_RADIUS * 1.5};${DOT_RADIUS * 0.5}`
+      );
+      animR.setAttribute("dur", `${DURATION}s`);
+      animR.setAttribute("begin", `${frac * DURATION}s`);
+      animR.setAttribute("repeatCount", "indefinite");
+      animR.setAttribute("calcMode", "spline");
+      animR.setAttribute("keySplines", "0.4 0 0.6 1;0.4 0 0.6 1");
+      circle.appendChild(animR);
+
+      // opacity pulse
+      const animO = document.createElementNS(svgNS, "animate");
+      animO.setAttribute("attributeName", "opacity");
+      animO.setAttribute("values", "0.3;1;0.3");
+      animO.setAttribute("dur", `${DURATION}s`);
+      animO.setAttribute("begin", `${frac * DURATION}s`);
+      animO.setAttribute("repeatCount", "indefinite");
+      animO.setAttribute("calcMode", "spline");
+      animO.setAttribute("keySplines", "0.4 0 0.6 1;0.4 0 0.6 1");
+      circle.appendChild(animO);
+    }
+  }
+
+  // Add corner decorations to all animation containers
+  function addCornerDecorations() {
+    document.querySelectorAll(".animation-container").forEach((container) => {
+      // Create corner SVG elements
+      const corners = ["top-left", "top-right", "bottom-left", "bottom-right"];
+
+      corners.forEach((position) => {
+        const corner = document.createElement("div");
+        corner.className = `corner ${position}`;
+
+        // Use the plus symbol SVG
+        const svg = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "svg"
+        );
+        svg.setAttribute("width", "16");
+        svg.setAttribute("height", "16");
+        svg.setAttribute("viewBox", "0 0 512 512");
+        svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+
+        // Create plus symbol polygon
+        const polygon = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "polygon"
+        );
+        polygon.setAttribute(
+          "points",
+          "448,224 288,224 288,64 224,64 224,224 64,224 64,288 224,288 224,448 288,448 288,288 448,288"
+        );
+        polygon.setAttribute("fill", "currentColor");
+
+        svg.appendChild(polygon);
+        corner.appendChild(svg);
+        container.appendChild(corner);
+      });
+    });
+  }

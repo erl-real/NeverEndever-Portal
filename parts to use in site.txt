@@ -1,0 +1,8 @@
+parts to use in site
+
+nav bar 
+draw this on almost everypage
+not done
+<link rel="stylesheet" href="/components/navbar/navbar.css">
+<script src="/components/navbar/navbar.js" defer></script>
+<div id="navbar-container"></div>

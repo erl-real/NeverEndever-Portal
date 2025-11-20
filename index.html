@@ -6,6 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="style.css">
 
+<div class="ripple-container">
+  <div class="ripple-ring"></div>
+  <div class="ripple-ring"></div>
+</div>
+
+
   <!-- Emerald Button Styles (kept inline as requested) -->
   <style>
     .emerald-button {
@@ -93,16 +99,14 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-  <!-- Three.js canvas -->
-  <canvas class="webgl"></canvas>
-
-  <!-- Preloader -->
-  <div id="preloader" style="display: block;">
-    <div class="loder-parent">
-      <div id="loader"></div>
-    </div>
-    <p class="loader-info-text">loading...</p>
+<canvas class="webgl"></canvas>
+    <div id="preloader" style="display: block;">
+        <!-- <div class="loder-parent">
+            <div id="loader"></div>
+        </div> -->
+        <!-- <p class="loader-text" id="loading-text">Loading</p> -->
   </div>
+
 
 <main>
   <header class="header">
@@ -159,27 +163,27 @@
 
     <!-- Media grid -->
     <section class="images-container">
-      <div class="img"><div class="img-main"><img src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/realisrareofnc.png" alt="real"></div></div>
-      <div class="img"><div class="img-main"><img src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/KXT.png" alt="kxtxxx"></div></div>
-      <div class="img"><div class="img-main"><img src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/fu2.png" alt="FU2"></div></div>
-      <div class="img"><div class="img-main"><img src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/chxrli3.png" alt="charlie"></div></div>
-      <div class="img"><div class="img-main"><img src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/cmplxcnt.png" alt="cmplxcnt"></div></div>
-      <div class="img"><div class="img-main"><img src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/zeek.png" alt="zeek"></div></div>
-      <div class="img"><div class="img-main"><img src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/swillow.png" alt="swillow"></div></div>
-      <div class="img"><div class="img-main"><img src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/boid.png" alt="who tf is betty boid"></div></div>
-      <div class="img"><div class="img-main"><img src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/beat%20tape%201.jpg" alt="tape"></div></div>
-      <div class="img"><div class="img-main"><img src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/10.png" alt="temp"></div></div>
-      <div class="img"><div class="img-main"><img src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/6.png" alt="temp"></div></div>
-      <div class="img"><div class="img-main"><img src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/9.png" alt="temp"></div></div>
-      <div class="img"><div class="img-main"><img src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/Sigil_Vol.1_-_EndEver_Art-Tape.png" alt="temp"></div></div>
-      <div class="img"><div class="img-main"><img src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/wdsss.png" alt="temp"></div></div>
+      <div class="img"><div class="img-main"><img loading="lazy" src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/realisrareofnc.png" alt="real"></div></div>
+      <div class="img"><div class="img-main"><img loading="lazy" src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/KXT.png" alt="kxtxxx"></div></div>
+      <div class="img"><div class="img-main"><img loading="lazy" src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/fu2.png" alt="FU2"></div></div>
+      <div class="img"><div class="img-main"><img loading="lazy" src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/chxrli3.png" alt="charlie"></div></div>
+      <div class="img"><div class="img-main"><img loading="lazy" src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/cmplxcnt.png" alt="cmplxcnt"></div></div>
+      <div class="img"><div class="img-main"><img loading="lazy" src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/zeek.png" alt="zeek"></div></div>
+      <div class="img"><div class="img-main"><img loading="lazy" src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/swillow.png" alt="swillow"></div></div>
+      <div class="img"><div class="img-main"><img loading="lazy" src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/boid.png" alt="who tf is betty boid"></div></div>
+      <div class="img"><div class="img-main"><img loading="lazy" src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/beat%20tape%201.jpg" alt="tape"></div></div>
+      <div class="img"><div class="img-main"><img loading="lazy" src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/10.png" alt="temp"></div></div>
+      <div class="img"><div class="img-main"><img loading="lazy" src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/6.png" alt="temp"></div></div>
+      <div class="img"><div class="img-main"><img loading="lazy" src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/9.png" alt="temp"></div></div>
+      <div class="img"><div class="img-main"><img loading="lazy" src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/Sigil_Vol.1_-_EndEver_Art-Tape.png" alt="temp"></div></div>
+      <div class="img"><div class="img-main"><img loading="lazy" src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/wdsss.png" alt="temp"></div></div>
     </section>
   </main>
 
   <!-- Three.js Scene -->
   <script type="module" src="scene.js"></script>
   <!-- Burn overlay shader -->
-  <script src="fire.js"></script>
+  <script src="ripple.js"></script>
 </body>
 <script>
   const toggleBtn = document.getElementById('menu-toggle');
@@ -194,6 +198,5 @@
       dropdown.classList.add('hidden');
     }
   });
-</script>
 
 </html>
