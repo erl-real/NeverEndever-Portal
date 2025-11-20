@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Artist Dashboard</title>
+  <link rel="stylesheet" href="dashboard.css"/>
+  <script defer src="dashboard.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet"/>
+</head>
+<body class="elo-bg">
+
+  <!-- Dashboard Wrapper -->
+  <div id="dashboard" class="dash-modal">
+    <!-- Header -->
+    <div class="dash-header">
+      <div class="dash-title font-poppins">
+        <i class="fas fa-sliders-h"></i> Artist Dashboard
+      </div>
+      <div class="dash-actions">
+        <button class="btn-icon" onclick="Dash.close()"><i class="fas fa-times"></i></button>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="dash-body">
+      <!-- Sidebar -->
+      <aside class="dash-sidebar">
+        <div class="dash-menu-item active" data-tab="overview"><i class="fas fa-chart-line mr-2"></i> Overview</div>
+        <div class="dash-menu-item" data-tab="profile"><i class="fas fa-user-edit mr-2"></i> Profile</div>
+        <div class="dash-menu-item" data-tab="widgets"><i class="fas fa-th-large mr-2"></i> Widgets</div>
+        <div class="dash-menu-item" data-tab="theme"><i class="fas fa-paint-brush mr-2"></i> Theme</div>
+        <div class="dash-menu-item" data-tab="layout"><i class="fas fa-object-group mr-2"></i> Layout</div>
+        <div class="dash-menu-item" data-tab="links"><i class="fas fa-link mr-2"></i> Links</div>
+        <div class="dash-menu-item" data-tab="media"><i class="fas fa-images mr-2"></i> Media</div>
+        <div class="dash-menu-item" data-tab="advanced"><i class="fas fa-cogs mr-2"></i> Advanced</div>
+      </aside>
+
+      <!-- Main Panel -->
+      <main class="dash-main">
+        <!-- Overview -->
+        <section id="tab-overview" class="dash-section active">
+          <h2 class="section-title">Performance Snapshot</h2>
+          <div class="stats-grid">
+            <div class="stat-box">
+              <div class="stat-label">Global Rank</div>
+              <div class="stat-value">–</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label">Average Score</div>
+              <div class="stat-value">–</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label">Profile Views</div>
+              <div class="stat-value">–</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Profile -->
+        <section id="tab-profile" class="dash-section hidden">
+          <h2 class="section-title">Edit Profile</h2>
+          <label class="form-label">Artist Name</label>
+          <input type="text" id="edit-name" class="form-input"/>
+          <label class="form-label">Handle</label>
+          <input type="text" id="edit-handle" class="form-input"/>
+          <label class="form-label">Bio</label>
+          <textarea id="edit-bio" class="form-input"></textarea>
+        </section>
+
+        <!-- Widgets -->
+        <section id="tab-widgets" class="dash-section hidden">
+          <h2 class="section-title">Widgets</h2>
+          <p>Configure Instagram, YouTube, Spotify, and more.</p>
+        </section>
+
+        <!-- Theme -->
+        <section id="tab-theme" class="dash-section hidden">
+          <h2 class="section-title">Theme Settings</h2>
+          <label class="form-label">Primary Color</label>
+          <input type="color" id="theme-primary" class="form-input"/>
+          <label class="form-label">Accent Color</label>
+          <input type="color" id="theme-accent" class="form-input"/>
+        </section>
+
+        <!-- Layout -->
+        <section id="tab-layout" class="dash-section hidden">
+          <h2 class="section-title">Layout Editor</h2>
+          <p>Drag and drop blocks to rearrange your profile layout.</p>
+        </section>
+
+        <!-- Links -->
+        <section id="tab-links" class="dash-section hidden">
+          <h2 class="section-title">External Links</h2>
+          <p>Add or edit links to socials, merch, booking, etc.</p>
+        </section>
+
+        <!-- Media -->
+        <section id="tab-media" class="dash-section hidden">
+          <h2 class="section-title">Media Manager</h2>
+          <p>Upload and manage photos, albums, and featured content.</p>
+        </section>
+
+        <!-- Advanced -->
+        <section id="tab-advanced" class="dash-section hidden">
+          <h2 class="section-title">Advanced Settings</h2>
+          <p>Auth, visibility rules, SEO tags, and more.</p>
+        </section>
+      </main>
+
+      <!-- Live Preview -->
+      <aside class="dash-preview">
+        <h2 class="section-title">Live Profile Preview</h2>
+        <iframe id="profilePreview" src="index.html" class="preview-frame"></iframe>
+      </aside>
+    </div>
+  </div>
+
+</body>
+</html>
