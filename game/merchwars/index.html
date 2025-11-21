@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>MerchWars — Playable Test</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    /* Simple, readable CSS — keep it minimal */
+    :root {
+      --bg: #0f1115;
+      --panel: #161922;
+      --text: #e6e9ef;
+      --muted: #aab0bd;
+      --accent: #7aa2f7;
+      --good: #79c0ff;
+      --bad: #ff7b72;
+      --ok: #8aff80;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; padding: 24px; background: var(--bg); color: var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+    }
+    header { margin-bottom: 16px; }
+    h1 { font-size: 24px; margin: 0 0 8px; }
+    .sub { color: var(--muted); font-size: 14px; }
+
+    .grid {
+      display: grid; gap: 16px;
+      grid-template-columns: 1fr 1fr;
+    }
+    @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid #1f2330;
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .stats { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+    .stat {
+      background: #121520; border: 1px solid #22283a; border-radius: 10px; padding: 8px 12px;
+      font-size: 14px;
+    }
+    .stat b { color: var(--accent); }
+
+    .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+
+    table {
+      width: 100%; border-collapse: collapse; margin-top: 8px;
+      font-size: 14px;
+    }
+    th, td { padding: 10px; border-bottom: 1px solid #22283a; }
+    th { text-align: left; color: var(--muted); font-weight: 600; }
+    td .price-high { color: var(--good); }
+    td .price-low  { color: var(--bad); }
+
+    input[type="number"], select {
+      background: #111422; border: 1px solid #20263a; color: var(--text);
+      border-radius: 8px; padding: 8px 10px; font-size: 14px; min-width: 100px;
+    }
+    button {
+      background: linear-gradient(180deg, #2a3350, #202742);
+      border: 1px solid #2e3a64; color: var(--text);
+      padding: 8px 12px; border-radius: 8px; font-weight: 600; cursor: pointer;
+    }
+    button:hover { filter: brightness(1.15); }
+    button.secondary {
+      background: #15192a; border-color: #263154; color: var(--muted);
+    }
+    .ok { color: var(--ok); }
+    .bad { color: var(--bad); }
+
+    .log {
+      background: #121520; border: 1px solid #22283a; border-radius: 8px;
+      padding: 10px; font-size: 13px; max-height: 200px; overflow: auto;
+    }
+    .log p { margin: 0 0 6px; }
+    .footer { margin-top: 16px; color: var(--muted); font-size: 12px; }
+    .pill {
+      padding: 2px 8px; border-radius: 999px; font-size: 12px; border: 1px solid #29324f;
+      background: #141828; color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>MerchWars — Artist Merch Economy (Playable Test)</h1>
+    <div class="sub">Buy low, sell high, dodge venue issues, and build your cash before the tour ends.</div>
+  </header>
+
+  <div class="grid">
+    <!-- Left: Market and Actions -->
+    <section class="card">
+      <div class="stats" id="statsBar"></div>
+
+      <div class="row">
+        <label>
+          <span class="pill">Location</span>
+          <select id="locationSelect"></select>
+        </label>
+        <button id="travelBtn">Travel</button>
+        <button id="endTurnBtn" class="secondary">End turn</button>
+      </div>
+
+      <table id="marketTable">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th style="width:220px;">Action</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <div class="footer">Tip: Prices vary by city and randomly each turn. Watch for event popups.</div>
+    </section>
+
+    <!-- Right: Inventory, Events, Log -->
+    <section class="card">
+      <h3 style="margin:0 0 8px;">Inventory</h3>
+      <table id="inventoryTable">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Units</th>
+            <th>Avg cost</th>
+            <th style="width:140px;">Sell</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <h3 style="margin:16px 0 8px;">Events</h3>
+      <div class="log" id="eventLog"></div>
+
+      <h3 style="margin:16px 0 8px;">Transaction log</h3>
+      <div class="log" id="txnLog"></div>
+    </section>
+  </div>
+
+  <script>
+    // --- Core Data -----------------------------------------------------------
+    const ITEMS = [
+      { key: 'tshirt',   name: 'T-Shirts',   baseRange: [10, 50]   },
+      { key: 'vinyl',    name: 'Vinyl',      baseRange: [20, 100]  },
+      { key: 'hoodie',   name: 'Hoodies',    baseRange: [30, 120]  },
+      { key: 'poster',   name: 'Posters',    baseRange: [5, 30]    },
+      { key: 'pin',      name: 'Pins',       baseRange: [2, 15]    },
+    ];
+
+    const LOCATIONS = [
+      { key: 'la',     name: 'Los Angeles',  modifiers: { tshirt: 1.0, vinyl: 1.1, hoodie: 1.0, poster: 0.95, pin: 1.0 } },
+      { key: 'nyc',    name: 'New York',     modifiers: { tshirt: 1.15, vinyl: 1.0, hoodie: 1.1, poster: 1.0,  pin: 0.9 } },
+      { key: 'chicago',name: 'Chicago',      modifiers: { tshirt: 0.95, vinyl: 0.9, hoodie: 1.05, poster: 1.1, pin: 1.0 } },
+      { key: 'austin', name: 'Austin',       modifiers: { tshirt: 1.0, vinyl: 1.2, hoodie: 0.95, poster: 1.0, pin: 1.05 } },
+    ];
+
+    const EVENTS = [
+      {
+        key: 'venueBan',
+        name: 'Venue ban',
+        chance: 0.08,
+        effect: (state) => {
+          const lost = 2;
+          state.turnsLeft = Math.max(0, state.turnsLeft - lost);
+          logEvent(`Venue shut your table down. Lost ${lost} turns.`);
+        }
+      },
+      {
+        key: 'shippingDelay',
+        name: 'Shipping delay',
+        chance: 0.10,
+        effect: (state) => {
+          state.canBuy = false;
+          logEvent('Shipping delays — buying disabled for this turn.');
+        }
+      },
+      {
+        key: 'counterfeitFlood',
+        name: 'Counterfeit flood',
+        chance: 0.06,
+        effect: (state) => {
+          // Drop prices sharply for one random item
+          const i = randInt(0, ITEMS.length - 1);
+          const item = ITEMS[i].key;
+          state.priceOverlays[item] = { type: 'drop', factor: 0.6, turns: 1 };
+          logEvent('Counterfeit merch hit the market — one item tanked in price.');
+        }
+      },
+      {
+        key: 'viralSpike',
+        name: 'Viral spike',
+        chance: 0.07,
+        effect: (state) => {
+          // Raise prices for a random item
+          const i = randInt(0, ITEMS.length - 1);
+          const item = ITEMS[i].key;
+          state.priceOverlays[item] = { type: 'spike', factor: 1.5, turns: 1 };
+          logEvent('Your new single went viral — demand spiked for one item.');
+        }
+      },
+    ];
+
+    // --- Game State ----------------------------------------------------------
+    const initialState = () => ({
+      cash: 500,
+      capacity: 20,
+      turnsLeft: 20,
+      location: 'la',
+
+      canBuy: true, // affected by events like shippingDelay
+      priceOverlays: {},
+
+      // inventory keyed by item: { units, avgCost }
+      inventory: Object.fromEntries(ITEMS.map(i => [i.key, { units: 0, avgCost: 0 }])),
+
+      // current market prices keyed by item
+      prices: {},
+    });
+
+    let state = initialState();
+
+    // --- Utility -------------------------------------------------------------
+    function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+    function randFloat(min, max) { return Math.random() * (max - min) + min; }
+
+    function formatMoney(n) { return `$${n.toFixed(2)}`; }
+    function totalUnits(inv) { return Object.values(inv).reduce((s, v) => s + v.units, 0); }
+
+    // --- Pricing -------------------------------------------------------------
+    function rollPrices() {
+      const loc = LOCATIONS.find(l => l.key === state.location);
+      state.prices = {};
+      ITEMS.forEach(item => {
+        const [low, high] = item.baseRange;
+        let base = randFloat(low, high);
+
+        // location modifier
+        const mod = loc.modifiers[item.key] ?? 1.0;
+        base *= mod;
+
+        // random daily volatility
+        base *= randFloat(0.85, 1.15);
+
+        // overlays from events (spike/drop)
+        const overlay = state.priceOverlays[item.key];
+        if (overlay) {
+          base *= overlay.factor;
+        }
+
+        state.prices[item.key] = Math.max(0.5, Math.round(base * 100) / 100);
+      });
+    }
+
+    function decayOverlays() {
+      for (const [key, overlay] of Object.entries(state.priceOverlays)) {
+        overlay.turns -= 1;
+        if (overlay.turns <= 0) delete state.priceOverlays[key];
+      }
+    }
+
+    // --- Events --------------------------------------------------------------
+    function maybeTriggerEvents() {
+      // Reset buy lock each turn; events may toggle it off
+      state.canBuy = true;
+
+      EVENTS.forEach(evt => {
+        if (Math.random() < evt.chance) {
+          evt.effect(state);
+        }
+      });
+    }
+
+    // --- Transactions --------------------------------------------------------
+    function buyItem(itemKey, qty) {
+      if (!state.canBuy) {
+        logTxn('Buying disabled this turn due to shipping delays.', 'bad');
+        return;
+      }
+      qty = Number(qty);
+      if (qty <= 0 || !Number.isFinite(qty)) return;
+
+      const price = state.prices[itemKey];
+      const cost = price * qty;
+      const currentUnits = totalUnits(state.inventory);
+      if (currentUnits + qty > state.capacity) {
+        logTxn('Not enough capacity.', 'bad');
+        return;
+      }
+      if (cost > state.cash) {
+        logTxn('Insufficient cash.', 'bad');
+        return;
+      }
+
+      // Update cash
+      state.cash -= cost;
+
+      // Update inventory average cost
+      const inv = state.inventory[itemKey];
+      const newUnits = inv.units + qty;
+      const totalCost = inv.avgCost * inv.units + cost;
+      inv.units = newUnits;
+      inv.avgCost = inv.units > 0 ? totalCost / inv.units : 0;
+
+      logTxn(`Bought ${qty} ${getItem(itemKey).name} at ${formatMoney(price)} each (${formatMoney(cost)}).`, 'ok');
+      render();
+    }
+
+    function sellItem(itemKey, qty) {
+      qty = Number(qty);
+      if (qty <= 0 || !Number.isFinite(qty)) return;
+
+      const price = state.prices[itemKey];
+      const inv = state.inventory[itemKey];
+      if (qty > inv.units) {
+        logTxn('Not enough units to sell.', 'bad');
+        return;
+      }
+
+      const revenue = price * qty;
+      state.cash += revenue;
+
+      inv.units -= qty;
+      // avgCost remains for remaining units; if zero, reset
+      if (inv.units === 0) inv.avgCost = 0;
+
+      const profit = revenue - (inv.avgCost * qty);
+      const profClass = profit >= 0 ? 'ok' : 'bad';
+      logTxn(`Sold ${qty} ${getItem(itemKey).name} at ${formatMoney(price)} each (${formatMoney(revenue)}). Profit: ${formatMoney(profit)}.`, profClass);
+      render();
+    }
+
+    // --- Turn / Travel -------------------------------------------------------
+    function endTurn() {
+      if (state.turnsLeft <= 0) return;
+      state.turnsLeft -= 1;
+      decayOverlays();
+      maybeTriggerEvents();
+      rollPrices();
+      render();
+
+      if (state.turnsLeft === 0) {
+        const netWorth = state.cash + estimateInventoryValue();
+        logEvent(`Tour ended. Net worth: ${formatMoney(netWorth)}. Sell-off value included.`);
+        alert(`Tour ended!\nNet worth: ${formatMoney(netWorth)}\nCash: ${formatMoney(state.cash)}\nSell-off value: ${formatMoney(estimateInventoryValue())}`);
+      }
+    }
+
+    function travelTo(newLocKey) {
+      if (state.location === newLocKey) return;
+      state.location = newLocKey;
+      // traveling consumes 1 turn but offers fresh prices
+      endTurn();
+      logEvent(`Traveled to ${getLocation(newLocKey).name}.`);
+      render();
+    }
+
+    function estimateInventoryValue() {
+      // value at current prices
+      let sum = 0;
+      for (const item of ITEMS) {
+        const inv = state.inventory[item.key];
+        const p = state.prices[item.key] ?? item.baseRange[0];
+        sum += inv.units * p;
+      }
+      return sum;
+    }
+
+    // --- Helpers -------------------------------------------------------------
+    function getItem(key) { return ITEMS.find(i => i.key === key); }
+    function getLocation(key) { return LOCATIONS.find(l => l.key === key); }
+
+    function logEvent(msg) {
+      const el = document.getElementById('eventLog');
+      const p = document.createElement('p');
+      p.textContent = msg;
+      el.prepend(p);
+    }
+
+    function logTxn(msg, type='') {
+      const el = document.getElementById('txnLog');
+      const p = document.createElement('p');
+      p.innerHTML = type ? `<span class="${type}">•</span> ${msg}` : msg;
+      el.prepend(p);
+    }
+
+    // --- Render --------------------------------------------------------------
+    function renderStats() {
+      const stats = document.getElementById('statsBar');
+      stats.innerHTML = '';
+
+      const pills = [
+        { label: 'Cash', val: formatMoney(state.cash) },
+        { label: 'Capacity', val: `${totalUnits(state.inventory)} / ${state.capacity}` },
+        { label: 'Turns', val: `${state.turnsLeft}` },
+        { label: 'City', val: getLocation(state.location).name },
+        { label: 'Buy', val: state.canBuy ? 'Enabled' : 'Disabled' },
+      ];
+
+      pills.forEach(p => {
+        const el = document.createElement('div');
+        el.className = 'stat';
+        el.innerHTML = `<b>${p.label}:</b> ${p.val}`;
+        stats.appendChild(el);
+      });
+    }
+
+    function renderLocations() {
+      const sel = document.getElementById('locationSelect');
+      sel.innerHTML = '';
+      LOCATIONS.forEach(loc => {
+        const opt = document.createElement('option');
+        opt.value = loc.key; opt.textContent = loc.name;
+        if (loc.key === state.location) opt.selected = true;
+        sel.appendChild(opt);
+      });
+    }
+
+    function renderMarket() {
+      const tbody = document.querySelector('#marketTable tbody');
+      tbody.innerHTML = '';
+
+      ITEMS.forEach(item => {
+        const tr = document.createElement('tr');
+
+        const price = state.prices[item.key];
+        const [low, high] = item.baseRange;
+        const colorClass = price >= (high * 0.9) ? 'price-high' : (price <= (low * 1.1) ? 'price-low' : '');
+
+        tr.innerHTML = `
+          <td>${item.name}</td>
+          <td><span class="${colorClass}">${formatMoney(price)}</span></td>
+          <td>${estimateStockDescriptor(item.key)}</td>
+          <td>
+            <div class="row">
+              <input type="number" min="1" step="1" value="1" id="buyQty_${item.key}" />
+              <button ${state.canBuy ? '' : 'disabled'} data-item="${item.key}" class="buyBtn">Buy</button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      // bind buy buttons
+      document.querySelectorAll('.buyBtn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const key = btn.getAttribute('data-item');
+          const qty = document.getElementById(`buyQty_${key}`).value;
+          buyItem(key, qty);
+        });
+      });
+    }
+
+    function estimateStockDescriptor(itemKey) {
+      // For flavor: pretend local availability affects negotiation power (visual only)
+      const p = state.prices[itemKey];
+      const [low, high] = getItem(itemKey).baseRange;
+      if (p < (low * 1.05)) return 'Overstocked';
+      if (p > (high * 0.95)) return 'Scarce';
+      return 'Normal';
+    }
+
+    function renderInventory() {
+      const tbody = document.querySelector('#inventoryTable tbody');
+      tbody.innerHTML = '';
+
+      ITEMS.forEach(item => {
+        const inv = state.inventory[item.key];
+        const tr = document.createElement('tr');
+
+        tr.innerHTML = `
+          <td>${item.name}</td>
+          <td>${inv.units}</td>
+          <td>${inv.units ? formatMoney(inv.avgCost) : '-'}</td>
+          <td>
+            <div class="row">
+              <input type="number" min="1" step="1" value="${inv.units ? 1 : 0}" id="sellQty_${item.key}" />
+              <button ${inv.units ? '' : 'disabled'} data-item="${item.key}" class="sellBtn">Sell</button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      // bind sell buttons
+      document.querySelectorAll('.sellBtn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const key = btn.getAttribute('data-item');
+          const qty = document.getElementById(`sellQty_${key}`).value;
+          sellItem(key, qty);
+        });
+      });
+    }
+
+    function render() {
+      renderStats();
+      renderLocations();
+      renderMarket();
+      renderInventory();
+    }
+
+    // --- Wiring --------------------------------------------------------------
+    document.getElementById('travelBtn').addEventListener('click', () => {
+      const dest = document.getElementById('locationSelect').value;
+      travelTo(dest);
+    });
+
+    document.getElementById('endTurnBtn').addEventListener('click', () => {
+      endTurn();
+    });
+
+    // --- Boot --------------------------------------------------------------
+    function boot() {
+      state = initialState();
+      rollPrices();
+      render();
+      logEvent('Tour started in Los Angeles with $500 cash and 20 turns.');
+    }
+
+    boot();
+  </script>
+</body>
+</html>
