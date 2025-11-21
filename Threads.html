@@ -1,0 +1,721 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Endever Community | Forums</title>
+    
+    <!-- LIBRARIES -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- THEME CONFIG --- */
+        :root {
+            --bg-app: #050505;
+            --bg-panel: #0f1016;
+            --bg-panel-light: #15161c;
+            --border: rgba(255, 255, 255, 0.1);
+            --accent-primary: #00f5d4; /* Cyan */
+            --accent-secondary: #9d4edd; /* Purple */
+            --accent-danger: #ff0033; /* Updated to Match AI Page Red */
+            --text-main: #f0f0f0; 
+            --text-muted: #9ca3af;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: linear-gradient(135deg, #020203 0%, #0a0a0e 100%);
+            color: var(--text-main); 
+            height: 100vh; width: 100vw;
+            overflow: hidden; display: flex; flex-direction: column;
+        }
+
+        /* --- HEADER --- */
+        header { 
+            height: 70px; padding: 0 30px; border-bottom: 1px solid var(--border); 
+            display: flex; align-items: center; justify-content: space-between;
+            background: rgba(5, 5, 8, 0.95); backdrop-filter: blur(10px); z-index: 50; flex-shrink: 0;
+        }
+        .brand { 
+            font-family: 'Poppins', sans-serif; font-size: 1.6rem; font-weight: 800; 
+            background: linear-gradient(to right, var(--accent-secondary), var(--accent-primary)); 
+            -webkit-background-clip: text; background-clip: text; color: transparent; cursor: pointer;
+            display: flex; align-items: center; gap: 10px;
+        }
+        
+        /* --- FORUM LAYOUT --- */
+        .forum-container {
+            flex: 1; overflow-y: auto; padding: 30px; max-width: 1400px; margin: 0 auto; width: 100%;
+        }
+
+        /* BREADCRUMBS */
+        .breadcrumbs {
+            display: flex; align-items: center; gap: 10px; margin-bottom: 20px;
+            font-size: 0.9rem; color: var(--text-muted);
+        }
+        .crumb { cursor: pointer; transition: 0.2s; }
+        .crumb:hover { color: var(--accent-primary); }
+        .crumb.active { color: white; font-weight: 600; cursor: default; }
+        .crumb-sep { color: var(--border); }
+
+        /* VBULLETIN STYLE CATEGORY BLOCK */
+        .forum-block {
+            background: var(--bg-panel); border: 1px solid var(--border);
+            border-radius: 8px; overflow: hidden; margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .block-head {
+            background: linear-gradient(90deg, rgba(157,77,221,0.1), rgba(0,245,212,0.05));
+            padding: 15px 20px; border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .block-title { font-family: 'Poppins'; font-weight: 700; font-size: 1.1rem; color: white; text-transform: uppercase; letter-spacing: 1px; }
+        
+        /* TABLE STYLES */
+        .forum-table { width: 100%; border-collapse: collapse; }
+        .forum-table th { text-align: left; padding: 10px 20px; background: rgba(0,0,0,0.3); color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; }
+        .forum-table td { padding: 15px 20px; border-bottom: 1px solid rgba(255,255,255,0.03); vertical-align: middle; position: relative; }
+        .forum-table tr:last-child td { border-bottom: none; }
+        .forum-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+        /* ICONS & STATUS */
+        .f-icon { font-size: 1.5rem; color: var(--text-muted); opacity: 0.5; width: 40px; text-align: center; }
+        .f-icon.unread { color: var(--accent-primary); opacity: 1; text-shadow: 0 0 10px var(--accent-primary); }
+        
+        /* TEXT STYLES */
+        .f-title { font-weight: 700; font-size: 1rem; color: var(--text-main); display: block; text-decoration: none; transition: 0.2s; cursor: pointer; }
+        .f-title:hover { color: var(--accent-primary); }
+        .f-desc { font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; }
+        .f-meta { font-size: 0.8rem; color: var(--text-muted); }
+        .f-stat { font-family: 'JetBrains Mono'; font-size: 1.1rem; font-weight: 700; color: white; }
+        
+        /* VBULLETIN POST BIT */
+        .thread-view { display: flex; flex-direction: column; gap: 15px; }
+        
+        .post-container {
+            background: var(--bg-panel); border: 1px solid var(--border);
+            border-radius: 8px; display: flex; overflow: hidden; min-height: 200px;
+            position: relative;
+        }
+        .post-userbit {
+            width: 220px; background: rgba(0,0,0,0.2); border-right: 1px solid var(--border);
+            padding: 20px; display: flex; flex-direction: column; align-items: center; text-align: center;
+            flex-shrink: 0;
+        }
+        .post-content-area { flex: 1; display: flex; flex-direction: column; }
+        .post-head { 
+            padding: 10px 20px; border-bottom: 1px solid rgba(255,255,255,0.03); 
+            display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-muted); 
+        }
+        .post-body { padding: 25px; font-size: 0.95rem; line-height: 1.6; color: #ddd; flex: 1; }
+        .post-foot { 
+            padding: 15px 20px; border-top: 1px solid rgba(255,255,255,0.03); 
+            background: rgba(0,0,0,0.1); display: flex; justify-content: flex-end; gap: 10px; 
+        }
+
+        /* USERBIT STYLING */
+        .ub-avatar {
+            width: 80px; height: 80px; border-radius: 50%; background: #222; 
+            border: 2px solid var(--accent-primary); margin-bottom: 15px;
+            background-size: cover; background-position: center;
+            box-shadow: 0 0 15px rgba(0, 245, 212, 0.2);
+        }
+        .ub-name { font-weight: 700; font-size: 1.1rem; color: white; margin-bottom: 5px; cursor: pointer; }
+        .ub-role { 
+            padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; text-transform: uppercase; font-weight: 700; 
+            background: var(--accent-secondary); color: white; margin-bottom: 15px;
+        }
+        .ub-stat { font-size: 0.75rem; color: var(--text-muted); width: 100%; display: flex; justify-content: space-between; margin-bottom: 3px; }
+
+        /* BUTTONS & INPUTS */
+        .btn-primary {
+            background: var(--accent-primary); color: black; font-weight: 700;
+            padding: 10px 25px; border-radius: 6px; cursor: pointer; transition: 0.2s;
+            border: none; font-family: 'Inter'; display: inline-flex; align-items: center; gap: 8px;
+        }
+        .btn-primary:hover { filter: brightness(1.1); box-shadow: 0 0 15px rgba(0,245,212,0.4); }
+        
+        .btn-ghost {
+            background: transparent; border: 1px solid var(--border); color: var(--text-muted);
+            padding: 6px 15px; border-radius: 4px; cursor: pointer; transition: 0.2s; font-size: 0.8rem;
+        }
+        .btn-ghost:hover { border-color: white; color: white; }
+
+        .btn-admin {
+            width: 100%; padding: 15px; border: none; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 1px; cursor: pointer;
+            transition: 0.2s; background: var(--accent-danger); color: white;
+            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+        }
+        .btn-admin:hover { filter: brightness(1.1); transform: translateY(-2px); }
+
+        .editor-box {
+            width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border);
+            border-radius: 6px; padding: 15px; color: white; font-family: 'Inter';
+            min-height: 150px; resize: vertical; margin-bottom: 15px;
+        }
+        .editor-box:focus { border-color: var(--accent-primary); }
+
+        /* ADMIN DELETE BTN */
+        .admin-delete-btn {
+            color: var(--accent-danger); background: rgba(255, 71, 87, 0.1);
+            border: 1px solid var(--accent-danger); padding: 4px 8px; border-radius: 4px;
+            cursor: pointer; font-size: 0.7rem; display: none; /* Hidden by default */
+        }
+        .admin-delete-btn:hover { background: var(--accent-danger); color: white; }
+        .admin-mode .admin-delete-btn { display: inline-block; }
+
+        /* TAGS & BADGES */
+        .tag-sticky { color: var(--accent-secondary); font-size: 0.7rem; font-weight: 700; border: 1px solid var(--accent-secondary); padding: 2px 6px; border-radius: 4px; margin-right: 5px; }
+        .tag-new { color: var(--accent-primary); font-weight: 700; font-size: 0.7rem; margin-right: 5px; }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .post-container { flex-direction: column; }
+            .post-userbit { width: 100%; border-right: none; border-bottom: 1px solid var(--border); flex-direction: row; text-align: left; padding: 10px; justify-content: space-between; }
+            .ub-avatar { width: 40px; height: 40px; margin-bottom: 0; margin-right: 10px; }
+            .ub-stats-group { display: none; }
+            .ub-name { margin-bottom: 0; font-size: 1rem; }
+            .ub-role { margin-bottom: 0; margin-left: 10px; }
+            .forum-table th:nth-child(2), .forum-table td:nth-child(2),
+            .forum-table th:nth-child(3), .forum-table td:nth-child(3) { display: none; } 
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 100;
+            display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px);
+        }
+        .modal-box {
+            background: var(--bg-panel); border: 1px solid var(--border); width: 600px; max-width: 95vw;
+            border-radius: 12px; padding: 30px; display: flex; flex-direction: column; gap: 15px;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+        }
+
+        /* ADMIN BOX STYLE (Specific match to AI Page) */
+        .admin-box-style {
+            background: var(--bg-panel); 
+            border: 1px solid var(--accent-danger);
+            padding: 40px; 
+            width: 400px; 
+            text-align: center; 
+            position: relative;
+            box-shadow: 0 0 50px rgba(255, 0, 51, 0.2);
+        }
+
+        /* FOOTER ADMIN */
+        footer {
+            padding: 20px; border-top: 1px solid var(--border); font-size: 0.8rem; color: var(--text-muted);
+            text-align: center; background: var(--bg-panel); margin-top: auto;
+        }
+        .admin-trigger { cursor: pointer; color: #333; transition: 0.2s; }
+        .admin-trigger:hover { color: var(--accent-danger); }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="brand" onclick="window.location.href='ELO.html'">
+            <i class="fas fa-star" style="color: var(--accent-primary);"></i>
+            Endever Live <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 400;">// COMMUNITY</span>
+        </div>
+        <div style="display: flex; gap: 15px; align-items: center;">
+            <button class="btn-ghost" onclick="window.location.href='ELO.html'">
+                <i class="fas fa-arrow-left"></i> Dashboard
+            </button>
+            <div id="user-badge" style="display: flex; align-items: center; gap: 10px;">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+    </header>
+
+    <div class="forum-container" id="main-view">
+        <!-- Dynamic Content Loads Here -->
+    </div>
+
+    <footer>
+        &copy; 2025 Endever Live Platform. All rights reserved. <br>
+        <span class="admin-trigger" onclick="App.openAdminLogin()"><i class="fas fa-lock"></i> Admin Access</span>
+    </footer>
+
+    <!-- CREATE THREAD MODAL -->
+    <div id="modal-create-thread" class="modal-overlay">
+        <div class="modal-box">
+            <h2 style="font-family: 'Poppins'; color: white; font-size: 1.5rem;">Start New Discussion</h2>
+            <input type="text" id="new-thread-title" placeholder="Thread Title" 
+                style="width: 100%; padding: 12px; background: #050505; border: 1px solid var(--border); color: white; border-radius: 6px;">
+            <textarea id="new-thread-content" class="editor-box" placeholder="Write your post content here..."></textarea>
+            <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                <button class="btn-ghost" onclick="App.closeModal('modal-create-thread')">Cancel</button>
+                <button class="btn-primary" onclick="App.submitThread()">Post Thread</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADMIN LOGIN MODAL (MATCHING AI JUDGE PAGE) -->
+    <div id="modal-admin-login" class="modal-overlay">
+        <div class="admin-box-style">
+            <h3 style="color:var(--accent-danger); margin-top:0; font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 1.5rem; letter-spacing: 1px;">RESTRICTED ACCESS</h3>
+            <p style="color:#888; font-size:0.8rem; margin-bottom: 20px;">Enter Developer Authorization Code</p>
+            
+            <input type="password" id="admin-pass" placeholder="Code" 
+                style="width: 100%; padding: 12px; background: black; border: 1px solid var(--accent-danger); color: white; margin-bottom: 15px; font-family: inherit; text-align: center;">
+            
+            <button class="btn-admin" onclick="App.verifyAdmin()">AUTHENTICATE</button>
+            
+            <button class="btn-ghost" onclick="App.closeModal('modal-admin-login')" style="margin-top:10px; border-color: transparent;">CANCEL</button>
+        </div>
+    </div>
+
+    <!-- LOGIN MODAL -->
+    <div id="modal-user-login" class="modal-overlay">
+        <div class="modal-box" style="width: 400px;">
+            <h2 style="font-family: 'Poppins'; color: white; font-size: 1.5rem; text-align: center;">Member Login</h2>
+            <p style="text-align: center; color: var(--text-muted);">Join the conversation.</p>
+            <input type="text" id="login-username" placeholder="Username" 
+                style="width: 100%; padding: 12px; background: #050505; border: 1px solid var(--border); color: white; border-radius: 6px; margin-bottom: 10px;">
+            <button class="btn-primary" style="width: 100%; justify-content: center;" onclick="App.loginUser()">Log In / Sign Up</button>
+            <button class="btn-ghost" style="width: 100%; margin-top: 10px;" onclick="App.closeModal('modal-user-login')">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        /* --- MOCK DATA GENERATOR (Runs if DB is empty) --- */
+        const SEED_DATA = {
+            categories: [
+                { id: 1, title: "Official Information", icon: "fa-bullhorn" },
+                { id: 2, title: "General Discussion", icon: "fa-comments" },
+                { id: 3, title: "Music Production", icon: "fa-sliders-h" },
+                { id: 4, title: "Feedback & Reviews", icon: "fa-headphones" }
+            ],
+            forums: [
+                { id: 1, catId: 1, title: "Announcements", desc: "News and updates from the Endever team.", threads: 5, posts: 12 },
+                { id: 2, catId: 1, title: "Rules & Guidelines", desc: "Please read before posting.", threads: 1, posts: 1 },
+                { id: 3, catId: 2, title: "The Lounge", desc: "Talk about anything.", threads: 124, posts: 5402 },
+                { id: 4, catId: 3, title: "Feedback Exchange", desc: "Post your tracks for community feedback.", threads: 89, posts: 412 },
+                { id: 5, catId: 3, title: "VSTs & Plugins", desc: "Discuss your favorite tools.", threads: 45, posts: 300 }
+            ],
+            threads: [
+                { id: 101, forumId: 1, title: "Welcome to the new Endever Forums!", author: "Admin", authorRole: "Admin", date: Date.now() - 10000000, views: 1200, sticky: true },
+                { id: 102, forumId: 3, title: "What's everyone working on?", author: "NeonGhost", authorRole: "Artist", date: Date.now() - 500000, views: 45, sticky: false },
+                { id: 103, forumId: 4, title: "Need mixing advice on this Trap beat", author: "BeatMaker99", authorRole: "User", date: Date.now() - 200000, views: 12, sticky: false }
+            ],
+            posts: [
+                { id: 1001, threadId: 101, author: "Admin", authorRole: "Admin", content: "Welcome to the new community hub. Be respectful and keep creating!", date: Date.now() - 10000000 },
+                { id: 1002, threadId: 102, author: "NeonGhost", authorRole: "Artist", content: "I'm currently working on a Cyberpunk themed EP. What about you guys?", date: Date.now() - 500000 },
+                { id: 1003, threadId: 102, author: "SynthWaveLover", authorRole: "User", content: "Just finished a Lo-Fi track. Struggling with the snare though.", date: Date.now() - 400000 },
+                { id: 1004, threadId: 103, author: "BeatMaker99", authorRole: "User", content: "The 808 clashes with my kick. Any tips on sidechaining in FL?", date: Date.now() - 200000 }
+            ]
+        };
+
+        /* --- APP LOGIC --- */
+        const App = {
+            data: {},
+            user: null,
+            isAdmin: false,
+            currentView: 'home',
+            currentForumId: null,
+            currentThreadId: null,
+
+            init: () => {
+                // 1. Load User from ELO.html localStorage
+                const userStr = localStorage.getItem('endever_user');
+                if (userStr) {
+                    App.user = JSON.parse(userStr);
+                }
+                App.renderUserHeader();
+
+                // 2. Load Forum Data
+                const dbStr = localStorage.getItem('endever_forum_db');
+                if (dbStr) {
+                    App.data = JSON.parse(dbStr);
+                } else {
+                    App.data = SEED_DATA;
+                    App.saveDB();
+                }
+
+                // 3. Render Home
+                App.renderHome();
+            },
+
+            saveDB: () => {
+                localStorage.setItem('endever_forum_db', JSON.stringify(App.data));
+            },
+
+            /* --- AUTHENTICATION --- */
+            renderUserHeader: () => {
+                const u = App.user;
+                const container = document.getElementById('user-badge');
+                
+                if (u) {
+                    container.innerHTML = `
+                        <div style="text-align:right; line-height:1.2;">
+                            <div style="font-weight:700; color:white;">${u.name}</div>
+                            <div style="font-size:0.7rem; color:var(--accent-secondary); text-transform:uppercase;">${u.role || 'User'}</div>
+                        </div>
+                        <div style="width:35px; height:35px; background: linear-gradient(45deg, #333, #555); border-radius:50%; border:1px solid var(--accent-primary);"></div>
+                    `;
+                } else {
+                    container.innerHTML = `<button class="btn-primary" style="padding: 5px 15px; font-size: 0.8rem;" onclick="App.openUserLogin()">Login / Sign Up</button>`;
+                }
+            },
+
+            openUserLogin: () => document.getElementById('modal-user-login').style.display = 'flex',
+            
+            loginUser: () => {
+                const name = document.getElementById('login-username').value.trim();
+                if(!name) return alert("Please enter a username.");
+                
+                // Create basic user object
+                const newUser = { name: name, role: 'User', credits: 0 };
+                localStorage.setItem('endever_user', JSON.stringify(newUser));
+                App.user = newUser;
+                
+                App.renderUserHeader();
+                App.closeModal('modal-user-login');
+                
+                // Refresh view to show post buttons
+                if(App.currentView === 'forum') App.renderForum(App.currentForumId);
+                if(App.currentView === 'thread') App.renderThread(App.currentThreadId);
+            },
+
+            /* --- ADMIN --- */
+            openAdminLogin: () => document.getElementById('modal-admin-login').style.display = 'flex',
+            
+            verifyAdmin: () => {
+                const pass = document.getElementById('admin-pass').value;
+                if(pass === "EndeverDev2025!") {
+                    App.isAdmin = true;
+                    document.body.classList.add('admin-mode');
+                    App.closeModal('modal-admin-login');
+                    alert("ADMIN ACCESS GRANTED. Moderation tools enabled.");
+                    
+                    // Refresh current view to show delete buttons
+                    if(App.currentView === 'forum') App.renderForum(App.currentForumId);
+                    if(App.currentView === 'thread') App.renderThread(App.currentThreadId);
+                } else {
+                    alert("INVALID AUTHORIZATION CODE");
+                }
+            },
+
+            deleteThread: (id) => {
+                if(!confirm("ADMIN: Delete this thread? This cannot be undone.")) return;
+                
+                // Remove posts associated with thread
+                App.data.posts = App.data.posts.filter(p => p.threadId !== id);
+                // Remove thread
+                App.data.threads = App.data.threads.filter(t => t.id !== id);
+                
+                App.saveDB();
+                alert("Thread deleted.");
+                App.renderForum(App.currentForumId);
+            },
+
+            deletePost: (id) => {
+                if(!confirm("ADMIN: Delete this post?")) return;
+                
+                App.data.posts = App.data.posts.filter(p => p.id !== id);
+                App.saveDB();
+                App.renderThread(App.currentThreadId);
+            },
+
+            /* --- RENDERERS --- */
+            renderBreadcrumbs: (items) => {
+                let html = `<div class="breadcrumbs"><div class="crumb" onclick="App.renderHome()"><i class="fas fa-home"></i></div>`;
+                items.forEach(item => {
+                    html += `<div class="crumb-sep">/</div>`;
+                    if (item.action) {
+                        html += `<div class="crumb" onclick="${item.action}">${item.label}</div>`;
+                    } else {
+                        html += `<div class="crumb active">${item.label}</div>`;
+                    }
+                });
+                html += `</div>`;
+                return html;
+            },
+
+            // 1. HOME VIEW
+            renderHome: () => {
+                App.currentView = 'home';
+                const container = document.getElementById('main-view');
+                let html = App.renderBreadcrumbs([{ label: "Index" }]);
+
+                App.data.categories.forEach(cat => {
+                    html += `
+                    <div class="forum-block">
+                        <div class="block-head">
+                            <span class="block-title">${cat.title}</span>
+                            <i class="fas ${cat.icon} style="color:var(--accent-secondary)"></i>
+                        </div>
+                        <table class="forum-table">
+                            <thead>
+                                <tr>
+                                    <th width="5%"></th>
+                                    <th width="55%">Forum</th>
+                                    <th width="15%" style="text-align:center">Stats</th>
+                                    <th width="25%">Last Post</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                    `;
+
+                    const catForums = App.data.forums.filter(f => f.catId === cat.id);
+                    catForums.forEach(f => {
+                        const lastThread = App.data.threads.filter(t => t.forumId === f.id).sort((a,b) => b.date - a.date)[0];
+                        
+                        html += `
+                            <tr>
+                                <td><div class="f-icon unread"><i class="fas fa-comments"></i></div></td>
+                                <td>
+                                    <a class="f-title" onclick="App.renderForum(${f.id})">${f.title}</a>
+                                    <div class="f-desc">${f.desc}</div>
+                                </td>
+                                <td style="text-align:center">
+                                    <div class="f-stat">${f.threads}</div>
+                                    <div class="f-meta">Threads</div>
+                                </td>
+                                <td>
+                                    ${lastThread ? `
+                                        <div style="font-size:0.85rem; font-weight:600; color:white; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:200px;">${lastThread.title}</div>
+                                        <div class="f-meta">by <span style="color:var(--accent-primary)">${lastThread.author}</span></div>
+                                        <div class="f-meta">${moment(lastThread.date).fromNow()}</div>
+                                    ` : '<span class="f-meta">No posts yet</span>'}
+                                </td>
+                            </tr>
+                        `;
+                    });
+
+                    html += `</tbody></table></div>`;
+                });
+
+                container.innerHTML = html;
+            },
+
+            // 2. FORUM VIEW
+            renderForum: (forumId) => {
+                App.currentView = 'forum';
+                App.currentForumId = forumId;
+                
+                const forum = App.data.forums.find(f => f.id === forumId);
+                const threads = App.data.threads.filter(t => t.forumId === forumId).sort((a,b) => b.date - a.date);
+                const container = document.getElementById('main-view');
+                
+                let html = App.renderBreadcrumbs([
+                    { label: "Forums", action: "App.renderHome()" },
+                    { label: forum.title }
+                ]);
+
+                html += `
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                        <h1 style="font-family:'Poppins'; font-weight:700; font-size:1.8rem; color:white;">${forum.title}</h1>
+                        ${App.user ? `<button class="btn-primary" onclick="App.openCreateThread()"><i class="fas fa-plus"></i> New Thread</button>` : ''}
+                    </div>
+                    
+                    <div class="forum-block">
+                         <table class="forum-table">
+                            <thead>
+                                <tr>
+                                    <th width="60%">Thread</th>
+                                    <th width="15%" style="text-align:center">Author</th>
+                                    <th width="10%" style="text-align:center">Replies</th>
+                                    <th width="15%" style="text-align:right">Last Activity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+
+                if (threads.length === 0) {
+                    html += `<tr><td colspan="4" style="text-align:center; padding:40px; color:var(--text-muted);">No threads in this forum yet. Be the first!</td></tr>`;
+                } else {
+                    threads.forEach(t => {
+                        const replyCount = App.data.posts.filter(p => p.threadId === t.id).length - 1;
+                        html += `
+                            <tr>
+                                <td>
+                                    ${t.sticky ? '<span class="tag-sticky">STICKY</span>' : ''}
+                                    <a class="f-title" onclick="App.renderThread(${t.id})" style="font-size:1.1rem;">${t.title}</a>
+                                    <button class="admin-delete-btn" onclick="event.stopPropagation(); App.deleteThread(${t.id})"><i class="fas fa-trash"></i></button>
+                                    <div class="f-meta">Started ${moment(t.date).format('MMM Do YYYY')}</div>
+                                </td>
+                                <td style="text-align:center">
+                                    <span style="color:var(--text-main); font-weight:600;">${t.author}</span>
+                                    <div style="font-size:0.7rem; color:var(--accent-secondary);">${t.authorRole}</div>
+                                </td>
+                                <td style="text-align:center">
+                                    <div class="f-stat">${Math.max(0, replyCount)}</div>
+                                </td>
+                                <td style="text-align:right">
+                                    <div class="f-meta">${moment(t.date).fromNow()}</div>
+                                    <div class="f-meta" style="color:var(--text-muted);">by ${t.author}</div>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                }
+
+                html += `</tbody></table></div>`;
+                container.innerHTML = html;
+            },
+
+            // 3. THREAD VIEW
+            renderThread: (threadId) => {
+                App.currentView = 'thread';
+                App.currentThreadId = threadId;
+                
+                const thread = App.data.threads.find(t => t.id === threadId);
+                const forum = App.data.forums.find(f => f.id === thread.forumId);
+                const posts = App.data.posts.filter(p => p.threadId === threadId).sort((a,b) => a.date - b.date);
+                
+                const container = document.getElementById('main-view');
+                
+                let html = App.renderBreadcrumbs([
+                    { label: "Forums", action: "App.renderHome()" },
+                    { label: forum.title, action: `App.renderForum(${forum.id})` },
+                    { label: thread.title }
+                ]);
+
+                html += `
+                    <div style="margin-bottom:20px;">
+                        <h1 style="font-family:'Poppins'; font-weight:700; font-size:1.8rem; color:white; margin-bottom:5px;">${thread.title}</h1>
+                        <div class="f-meta"><i class="fas fa-tag"></i> Posted in ${forum.title}</div>
+                    </div>
+                    <div class="thread-view">
+                `;
+
+                posts.forEach((p, index) => {
+                    html += `
+                        <div class="post-container" id="post-${p.id}">
+                            <div class="post-userbit">
+                                <div class="ub-avatar" style="background-image: url('https://ui-avatars.com/api/?name=${p.author}&background=random&color=fff')"></div>
+                                <div class="ub-name">${p.author}</div>
+                                <div class="ub-role">${p.authorRole}</div>
+                                
+                                <div class="ub-stats-group" style="width:100%; margin-top:10px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.1);">
+                                    <div class="ub-stat"><span>Posts:</span> <span style="color:var(--accent-primary)">102</span></div>
+                                    <div class="ub-stat"><span>Aura:</span> <span style="color:var(--accent-secondary)">500</span></div>
+                                    <div class="ub-stat"><span>Joined:</span> <span>2023</span></div>
+                                </div>
+                            </div>
+                            <div class="post-content-area">
+                                <div class="post-head">
+                                    <span>${moment(p.date).format('MMMM Do YYYY, h:mm a')}</span>
+                                    <span>
+                                        #${index + 1} 
+                                        <button class="admin-delete-btn" onclick="App.deletePost(${p.id})" style="margin-left:10px;"><i class="fas fa-trash"></i></button>
+                                    </span>
+                                </div>
+                                <div class="post-body">
+                                    ${p.content.replace(/\n/g, '<br>')}
+                                </div>
+                                <div class="post-foot">
+                                    <button class="btn-ghost"><i class="fas fa-heart"></i> Like</button>
+                                    <button class="btn-ghost" onclick="App.quotePost('${p.author}', '${p.content.replace(/'/g, "\\'")}')"><i class="fas fa-quote-right"></i> Quote</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += `</div>`; // End thread-view
+
+                // Quick Reply Box
+                if (App.user) {
+                    html += `
+                        <div class="forum-block" style="margin-top:30px; padding:20px;">
+                            <h3 style="color:white; margin-bottom:10px;">Quick Reply</h3>
+                            <textarea id="reply-content" class="editor-box" placeholder="Type your reply here..."></textarea>
+                            <button class="btn-primary" onclick="App.submitReply()">Post Reply</button>
+                        </div>
+                    `;
+                } else {
+                    html += `<div style="margin-top:30px; padding:20px; background:rgba(255,0,0,0.1); border:1px solid var(--accent-danger); text-align:center; border-radius:8px;">
+                        You must be logged in to reply.
+                    </div>`;
+                }
+
+                container.innerHTML = html;
+            },
+
+            /* --- ACTIONS --- */
+
+            openCreateThread: () => document.getElementById('modal-create-thread').style.display = 'flex',
+            closeModal: (id) => document.getElementById(id).style.display = 'none',
+
+            submitThread: () => {
+                const title = document.getElementById('new-thread-title').value;
+                const content = document.getElementById('new-thread-content').value;
+                if (!title || !content) return alert("Please fill in all fields.");
+
+                const newThreadId = Date.now();
+                const newThread = {
+                    id: newThreadId,
+                    forumId: App.currentForumId,
+                    title: title,
+                    author: App.user.name,
+                    authorRole: App.user.role || "User",
+                    date: Date.now(),
+                    views: 0,
+                    sticky: false
+                };
+                const newPost = {
+                    id: Date.now() + 1,
+                    threadId: newThreadId,
+                    author: App.user.name,
+                    authorRole: App.user.role || "User",
+                    content: content,
+                    date: Date.now()
+                };
+
+                App.data.threads.unshift(newThread);
+                App.data.posts.push(newPost);
+                
+                const forum = App.data.forums.find(f => f.id === App.currentForumId);
+                forum.threads++;
+                forum.posts++;
+
+                App.saveDB();
+                App.closeModal('modal-create-thread');
+                App.renderThread(newThreadId);
+            },
+
+            submitReply: () => {
+                const content = document.getElementById('reply-content').value;
+                if (!content) return alert("Message cannot be empty.");
+
+                const newPost = {
+                    id: Date.now(),
+                    threadId: App.currentThreadId,
+                    author: App.user.name,
+                    authorRole: App.user.role || "User",
+                    content: content,
+                    date: Date.now()
+                };
+
+                App.data.posts.push(newPost);
+                const thread = App.data.threads.find(t => t.id === App.currentThreadId);
+                thread.date = Date.now();
+                const forum = App.data.forums.find(f => f.id === thread.forumId);
+                forum.posts++;
+
+                App.saveDB();
+                App.renderThread(App.currentThreadId);
+            },
+
+            quotePost: (author, content) => {
+                const editor = document.getElementById('reply-content');
+                editor.value += `> **${author} wrote:**\n> ${content}\n\n`;
+                editor.focus();
+                editor.scrollTop = editor.scrollHeight;
+            }
+        };
+
+        window.onload = App.init;
+    </script>
+</body>
+</html>
