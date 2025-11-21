@@ -82,11 +82,21 @@
   --sticker-start: calc(-1 * var(--sticker-p));
   --sticker-end: calc(100% + var(--sticker-p));
 }
+html, body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden; /* prevents scrolling beyond bounds */
+  margin: 0;
+  padding: 0;
+}
 
 body {
-  padding: 0;
-  margin: 0;
   background-image: linear-gradient(to bottom, #302f31, #1a1a1a);
+}
+main {
+  width: 180px;
+  height: 180px;
+  position: relative;
 }
 
 .sticker-container {
@@ -210,6 +220,10 @@ body {
 
 .draggable {
   position: absolute;
+ top: -3px;   /* move higher */
+  left: -10px;  /* move farther left */
+  width: 190px; /* or whatever size you want */
+  height: auto;
   cursor: grab;
 }
 
