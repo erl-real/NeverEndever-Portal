@@ -1,0 +1,55 @@
+<!-- Toggle Button -->
+<button id="toggleSidebar" class="toggle-btn" aria-label="Toggle sidebar">
+  <div class="burger-menu">
+    <span class="burger-bun burger-bun--top"></span>
+    <span class="burger-bun burger-bun--mid"></span>
+    <span class="burger-bun burger-bun--bottom"></span>
+  </div>
+</button>
+
+<!-- Sidebar -->
+<!-- Sidebar -->
+<div class="sidebar-wrapper" id="sidebar">
+  <div id="nav-placeholder"></div>
+
+<link rel="stylesheet" href="staticnavbar.css">
+<link rel="stylesheet" href="sidebartheme.css">
+
+  <aside class="radio-nav" style="--main-color:#f43f5e; --main-color-opacity:rgba(244,63,94,0.11); --total-radio:4">
+    <div class="radio-nav-container">
+<aside class="radio-nav" style="--total-radio:1">
+
+    <!-- Home link -->
+    <input type="radio" id="nav-home" name="nav-menu" checked />
+    <label for="nav-home">
+      <i class="fas fa-home"></i>
+      <a href="https://www.neverendever.com" target="_blank" rel="noopener noreferrer">Home</a>
+    </label>
+
+    <div class="glider-container">
+      <div class="glider"></div>
+    </div>
+  </div>
+</aside>
+
+
+      <div class="glider-container"><div class="glider"></div></div>
+    </div>
+  </aside>
+</div>
+
+<!-- Main Content -->
+
+<!-- Local script to handle collapse -->
+<script>
+  const toggleBtn = document.getElementById('toggleSidebar');
+  const sidebar = document.getElementById('sidebar');
+  const burger = toggleBtn.querySelector('.burger-menu');
+
+  toggleBtn.addEventListener('click', () => {
+    sidebar.classList.toggle('collapsed');
+    burger.classList.toggle('open');
+  });
+</script>
+<script src="staticnavbar.js" defer></script>
+
