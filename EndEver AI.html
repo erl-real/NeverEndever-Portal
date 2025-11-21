@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Integrity Protocol | Endever Live</title>
+    
+    <!-- LIBS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=JetBrains+Mono:wght@400;800&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- ENDEVER DESIGN SYSTEM --- */
+        :root {
+            --bg-app: #030304;
+            --bg-panel: #0a0a0f;
+            --border: #1a1a20;
+            --emerald: #00f5d4;
+            --purple: #7b2cbf;
+            --blue: #4cc9f0;
+            --red: #ff0033;
+            --gold: #ffd700;
+            --text-main: #e0e0e0;
+            --text-muted: #6c757d;
+        }
+
+        * { box-sizing: border-box; outline: none; }
+        body {
+            background-color: var(--bg-app); color: var(--text-main);
+            font-family: 'Rajdhani', sans-serif; margin: 0; overflow-x: hidden;
+            position: relative;
+        }
+
+        /* --- AESTHETICS --- */
+        canvas#matrix { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; opacity: 0.15; pointer-events: none; }
+        .scanlines {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 999;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
+            background-size: 100% 4px; opacity: 0.4;
+        }
+
+        /* NAV */
+        nav {
+            height: 80px; border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 40px; background: rgba(10, 10, 15, 0.95); backdrop-filter: blur(10px);
+            position: sticky; top: 0; z-index: 50;
+        }
+        .brand { font-size: 1.8rem; font-weight: 800; letter-spacing: 2px; color: white; text-decoration: none; cursor: pointer; }
+        .brand span { color: var(--emerald); }
+        
+        .user-hud { display: flex; align-items: center; gap: 20px; }
+        .aura-badge {
+            background: rgba(0, 245, 212, 0.1); border: 1px solid var(--emerald);
+            color: var(--emerald); padding: 8px 16px; border-radius: 4px;
+            font-family: 'JetBrains Mono'; font-weight: 700; font-size: 0.9rem;
+        }
+
+        /* LAYOUT */
+        .container {
+            max-width: 1800px; margin: 0 auto; padding: 40px; padding-bottom: 80px;
+            display: grid; grid-template-columns: 380px 1fr 420px; gap: 25px; position: relative; z-index: 2;
+        }
+
+        .panel {
+            background: rgba(10, 10, 15, 0.8); border: 1px solid var(--border);
+            border-radius: 12px; padding: 25px; position: relative; overflow: hidden;
+            display: flex; flex-direction: column; gap: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); backdrop-filter: blur(5px);
+        }
+        .panel-head {
+            display: flex; justify-content: space-between; align-items: center;
+            border-left: 4px solid var(--purple); padding-left: 15px; margin-bottom: 10px;
+        }
+        .panel-title { font-size: 1.2rem; font-weight: 700; text-transform: uppercase; color: white; }
+
+        /* WIDGETS */
+        .emotion-core {
+            width: 100%; height: 100px; background: black; border: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: center; font-size: 3.5rem;
+            border-radius: 8px; position: relative; overflow: hidden; transition: 0.3s;
+        }
+        .emotion-core.scanning { border-color: var(--blue); box-shadow: 0 0 15px var(--blue); }
+        .emotion-core.happy { border-color: var(--emerald); box-shadow: 0 0 15px var(--emerald); }
+        .emotion-core.angry { border-color: var(--red); box-shadow: 0 0 15px var(--red); }
+
+        .console-box {
+            height: 100px; background: #050505; border: 1px solid var(--border); padding: 10px;
+            font-family: 'JetBrains Mono'; font-size: 0.7rem; color: var(--emerald);
+            overflow-y: auto; border-radius: 4px;
+        }
+        .log-line { margin-bottom: 2px; opacity: 0.8; animation: fadeIn 0.2s; }
+
+        .eq-container { display: flex; gap: 5px; height: 60px; align-items: flex-end; }
+        .eq-band { flex: 1; background: #111; height: 100%; position: relative; border-radius: 4px; overflow: hidden; }
+        .eq-fill { position: absolute; bottom: 0; width: 100%; background: var(--blue); transition: height 0.1s; }
+        .eq-label { position: absolute; bottom: 2px; width: 100%; text-align: center; font-size: 0.6rem; color: #888; z-index: 2; }
+
+        .stereo-box { display: flex; flex-direction: column; gap: 4px; }
+        .stereo-row { display: flex; align-items: center; gap: 8px; }
+        .stereo-track { flex: 1; height: 4px; background: #222; border-radius: 2px; overflow: hidden; }
+        .stereo-val { height: 100%; width: 50%; background: var(--green); transition: width 0.1s; }
+
+        .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .meta-card { background: rgba(255,255,255,0.03); padding: 8px; border-radius: 4px; }
+        .meta-head { font-size: 0.6rem; color: var(--text-muted); display: block; }
+        .meta-body { font-family: 'JetBrains Mono'; font-size: 0.9rem; color: white; }
+
+        .telemetry-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+        .tel-item { background: #08080a; border: 1px solid var(--border); padding: 8px; border-radius: 4px; display: flex; flex-direction: column; justify-content: center; }
+        .tel-label { font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; }
+        .tel-val { font-family: 'JetBrains Mono'; font-size: 1rem; font-weight: 700; color: var(--blue); }
+        
+        .market-viability-bar { width: 100%; height: 8px; background: #222; border-radius: 4px; overflow: hidden; margin-top: 5px; }
+        .market-fill { height: 100%; background: linear-gradient(90deg, var(--blue), var(--purple)); width: 0%; transition: width 1s; }
+
+        /* SCORE BREAKDOWN */
+        .score-breakdown-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px;
+            background: rgba(255,255,255,0.02); padding: 15px; border-radius: 8px; border: 1px solid var(--border);
+            opacity: 0.5; pointer-events: none; transition: 0.3s; /* Hidden state */
+        }
+        .score-breakdown-grid.revealed { opacity: 1; pointer-events: auto; border-color: var(--emerald); }
+        .score-item { display: flex; justify-content: space-between; border-bottom: 1px solid #222; padding-bottom: 5px; }
+        .score-key { color: #888; font-size: 0.8rem; text-transform: uppercase; }
+        .score-num { color: var(--emerald); font-family: 'JetBrains Mono'; font-weight: 700; }
+
+        /* UPLOAD */
+        .upload-area {
+            border: 2px dashed var(--border); border-radius: 8px; height: 250px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            cursor: pointer; transition: 0.3s; background: rgba(255,255,255,0.02);
+        }
+        .upload-area:hover { border-color: var(--emerald); background: rgba(0, 245, 212, 0.05); }
+        .upload-area i { font-size: 4rem; color: #333; margin-bottom: 20px; transition: 0.3s; }
+
+        /* SCANNER */
+        .scanner-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: black; z-index: 10; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+        }
+        #visualizer { width: 100%; height: 80px; margin-top: 20px; }
+        .scan-line {
+            width: 100%; height: 2px; background: var(--emerald);
+            box-shadow: 0 0 15px var(--emerald); animation: scan 1.5s infinite linear;
+        }
+        @keyframes scan { 0% { transform: translateY(-150px); } 100% { transform: translateY(150px); } }
+
+        /* RESULTS */
+        .verdict { font-size: 2.5rem; font-weight: 800; text-align: center; margin: 10px 0; }
+        .pass { color: var(--emerald); text-shadow: 0 0 20px rgba(0, 255, 157, 0.3); }
+        .fail { color: var(--red); text-shadow: 0 0 20px rgba(255, 0, 51, 0.3); }
+        .chart-box { position: relative; height: 200px; width: 100%; }
+
+        /* LEADERBOARD */
+        .leaderboard-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        .leaderboard-table th { text-align: left; color: var(--text-muted); padding: 10px; border-bottom: 1px solid var(--border); cursor: pointer; }
+        .leaderboard-table td { padding: 12px 10px; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: background 0.2s; }
+        .leaderboard-table tr:hover td { background: rgba(255,255,255,0.05); }
+        .rank { font-size: 1rem; color: #666; font-weight: 700; }
+        .track-name { font-weight: 700; color: white; display: block; }
+        .score-val { font-family: 'JetBrains Mono'; font-weight: 800; color: var(--blue); }
+        .score-hidden { font-family: 'JetBrains Mono'; color: #666; letter-spacing: 2px; }
+        
+        /* BUTTONS */
+        .btn {
+            width: 100%; padding: 15px; border: none; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 1px; cursor: pointer;
+            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+            transition: 0.2s; background: var(--emerald); color: black;
+        }
+        .btn:hover { filter: brightness(1.1); transform: translateY(-2px); }
+        .btn:disabled { background: #333; color: #666; cursor: not-allowed; }
+        .btn-outline { background: transparent; border: 1px solid #333; color: #888; width: 100%; padding: 10px; cursor: pointer; }
+        .btn-outline:hover { border-color: white; color: white; }
+        .btn-sm { width: auto; padding: 5px 10px; font-size: 0.8rem; }
+
+        /* MODALS */
+        .auth-modal, .admin-auth-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); backdrop-filter: blur(10px);
+            display: flex; justify-content: center; align-items: center; z-index: 100;
+            display: none;
+        }
+        .auth-box, .admin-box {
+            background: #0a0a0f; border: 1px solid var(--purple);
+            padding: 40px; width: 400px; text-align: center; position: relative;
+            box-shadow: 0 0 50px rgba(123, 44, 191, 0.2);
+        }
+        .auth-input {
+            width: 100%; padding: 12px; background: black; border: 1px solid var(--border);
+            color: white; margin-bottom: 10px; font-family: inherit;
+        }
+        
+        .dev-bypass-btn {
+            position: absolute; bottom: 10px; right: 10px;
+            background: #333; color: #666; border: none;
+            font-size: 0.6rem; padding: 5px 10px; cursor: pointer;
+            border-radius: 4px;
+        }
+        .dev-bypass-btn:hover { color: white; background: var(--purple); }
+
+        /* TABS */
+        .tabs { display: flex; gap: 15px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+        .tab-btn { background: transparent; border: none; color: var(--text-muted); font-weight: 700; cursor: pointer; padding: 5px 10px; }
+        .tab-btn.active { color: var(--emerald); border-bottom: 2px solid var(--emerald); }
+        
+        /* TICKER */
+        .ticker-wrap {
+            position: fixed; bottom: 0; left: 0; width: 100%; height: 30px; background: #000;
+            border-top: 1px solid var(--border); overflow: hidden; z-index: 40; display: flex; align-items: center;
+        }
+        .ticker { display: inline-block; white-space: nowrap; padding-left: 100%; animation: ticker 30s linear infinite; }
+        .ticker-item { display: inline-block; padding: 0 20px; font-size: 0.8rem; color: var(--emerald); font-family: 'JetBrains Mono'; }
+        @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
+    </style>
+</head>
+<body>
+
+    <canvas id="matrix"></canvas>
+    <div class="scanlines"></div>
+    <div class="particles"></div>
+
+    <!-- LOGIN GATE -->
+    <div id="auth-overlay" class="auth-modal">
+        <div class="auth-box">
+            <h2 style="margin-top:0; color:white;">IDENTITY REQUIRED</h2>
+            <p style="color:var(--text-muted); margin-bottom:30px;">Log in to access the AI Integrity Protocol.</p>
+            <div id="login-form">
+                <input type="email" id="login-email" class="auth-input" placeholder="Email">
+                <input type="password" id="login-pass" class="auth-input" placeholder="Password">
+                <button class="btn" id="btn-login">INITIALIZE CONNECTION</button>
+                <p id="login-error" style="color:var(--red); font-size:0.8rem; margin-top:10px;"></p>
+            </div>
+            <button class="dev-bypass-btn" id="btn-dev-trigger"><i class="fas fa-code"></i> DEV BYPASS</button>
+        </div>
+    </div>
+
+    <!-- ADMIN PASSWORD MODAL -->
+    <div id="admin-auth-overlay" class="admin-auth-modal">
+        <div class="admin-box" style="border-color: var(--red);">
+            <h3 style="color:var(--red); margin-top:0;">RESTRICTED ACCESS</h3>
+            <p style="color:#888; font-size:0.8rem;">Enter Developer Authorization Code</p>
+            <input type="password" id="admin-pass-input" class="auth-input" style="border-color:var(--red);" placeholder="Code">
+            <button class="btn" id="btn-admin-auth" style="background:var(--red);">AUTHENTICATE</button>
+            <button class="btn-outline" onclick="document.getElementById('admin-auth-overlay').style.display='none'" style="margin-top:10px;">CANCEL</button>
+        </div>
+    </div>
+
+    <!-- NAV -->
+    <nav>
+        <div class="brand">ENDEVER<span> // INTEGRITY PROTOCOL</span></div>
+        <div class="user-hud" id="user-hud" style="opacity: 0;">
+            <div class="aura-badge"><i class="fas fa-bolt"></i> <span id="aura-display">...</span></div>
+            <div style="font-weight:700;" id="username-display">...</div>
+            <button class="btn-outline" style="width:auto; padding:5px 15px; margin:0;" id="btn-logout">LOGOUT</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        
+        <!-- COL 1: TELEMETRY -->
+        <div class="panel">
+            <div class="panel-head"><div class="panel-title">AI Judge Emotion</div></div>
+            
+            <div class="emotion-core" id="emotion-core">😐</div>
+            
+            <div class="console-box" id="console-output">
+                <div class="log-line">> System initialized...</div>
+                <div class="log-line">> Waiting for input...</div>
+            </div>
+
+            <div class="eq-container">
+                <div class="eq-band"><div class="eq-fill" id="eq-low" style="height:0%"></div><div class="eq-label">LOW</div></div>
+                <div class="eq-band"><div class="eq-fill" id="eq-mid" style="height:0%"></div><div class="eq-label">MID</div></div>
+                <div class="eq-band"><div class="eq-fill" id="eq-high" style="height:0%"></div><div class="eq-label">HIGH</div></div>
+            </div>
+
+            <div class="stereo-box">
+                <div class="stereo-row"><span class="stereo-label">L</span><div class="stereo-track"><div class="stereo-val" id="meter-l"></div></div></div>
+                <div class="stereo-row"><span class="stereo-label">R</span><div class="stereo-track"><div class="stereo-val" id="meter-r"></div></div></div>
+            </div>
+
+            <div class="meta-grid">
+                <div class="meta-card"><span class="meta-head">SAMPLE RATE</span><span class="meta-body" id="meta-rate">--</span></div>
+                <div class="meta-card"><span class="meta-head">BIT DEPTH</span><span class="meta-body" id="meta-bit">--</span></div>
+                <div class="meta-card"><span class="meta-head">CHANNELS</span><span class="meta-body" id="meta-ch">--</span></div>
+                <div class="meta-card"><span class="meta-head">SIZE</span><span class="meta-body" id="meta-size">--</span></div>
+            </div>
+
+            <div style="margin-top: 20px; border-top: 1px solid var(--border); padding-top: 15px;">
+                <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:10px; font-weight:700;">ADVANCED TELEMETRY</div>
+                <div class="telemetry-grid">
+                    <div class="tel-item"><span class="tel-label">LUFS (Int)</span><span class="tel-val" id="tel-lufs">--</span></div>
+                    <div class="tel-item"><span class="tel-label">True Peak</span><span class="tel-val" id="tel-peak">--</span></div>
+                    <div class="tel-item"><span class="tel-label">Dyn Range</span><span class="tel-val" id="tel-dr">--</span></div>
+                    <div class="tel-item"><span class="tel-label">Stereo Width</span><span class="tel-val" id="tel-width">--</span></div>
+                    <div class="tel-item"><span class="tel-label">Noise Floor</span><span class="tel-val" id="tel-noise">--</span></div>
+                    <div class="tel-item"><span class="tel-label">Bitrate (Est)</span><span class="tel-val" id="tel-bitrate">--</span></div>
+                    
+                    <div class="tel-item"><span class="tel-label">Sentiment</span><span class="tel-val" id="tel-sentiment" style="font-size:0.8rem">--</span></div>
+                    <div class="tel-item"><span class="tel-label">Sync Probability</span><span class="tel-val" id="tel-sync">--</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- COL 2: SCANNER & RESULTS -->
+        <div class="panel" id="scanner-panel">
+            <div class="panel-head">
+                <div class="panel-title">Core Engine</div>
+                <div style="font-size:0.9rem; color:var(--blue); font-weight:700;">-25 AURA</div>
+            </div>
+
+            <div id="view-upload">
+                <div class="upload-area" id="upload-trigger">
+                    <input type="file" id="file-input" hidden accept=".mp3,.wav">
+                    <i class="fas fa-microchip"></i>
+                    <div style="font-size:1.2rem; font-weight:700; color:white;">INITIATE SCAN</div>
+                    <div style="color:var(--text-muted); margin-top:5px;">DROP AUDIO FILE (MP3/WAV)</div>
+                    <div style="font-size:0.7rem; color:#444; margin-top:20px;">SHORTCUT: Press 'U'</div>
+                </div>
+            </div>
+
+            <div id="view-scanning" class="scanner-overlay" style="display:none;">
+                <canvas id="visualizer"></canvas>
+                <div class="scan-line"></div>
+                <div style="margin-top:10px; color:var(--emerald); font-family:'JetBrains Mono'; letter-spacing:2px;">DECRYPTING...</div>
+            </div>
+
+            <div id="view-results" style="display:none;">
+                <div id="verdict-text" class="verdict pass">HUMAN VERIFIED</div>
+                
+                <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                    <span>AI Confidence</span>
+                    <span id="conf-val" style="font-family:'JetBrains Mono'; color:white;">12%</span>
+                </div>
+
+                <!-- MARKET VIABILITY -->
+                <div style="margin-bottom:10px;">
+                    <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:#888;">
+                        <span>Market Viability</span><span id="market-val">85%</span>
+                    </div>
+                    <div class="market-viability-bar"><div class="market-fill" id="market-bar" style="width:0%"></div></div>
+                </div>
+                
+                <!-- GENRE -->
+                <div style="margin-bottom:10px; display:flex; justify-content:space-between; font-size:0.8rem; color:#888;">
+                    <span>Genre</span><span id="genre-label" style="color:white; font-family:'JetBrains Mono';">--</span>
+                </div>
+
+                <!-- PRE-FLIGHT STATUS PLACEHOLDER (New element) -->
+                <div id="pre-scan-status" style="height: 250px; background: rgba(0, 245, 212, 0.1); border: 1px solid var(--emerald); border-radius: 8px; display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; color: var(--emerald); font-family: 'JetBrains Mono'; margin: 20px 0; padding: 20px; font-size: 1.1rem;">
+                    <i class="fas fa-satellite-dish fa-3x" style="margin-bottom: 10px;"></i>
+                    <div>PRE-FLIGHT CHECK COMPLETE</div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 5px;">Awaiting Event Submission for Full Spectrum Analysis.</div>
+                </div>
+
+
+                <div class="chart-box"><canvas id="radarChart"></canvas></div>
+
+                <!-- SCORE BREAKDOWN GRID -->
+                <div id="breakdown-list" class="score-breakdown-grid">
+                    <!-- JS INJECTS SCORES HERE -->
+                </div>
+                <div style="text-align:center; font-size:0.7rem; color:var(--text-muted); margin-bottom:10px;" id="lock-msg">
+                    <i class="fas fa-lock"></i> BREAKDOWN HIDDEN UNTIL EVENT END
+                </div>
+
+                <div id="critique-text" style="background:rgba(255,255,255,0.05); padding:15px; font-size:0.9rem; color:#ccc; border-left:2px solid var(--purple); margin:20px 0; font-style:italic;"></div>
+
+                <!-- CROWD REACTION -->
+                <div style="text-align:center; margin-bottom:15px;">
+                    <div style="font-size:0.7rem; color:var(--text-muted); margin-bottom:5px;">PREDICTED CROWD REACTION</div>
+                    <div style="font-size:1.5rem;" id="crowd-reaction">🔥 🕺 🔉</div>
+                </div>
+
+                <div style="display:grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap:10px; margin-bottom:15px;">
+                    <button class="btn-outline btn-sm" id="btn-preview"><i class="fas fa-play"></i> Play</button>
+                    <button class="btn-outline btn-sm" id="btn-download"><i class="fas fa-certificate"></i> Badge</button>
+                    <button class="btn-outline btn-sm" id="btn-share"><i class="fas fa-share-alt"></i> Share</button>
+                    <button class="btn-outline btn-sm" id="btn-json"><i class="fas fa-code"></i> JSON</button>
+                </div>
+
+                <button id="btn-enter" class="btn">ENTER EVENT (-75 AURA)</button>
+                <button class="btn-outline" onclick="location.reload()" style="margin-top:10px;">RESET</button>
+            </div>
+        </div>
+
+        <!-- COL 3: LEADERBOARD -->
+        <div class="panel">
+            <div class="panel-head">
+                <div class="panel-title">Live Queue</div>
+                <div style="font-size:0.9rem; color:var(--text-muted);">CAP: <span id="queue-count">0</span>/100</div>
+            </div>
+            <div class="tabs">
+                <button class="tab-btn active" id="tab-global">Global</button>
+                <button class="tab-btn" id="tab-mine">My Rank</button>
+            </div>
+            
+            <!-- Similar Tracks -->
+            <div style="background:#08080a; padding:10px; border:1px solid var(--border); border-radius:4px; margin-bottom:15px;">
+                <div style="font-size:0.7rem; color:var(--text-muted);">SONICALLY SIMILAR</div>
+                <div style="font-size:0.8rem; color:white; margin-top:5px;" id="similar-tracks">--</div>
+            </div>
+            
+            <div id="leaderboard-list" style="overflow-y: auto; max-height: 500px;">
+                <div style="text-align:center; padding:50px; color:var(--text-muted);"><div class="loader"></div> Fetching...</div>
+            </div>
+
+            <!-- ADMIN CONTROLS -->
+            <div id="admin-panel" style="display:none; background:rgba(255,0,0,0.1); border:1px solid var(--red); padding:15px; margin-top:auto;">
+                <strong style="color:var(--red);">ADMIN OVERRIDE</strong>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:5px;">
+                    <button id="btn-admin-force" style="background:var(--purple); color:white; border:none; padding:8px; border-radius:4px; cursor:pointer;">FORCE JUDGE</button>
+                    <button id="btn-admin-wipe" style="background:var(--red); color:white; border:none; padding:8px; border-radius:4px; cursor:pointer;">WIPE EVENT</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- TICKER -->
+    <div class="ticker-wrap">
+        <div class="ticker" id="ticker-content">
+            <div class="ticker-item">Endever AI Protocol v5.0</div>
+            <div class="ticker-item">Engine Status: ONLINE</div>
+            <div class="ticker-item">Scans Today: <span id="daily-scans">0</span></div>
+        </div>
+    </div>
+
+    <audio id="audio-preview" hidden></audio>
+
+    <script>
+        // GLOBAL SCOPE - defined outside event listener to be accessible
+        window.App = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const SUPABASE_URL = "https://imqfnxtornlvglwvkspi.supabase.co";
+            const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImltcWZueHRvcm5sdmdsd3Zrc3BpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMxMzQyNjksImV4cCI6MjA3ODcxMDI2OX0.Is7G7NCKxTQDoefyitkfhREXAR8m8cBBTjohRiBKMs4";
+            const PYTHON_API = "http://localhost:5000/analyze";
+
+            const sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            let user = null;
+            let analysisData = null;
+            let allEntries = [];
+            let audioCtx, analyser, dataArray;
+            let isDevMode = false;
+            let uploadedFile = null;
+            let eventActive = true; // New Flag: True = Scores Hidden, False = Scores Revealed
+
+            // Safe Element Update Helper
+            const safeSetText = (id, text) => {
+                const el = document.getElementById(id);
+                if (el) el.innerText = text;
+            };
+            
+            const safeStyle = (id, prop, val) => {
+                const el = document.getElementById(id);
+                if(el) el.style[prop] = val;
+            };
+
+            // DEFINE APP LOGIC
+            window.App = {
+                async init() {
+                    this.log("> Boot sequence initiated...");
+                    const { data: { session } } = await sbClient.auth.getSession();
+                    if (session) {
+                        user = session.user;
+                        this.loadProfile();
+                        this.loadLeaderboard();
+                        this.showHUD();
+                        this.log("> Session verified. Welcome.");
+                    } else {
+                        document.getElementById('auth-overlay').style.display = 'flex';
+                        this.log("> Auth required.");
+                    }
+                    this.updateDailyScans();
+                },
+
+                log(msg) {
+                    const div = document.getElementById('console-output');
+                    const line = document.createElement('div');
+                    line.className = 'log-line';
+                    line.innerText = msg;
+                    div.appendChild(line);
+                    div.scrollTop = div.scrollHeight;
+                },
+
+                setupListeners() {
+                    document.getElementById('btn-login').onclick = () => this.login();
+                    document.getElementById('btn-dev-trigger').onclick = () => document.getElementById('admin-auth-overlay').style.display = 'flex';
+                    document.getElementById('btn-admin-auth').onclick = () => this.verifyAdminPass();
+                    document.getElementById('btn-logout').onclick = () => this.logout();
+                    
+                    document.getElementById('upload-trigger').onclick = () => document.getElementById('file-input').click();
+                    document.getElementById('file-input').onchange = (e) => {
+                        if(e.target.files[0]) {
+                            uploadedFile = e.target.files[0];
+                            this.uploadFile(uploadedFile);
+                        }
+                    };
+                    
+                    document.getElementById('btn-enter').onclick = () => { if(analysisData) this.enterEvent(); else alert("Scan a file first!"); };
+                    document.getElementById('btn-preview').onclick = () => { if(uploadedFile) this.playAudio(); else alert("No file loaded."); };
+                    document.getElementById('btn-admin-wipe').onclick = () => this.forceEndEvent();
+                    document.getElementById('btn-admin-force').onclick = () => this.forceRunEvent();
+                    document.getElementById('tab-global').onclick = (e) => this.switchTab('all', e.target);
+                    document.getElementById('tab-mine').onclick = (e) => this.switchTab('mine', e.target);
+                    document.getElementById('btn-download').onclick = () => this.downloadReport();
+                    document.getElementById('btn-json').onclick = () => this.downloadJSON();
+                    document.getElementById('btn-share').onclick = () => this.shareResult();
+                },
+
+                verifyAdminPass() {
+                    const pass = document.getElementById('admin-pass-input').value;
+                    if(pass === "EndeverDev2025!") {
+                        document.getElementById('admin-auth-overlay').style.display = 'none';
+                        this.enableDevMode();
+                    } else { /* Using console.error instead of alert due to constraints */ console.error("INVALID CODE"); } 
+                },
+
+                enableDevMode() {
+                    isDevMode = true;
+                    user = { id: "dev_test", profile: { username: "DEV_ADMIN", aura: 9999, role: "admin" } };
+                    this.showHUD();
+                    this.loadProfile();
+                    this.log("> DEV OVERRIDE ACTIVE");
+                },
+
+                showHUD() {
+                    document.getElementById('auth-overlay').style.display = 'none';
+                    document.getElementById('user-hud').style.opacity = '1';
+                },
+
+                async login() {
+                    const email = document.getElementById('login-email').value;
+                    const pass = document.getElementById('login-pass').value;
+                    const { error } = await sbClient.auth.signInWithPassword({ email, password: pass });
+                    if (error) document.getElementById('login-error').innerText = error.message;
+                    else location.reload();
+                },
+
+                async logout() {
+                    if(!isDevMode) await sbClient.auth.signOut();
+                    location.reload();
+                },
+
+                async loadProfile() {
+                    if(isDevMode) {
+                        safeSetText('aura-display', "9999");
+                        safeSetText('username-display', "DEV_ADMIN");
+                        document.getElementById('admin-panel').style.display = 'block';
+                        return;
+                    }
+                    const { data } = await sbClient.from('profiles').select('*').eq('id', user.id).single();
+                    if (data) {
+                        user.profile = data;
+                        safeSetText('aura-display', data.aura || 0);
+                        safeSetText('username-display', data.username || "ARTIST");
+                        if (data.role === 'admin') document.getElementById('admin-panel').style.display = 'block';
+                    }
+                },
+
+                async uploadFile(file) {
+                    if (!user) return;
+                    this.log(`> Scanning: ${file.name}`);
+                    document.getElementById('view-upload').style.display = 'none';
+                    document.getElementById('view-scanning').style.display = 'flex';
+                    
+                    this.setupVisualizer(file); // START VISUALIZER (REAL AUDIO)
+
+                    const formData = new FormData();
+                    formData.append('file', file);
+
+                    try {
+                        const res = await fetch(PYTHON_API, { method: 'POST', body: formData });
+                        const data = await res.json();
+                        if (data.success) this.renderResults(data);
+                        else throw new Error(data.error);
+                    } catch (err) {
+                        if (isDevMode) {
+                            setTimeout(() => this.renderResults({
+                                success: true,
+                                ai_confidence: 12,
+                                meta: { rate: 44100, format: 'WAV', channels: 2 },
+                                eq: { low: 40, mid: 30, high: 30 },
+                                genre: "Techno",
+                                advanced: { lufs: -14, peak_db: -0.2, dr_score: 12, width: 120, noise_floor: -80, crest: 4.5, clipping: false, dc_offset: false },
+                                extra: { market_viability: 85, sync_score: 75, sentiment: "Uplifting" },
+                                scores: { production: 8.5, mixing: 7.2, originality: 9.0, vocals: 6.5, lyrics: 7.0, replayability: 8.0 }
+                            }), 2000);
+                        } else {
+                            /* Using console.error instead of alert due to constraints */
+                            console.error("Engine Error: " + err.message);
+                            location.reload();
+                        }
+                    }
+                },
+
+                renderResults(data) {
+                    analysisData = data;
+                    document.getElementById('view-scanning').style.display = 'none';
+                    document.getElementById('view-results').style.display = 'block';
+                    document.getElementById('audio-preview').pause();
+
+                    if(data.meta) {
+                        safeSetText('meta-rate', data.meta.rate);
+                        safeSetText('meta-ch', data.meta.channels);
+                        safeSetText('meta-bit', data.meta.format || "PCM");
+                        const br = (data.meta.rate * 16 * data.meta.channels) / 1000;
+                        safeSetText('tel-bitrate', Math.round(br) + " kbps");
+                    }
+                    if(data.eq) {
+                        safeStyle('eq-low', 'height', data.eq.low + "%");
+                        safeStyle('eq-mid', 'height', data.eq.mid + "%");
+                        safeStyle('eq-high', 'height', data.eq.high + "%");
+                    }
+                    if(data.genre) safeSetText('genre-label', data.genre);
+                    
+                    // Advanced Telemetry
+                    if(data.advanced) {
+                        safeSetText('tel-lufs', data.advanced.lufs + " dB");
+                        safeSetText('tel-peak', data.advanced.peak_db + " dB");
+                        safeSetText('tel-dr', data.advanced.dr_score);
+                        safeSetText('tel-width', data.advanced.width + "%");
+                        safeSetText('tel-noise', data.advanced.noise_floor + " dB");
+                    }
+                    
+                    // Extra Data (Market/Sentiment)
+                    if(data.extra) {
+                        safeSetText('market-val', data.extra.market_viability + "%");
+                        safeStyle('market-bar', 'width', data.extra.market_viability + "%");
+                        safeSetText('tel-sentiment', data.extra.sentiment);
+                        safeSetText('tel-sync', data.extra.sync_score + "%");
+                        const mood = data.extra.sentiment;
+                        safeSetText('crowd-reaction', mood === 'Aggressive' ? "🔥 🤘 😤" : (mood === 'Uplifting' ? "💃 ✨ 🙌" : "🌊 😌 🍷"));
+                    }
+
+                    // RENDER SCORE BREAKDOWN 
+                    this.renderBreakdownForEntry(data.scores);
+
+                    const isRejected = data.ai_confidence > 70;
+                    const verdict = document.getElementById('verdict-text');
+                    const btn = document.getElementById('btn-enter');
+                    
+                    const preScanStatus = document.getElementById('pre-scan-status');
+                    const chartBox = document.querySelector('.chart-box'); 
+                    const breakdownList = document.getElementById('breakdown-list');
+
+                    // --- NEW VISIBILITY CONTROL LOGIC ---
+                    if (eventActive) {
+                        preScanStatus.style.display = 'flex';
+                        chartBox.style.display = 'none';
+                        breakdownList.style.display = 'none';
+                    } else {
+                        preScanStatus.style.display = 'none';
+                        chartBox.style.display = 'block';
+                        // Restore breakdown list to its original grid display
+                        breakdownList.style.display = 'grid'; 
+                    }
+                    // ------------------------------------
+
+                    if (isRejected) {
+                        safeSetText('verdict-text', "AI DETECTED");
+                        verdict.className = "verdict fail";
+                        btn.disabled = true;
+                        btn.innerText = "ENTRY REJECTED";
+                        safeSetText('emotion-core', "😡");
+                        document.getElementById('emotion-core').className = "emotion-core angry";
+                        safeSetText('critique-text', "Analysis Failure: High probability of generative synthesis.");
+                        this.log("> RESULT: REJECTED (AI)");
+                    } else {
+                        safeSetText('verdict-text', "HUMAN VERIFIED");
+                        verdict.className = "verdict pass";
+                        btn.disabled = false;
+                        btn.innerText = "ENTER EVENT (-75 AURA)";
+                        confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+                        safeSetText('emotion-core', "🤩");
+                        document.getElementById('emotion-core').className = "emotion-core happy";
+                        safeSetText('critique-text', "Clean spectral signature. Human performance verified.");
+                        this.log("> RESULT: PASSED");
+                    }
+
+                    safeSetText('conf-val', data.ai_confidence + "%");
+                    this.renderChart(data.scores);
+                },
+                
+                // RENDER BREAKDOWN FOR ENTRIES (Conditional visibility based on eventActive flag)
+                renderBreakdownForEntry(scores) {
+                    const breakdownDiv = document.getElementById('breakdown-list');
+                    breakdownDiv.innerHTML = '';
+                    
+                    const scoreLockMsg = document.getElementById('lock-msg');
+                    const isRevealed = !eventActive;
+                    
+                    // We call renderChart explicitly here to ensure data is zeroed out if needed
+                    this.renderChart(scores); 
+
+                    if (isRevealed || isDevMode) {
+                        breakdownDiv.classList.add('revealed');
+                        scoreLockMsg.style.display = 'none';
+
+                        Object.entries(scores).forEach(([key, val]) => {
+                            breakdownDiv.innerHTML += `
+                                <div class="score-item">
+                                    <span class="score-key">${key.toUpperCase()}</span>
+                                    <span class="score-num">${val}/10</span>
+                                </div>
+                            `;
+                        });
+                    } else {
+                        // This path is hit during the pre-flight scan - scores must be hidden
+                        breakdownDiv.classList.remove('revealed');
+                        scoreLockMsg.style.display = 'block';
+
+                        // Use all keys from the scores object to create placeholders
+                        Object.keys(scores).forEach(key => {
+                            breakdownDiv.innerHTML += `
+                                <div class="score-item">
+                                    <span class="score-key">${key.toUpperCase()}</span>
+                                    <span class="score-num score-hidden">[HIDDEN]</span>
+                                </div>
+                            `;
+                        });
+                    }
+                },
+
+                renderChart(scores) {
+                    // Chart generation logic (uses window.myRadar)
+                    const ctx = document.getElementById('radarChart').getContext('2d');
+                    if(window.myRadar) window.myRadar.destroy();
+                    
+                    // Display all 0s if event is active and scores are locked
+                    const displayData = (eventActive && !isDevMode) ? Object.values(scores).map(v => 0) : Object.values(scores);
+
+                    window.myRadar = new Chart(ctx, {
+                        type: 'radar',
+                        data: {
+                            labels: Object.keys(scores).map(s => s.toUpperCase()),
+                            datasets: [{
+                                label: 'Manifest',
+                                data: displayData,
+                                backgroundColor: 'rgba(0, 245, 212, 0.2)',
+                                borderColor: '#00f5d4',
+                                pointBackgroundColor: '#fff'
+                            }]
+                        },
+                        options: {
+                            scales: { r: { min: 0, max: 10, grid: { color: '#333' }, ticks: { display: false } } },
+                            plugins: { legend: { display: false } }
+                        }
+                    });
+                },
+
+                setupVisualizer(file) {
+                    // Audio context setup and drawing loop (for EQ/Stereo/Visualizer)
+                    const url = URL.createObjectURL(file);
+                    const audio = document.getElementById('audio-preview');
+                    audio.src = url;
+                    if (!audioCtx) {
+                        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                        analyser = audioCtx.createAnalyser();
+                        const source = audioCtx.createMediaElementSource(audio);
+                        source.connect(analyser);
+                        analyser.connect(audioCtx.destination);
+                        analyser.fftSize = 256;
+                        dataArray = new Uint8Array(analyser.frequencyBinCount);
+                        const canvas = document.getElementById('visualizer');
+                        const ctx = canvas.getContext('2d');
+                        const draw = () => {
+                            requestAnimationFrame(draw);
+                            analyser.getByteFrequencyData(dataArray);
+                            ctx.fillStyle = '#000';
+                            ctx.fillRect(0, 0, canvas.width, canvas.height);
+                            const barWidth = (canvas.width / dataArray.length) * 2.5;
+                            let x = 0;
+                            let sum = 0;
+                            for(let i = 0; i < dataArray.length; i++) {
+                                ctx.fillStyle = `rgb(0, ${dataArray[i] + 100}, 212)`;
+                                ctx.fillRect(x, canvas.height - (dataArray[i] / 2), barWidth, dataArray[i] / 2);
+                                x += barWidth + 1;
+                                sum += dataArray[i];
+                            }
+                            const avg = sum / dataArray.length;
+                            safeStyle('meter-l', 'width', (avg / 2.5) + "%");
+                            safeStyle('meter-r', 'width', (avg / 2.6) + "%");
+                        }
+                        draw();
+                    }
+                    audio.play().catch(()=>{});
+                },
+                
+                playAudio() {
+                    const audio = document.getElementById('audio-preview');
+                    if (audio.paused) audio.play(); else audio.pause();
+                },
+
+                async enterEvent() {
+                    const trackTitle = uploadedFile ? uploadedFile.name : "Dev_Track.wav";
+                    
+                    if (isDevMode) {
+                        allEntries.unshift({
+                            track_title: trackTitle,
+                            username: "DEV_ADMIN",
+                            ai_confidence: analysisData.ai_confidence,
+                            final_score: 9.5,
+                            id: Date.now(),
+                            scores: analysisData.scores // STORE SCORES
+                        });
+                        this.renderLeaderboard(allEntries);
+                        /* Using console.log instead of alert due to constraints */ console.log("Entry Successful");
+                        document.getElementById('view-results').style.display = 'none';
+                        document.getElementById('view-upload').style.display = 'flex';
+                        return;
+                    }
+
+                    if (user.profile.aura < 75) return /* Using console.log instead of alert due to constraints */ console.log("Insufficient Aura!");
+                    
+                    await sbClient.from('profiles').update({ aura: user.profile.aura - 75 }).eq('id', user.id);
+                    
+                    // Calculate overall score (simple average for now)
+                    const scores = analysisData.scores;
+                    const scoreValues = Object.values(scores);
+                    const final_score = (scoreValues.reduce((a, b) => a + b, 0) / scoreValues.length).toFixed(1);
+
+                    await sbClient.from('ai_event_entries').insert({
+                        user_id: user.id,
+                        username: user.profile.username,
+                        track_title: trackTitle,
+                        filename: trackTitle,
+                        final_score: parseFloat(final_score),
+                        ai_confidence: analysisData.ai_confidence,
+                        ...analysisData.scores
+                    });
+                    /* Using console.log instead of alert due to constraints */ console.log("Submitted!");
+                    location.reload();
+                },
+
+                async loadLeaderboard() {
+                    if(isDevMode) {
+                        allEntries = [
+                            { track_title: "Neon Nights.wav", username: "RetroWave", ai_confidence: 12, final_score: 8.5, id: 101, scores: { production: 8, mixing: 7, originality: 9, vocals: 6, lyrics: 7, replayability: 8 } },
+                            { track_title: "System_Final.mp3", username: "GlitchGod", ai_confidence: 89, final_score: 4.2, id: 102, scores: { production: 4, mixing: 5, originality: 2, vocals: 4, lyrics: 3, replayability: 4 } }
+                        ];
+                        this.renderLeaderboard(allEntries);
+                        return;
+                    }
+                    const { data } = await sbClient.from('ai_event_entries').select('*').order('final_score', { ascending: false });
+                    allEntries = data || [];
+                    this.renderLeaderboard(allEntries);
+                },
+
+                renderLeaderboard(entries) {
+                    const list = document.getElementById('leaderboard-list');
+                    list.innerHTML = "";
+                    safeSetText('queue-count', entries.length);
+                    
+                    if (!entries.length) return list.innerHTML = "<div style='text-align:center; padding:40px; color:#666'>Empty</div>";
+                    const table = document.createElement('table');
+                    table.className = 'leaderboard-table';
+                    table.innerHTML = `<thead><tr><th>#</th><th>TRACK</th><th>AI%</th><th>SCORE</th><th>ACTIONS</th></tr></thead><tbody></tbody>`;
+                    const tbody = table.querySelector('tbody');
+                    entries.forEach((e, i) => {
+                        // Score Visibility Logic
+                        const displayScore = (eventActive && !isDevMode) ? "[HIDDEN]" : e.final_score.toFixed(1);
+                        const scoreClass = (eventActive && !isDevMode) ? 'score-hidden' : 'score-val';
+                        
+                        // Admin Delete Button
+                        const deleteBtn = (isDevMode || (user && user.profile && user.profile.role === 'admin'))
+                            ? `<button class="btn-icon danger" onclick="window.App.adminDeleteEntry(${e.id}); event.stopPropagation();"><i class="fas fa-trash"></i></button>`
+                            : '';
+                            
+                        const row = document.createElement('tr');
+                        // CLICK HANDLER FOR BREAKDOWN - passing the array index
+                        row.onclick = () => window.App.viewEntry(i);
+
+                        row.innerHTML = `
+                            <td><span class="rank">#${i+1}</span></td>
+                            <td><span class="track-name">${e.track_title}</span><span class="artist-name">${e.username}</span></td>
+                            <td><span style="color:${e.ai_confidence>50?'red':'green'}">${e.ai_confidence}%</span></td>
+                            <td><span class="${scoreClass}">${displayScore}</span></td>
+                            <td><div class="action-btn-group">${deleteBtn}</div></td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                    list.appendChild(table);
+                },
+                
+                viewEntry(index) {
+                    const entry = allEntries[index];
+                    if (!entry) return;
+                    
+                    // Only allow viewing detailed breakdown if event ended
+                    if(eventActive && !isDevMode) {
+                        return /* Using console.log instead of alert due to constraints */ console.log("Detailed breakdown is hidden until event concludes! Click FORCE JUDGE if you are the admin.");
+                    }
+                    
+                    // Load data into center panel
+                    analysisData = {
+                        ai_confidence: entry.ai_confidence,
+                        scores: entry.scores || { production: 5, mixing: 5, originality: 5, vocals: 5, lyrics: 5, replayability: 5 }
+                    };
+                    
+                    // Mock visual data for historic entries
+                    const displayData = {
+                        ...analysisData,
+                        meta: { rate: 44100, channels: 2, format: 'WAV' },
+                        eq: { low: 50, mid: 50, high: 50 },
+                        genre: "Loaded Entry",
+                        advanced: { lufs: -14, peak_db: -1, dr_score: 10, width: 100, noise_floor: -70, crest: 3, clipping: false, dc_offset: false },
+                        extra: { market_viability: 50, sync_score: 50, sentiment: "Neutral" }
+                    };
+                    
+                    this.renderResults(displayData);
+                    this.renderBreakdownForEntry(analysisData.scores); // Reveal full breakdown
+
+                    // Change UI
+                    document.getElementById('view-upload').style.display = 'none';
+                    document.getElementById('view-results').style.display = 'block';
+                    document.getElementById('btn-enter').style.display = 'none';
+                    document.getElementById('critique-text').innerText = `Viewing historic entry: ${entry.track_title} by ${entry.username}. Final Score: ${entry.final_score.toFixed(1)}`;
+
+                    // Ensure the pre-scan status is hidden and charts/breakdown are shown when viewing an old entry
+                    document.getElementById('pre-scan-status').style.display = 'none';
+                    document.querySelector('.chart-box').style.display = 'block';
+                    document.getElementById('breakdown-list').style.display = 'grid';
+                },
+
+                switchTab(type, btn) {
+                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    if(type === 'mine') {
+                        const myUsername = user.profile ? user.profile.username : "DEV_ADMIN";
+                        const myEntries = allEntries.filter(e => e.username === myUsername);
+                        this.renderLeaderboard(myEntries);
+                    } else {
+                        this.renderLeaderboard(allEntries);
+                    }
+                },
+
+                updateDailyScans() {
+                    const daily = localStorage.getItem('daily_scans') || 0;
+                    safeSetText('daily-scans', daily);
+                },
+
+                async forceRunEvent() {
+                    /* Using console.log instead of confirm due to constraints */
+                    if(!confirm("ADMIN: Conclude Event? This reveals scores.")) return; 
+                    eventActive = false; // Unlock scores locally
+                    this.renderLeaderboard(allEntries); // Re-render with scores visible
+                    
+                    // Find Winner
+                    const winner = allEntries.reduce((prev, current) => (prev.final_score > current.final_score) ? prev : current);
+                    
+                    /* Using console.log instead of alert due to constraints */
+                    console.log(`EVENT CONCLUDED! WINNER: ${winner.track_title} by ${winner.username} SCORE: ${winner.final_score}`);
+                    confetti({ particleCount: 500, spread: 150, origin: { y: 0.6 } });
+                },
+                
+                async adminDeleteEntry(id) {
+                    /* Using console.log instead of confirm due to constraints */
+                    if(!confirm("Delete this entry?")) return; 
+                    if(isDevMode) {
+                        allEntries = allEntries.filter(e => e.id !== id);
+                        this.renderLeaderboard(allEntries);
+                        return;
+                    }
+                    await sbClient.from('ai_event_entries').delete().eq('id', id);
+                    this.loadLeaderboard();
+                },
+                
+                async forceEndEvent() {
+                    /* Using console.log instead of confirm due to constraints */
+                    if (!confirm("ADMIN: Wipe event?")) return; 
+                    if(isDevMode) { /* Using console.log instead of alert due to constraints */ console.log("Wiped (Simulated)"); allEntries = []; location.reload(); return; }
+                    await sbClient.from('ai_event_entries').delete().neq('id', 0);
+                    location.reload();
+                },
+
+                downloadReport() { /* Using console.log instead of alert due to constraints */ console.log("Downloading Certificate..."); },
+                downloadJSON() { /* Using console.log instead of alert due to constraints */ console.log("Downloading JSON..."); },
+                shareResult() { /* Using console.log instead of alert due to constraints */ console.log("Copied to Clipboard!"); },
+                playAudio() { const a = document.getElementById('audio-preview'); if(a.paused) a.play(); else a.pause(); }
+            };
+
+            window.App.setupListeners();
+            window.App.init();
+        });
+    </script>
+</body>
+</html>
