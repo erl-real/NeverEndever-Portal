@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>About – NeverEndEver</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Base styles -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Sidebar styles -->
+  <link rel="stylesheet" href="sidebarmaintheme.css" />
+  <link rel="stylesheet" href="sidebartheme.css" />
+
+  <!-- Ionicons + Font Awesome -->
+  <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+  <!-- Toggle Button -->
+  <button id="toggleSidebar" class="toggle-btn" aria-label="Toggle sidebar">
+    <div class="burger-menu">
+      <span class="burger-bun burger-bun--top"></span>
+      <span class="burger-bun burger-bun--mid"></span>
+      <span class="burger-bun burger-bun--bottom"></span>
+    </div>
+  </button>
+
+  <!-- Sidebar -->
+  <div class="sidebar-wrapper" id="sidebar">
+    <div class="sidebar-inner">
+      <aside class="radio-nav" style="--total-radio:24">
+        <div class="radio-nav-container">
+          <input type="radio" id="nav-home" name="nav-menu" />
+          <label for="nav-home"><i class="ion-home"></i><a href="index.html">Home</a></label>
+
+          <input type="radio" id="nav-about" name="nav-menu" checked />
+          <label for="nav-about"><i class="ion-information-circled"></i><a href="about.html">About</a></label>
+
+          <input type="radio" id="nav-contact" name="nav-menu" />
+          <label for="nav-contact"><i class="ion-email"></i><a href="contact.html">Contact</a></label>
+
+          <!-- Social Links -->
+          <input type="radio" id="nav-twitch" name="nav-menu" />
+          <label for="nav-twitch"><i class="fa-brands fa-twitch"></i><a href="https://twitch.tv/optimisticweb" target="_blank">Twitch</a></label>
+
+          <input type="radio" id="nav-discord" name="nav-menu" />
+          <label for="nav-discord"><i class="fa-brands fa-discord"></i><a href="https://discord.com/invite/optimisticweb" target="_blank">Discord</a></label>
+
+          <input type="radio" id="nav-youtube" name="nav-menu" />
+          <label for="nav-youtube"><i class="fa-brands fa-youtube"></i><a href="https://youtube.com/@optimisticweb" target="_blank">YouTube</a></label>
+
+          <input type="radio" id="nav-instagram" name="nav-menu" />
+          <label for="nav-instagram"><i class="fa-brands fa-instagram"></i><a href="https://instagram.com/optimisticweb" target="_blank">Instagram</a></label>
+
+          <!-- Glider -->
+          <div class="glider-container">
+            <div class="glider"></div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <header class="header">
+      <a href="#" class="logo">
+        <img src="logo.png" alt="Logo">
+      </a>
+      <div class="nav-link-container">
+        <a href="index.html">Home</a>
+        <a href="elo.html">ELO</a>
+        <a href="store.html">Store</a>
+      </div>
+    </header>
+
+    <section class="banner-section">
+      <h1>About NeverEndEver</h1>
+      <p>This is a stub page to test navigation. The sidebar persists and remembers the active item.</p>
+    </section>
+  </main>
+
+  <!-- Sidebar logic -->
+  <script src="staticsidebar.js" defer></script>
+</body>
+</html>
