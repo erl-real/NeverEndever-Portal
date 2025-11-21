@@ -1,11 +1,4 @@
-[https://docs.google.com/document/d/1-U9OHi55hidGQufDcnB9148OxhutzMHGD_xdZ_v9RW8/edit?usp=sharing
-
-whats done
-
-Connected GitHub → Cloudflare Pages (for seamless CI/CD.)
-
-
-](https://docs.google.com/document/d/1-U9OHi55hidGQufDcnB9148OxhutzMHGD_xdZ_v9RW8/edit?usp=sharing
+https://docs.google.com/document/d/1-U9OHi55hidGQufDcnB9148OxhutzMHGD_xdZ_v9RW8/edit?usp=sharing
 
 # NeverEndever-Portal
 www.neverendever.com next gen project
