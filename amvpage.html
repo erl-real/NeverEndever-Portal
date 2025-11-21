@@ -1,3 +1,57 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Page</title>
+
+  <!-- Sidebar styles -->
+  <link rel="stylesheet" href="bar.css">
+
+  <!-- Ionicons for icons -->
+  <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+
+  <!-- Bootstrap for accordion dropdowns -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      min-height: 100vh;
+      flex-direction: column;
+    }
+
+    #main {
+      flex: 1;
+      padding: 4% 1.5em;
+      max-width: 55em;
+      margin: 0 auto;
+    }
+
+    footer {
+      background: #000;
+      color: #aaa;
+      text-align: center;
+      padding: 1em;
+      font-size: 0.9em;
+    }
+
+    /* Ensure sidebar doesn't overlap content */
+    @media screen and (min-width: 0px) {
+      body.openNav #main {
+        margin-left: 250px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar placeholder -->
+  <div id="nav-placeholder"></div>
+
+  <!-- Main content -->
+
 <header>
 
 	<!-- Video from coverr.co -->
@@ -18,3 +72,26 @@
 	<p>payment buttons coming soon!</p>
 
 </main>
+  <!-- Footer -->
+  <footer>
+    Placeholder footer — update as needed.
+  </footer>
+
+  <!-- Load sidebar HTML -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      fetch('nav.html')
+        .then(res => res.text())
+        .then(html => {
+          document.getElementById('nav-placeholder').innerHTML = html;
+        });
+    });
+  </script>
+
+  <!-- Sidebar logic -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script src="bar.js" defer></script>
+
+</body>
+</html>

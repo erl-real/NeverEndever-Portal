@@ -420,7 +420,7 @@
           drop-shadow(0 0 10cqi hsl(0 0% 10% / 0.75));
       }
 
-      .signature {
+     <!-- .signature {
         color: hsl(45 20% 60%);
         position: absolute;
         z-index: 100;
@@ -428,7 +428,7 @@
         bottom: calc(var(--border) * 1.1);
         right: calc(var(--border) * 0.6);
         rotate: 20deg;
-      }
+      } -->
 
       .sticker {
         position: absolute;
@@ -484,7 +484,7 @@
   .pattern,
   .watermark {
     filter: saturate(0.8) contrast(1) brightness(1);
-    mask: url(https://assets.codepen.io/605876/figma-texture.png) 50% 50% / 4cqi
+    mask: url(smalllogo.png) 50% 50% / 4cqi
       4cqi;
     opacity: 0.4;
     mix-blend-mode: multiply;
@@ -501,7 +501,7 @@
 
   .watermark {
     filter: saturate(0.9) contrast(1.1) brightness(1.2);
-    mask: url(https://assets.codepen.io/605876/shopify-pattern.svg) 50% 50% /
+    mask: url(smalllogo.png) 50% 50% /
       14cqi 14cqi repeat;
     opacity: 1;
     mix-blend-mode: hard-light;

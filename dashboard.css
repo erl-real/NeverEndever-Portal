@@ -1,1000 +1,591 @@
-@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Poppins:wght@400;500;600;700&display=swap');
-
-* {
-	margin: 0;
-	padding: 0;
-	box-sizing: border-box;
-}
-
-a {
-	text-decoration: none;
-}
-
-li {
-	list-style: none;
-}
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-  --poppins: 'Poppins', sans-serif;
-	--lato: 'Lato', sans-serif;
-
-	--light: #F9F9F9;
-	--blue: #3C91E6;
-	--light-blue: #CFE8FF;
-	--grey: #eee;
-	--dark-grey: #AAAAAA;
-	--dark: #342E37;
-	--red: #DB504A;
-	--yellow: #FFCE26;
-	--light-yellow: #FFF2C6;
-	--orange: #FD7238;
-	--light-orange: #FFE0D3;
-}
-
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-}
-html {
-	overflow-x: hidden;
-}
-
-body.dark {
-	--light: #0C0C1E;
-	--grey: #060714;
-	--dark: #FBFBFB;
-}
-
-body {
-	background: var(--grey);
-	overflow-x: hidden;
-}
-
-
-/* Form Styles */
-.sample-form {
-    background-color: var(--light);
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-top: 20px;
-    width: 100%;
-}
-
-.sample-form .head {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.sample-form .head h3 {
-    font-size: 24px;
-    font-weight: 600;
-    color: var(--dark);
-}
-
-.form-container {
-    display: flex;
-    flex-direction: column;
-}
-
-.form-group {
-    margin-bottom: 15px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: 500;
-    color: var(--dark);
-}
-
-.form-group input[type="text"],
-.form-group input[type="email"],
-.form-group textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid var(--grey);
-    border-radius: 5px;
-    font-size: 16px;
-    color: var(--dark);
-    background-color: var(--grey);
-}
-
-.form-group input[type="text"]:focus,
-.form-group input[type="email"]:focus,
-.form-group textarea:focus {
-    border-color: var(--blue);
-    outline: none;
-}
-
-.form-group textarea {
-    resize: vertical;
-}
-
-.btn-submit {
-    background-color: var(--blue);
-    color: var(--light);
-    padding: 12px 20px;
-    border: none;
-    border-radius: 5px;
-    font-size: 18px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.btn-submit:hover {
-    background-color: #337ab7;
-}
-
-
-
-
-
-/* SIDEBAR */
-#sidebar {
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 220px;
-	height: 100%;
-	background: var(--light);
-	z-index: 2000;
-	font-family: var(--lato);
-	transition: .3s ease;
-	overflow-x: hidden;
-	scrollbar-width: none;
-}
-#sidebar::--webkit-scrollbar {
-	display: none;
-}
-#sidebar.hide {
-	width: 60px;
-}
-#sidebar .brand {
-	font-size: 24px;
-	font-weight: 700;
-	height: 56px;
-	display: flex;
-	align-items: center;
-	color: var(--blue);
-	position: sticky;
-	top: 0;
-	left: 0;
-	background: var(--light);
-	z-index: 500;
-	padding-bottom: 20px;
-	box-sizing: content-box;
-}
-#sidebar .brand .bx {
-	min-width: 60px;
-	display: flex;
-	justify-content: center;
-}
-#sidebar .side-menu {
-	width: 100%;
-	margin-top: 48px;
-}
-#sidebar .side-menu li {
-	height: 48px;
-	background: transparent;
-	margin-left: 6px;
-	border-radius: 48px 0 0 48px;
-	padding: 4px;
-}
-#sidebar .side-menu li.active {
-	background: var(--grey);
-	position: relative;
-}
-#sidebar .side-menu li.active::before {
-	content: '';
-	position: absolute;
-	width: 40px;
-	height: 40px;
-	border-radius: 50%;
-	top: -40px;
-	right: 0;
-	box-shadow: 20px 20px 0 var(--grey);
-	z-index: -1;
-}
-#sidebar .side-menu li.active::after {
-	content: '';
-	position: absolute;
-	width: 40px;
-	height: 40px;
-	border-radius: 50%;
-	bottom: -40px;
-	right: 0;
-	box-shadow: 20px -20px 0 var(--grey);
-	z-index: -1;
-}
-#sidebar .side-menu li a {
-	width: 100%;
-	height: 100%;
-	background: var(--light);
-	display: flex;
-	align-items: center;
-	border-radius: 48px;
-	font-size: 16px;
-	color: var(--dark);
-	white-space: nowrap;
-	overflow-x: hidden;
-}
-#sidebar .side-menu.top li.active a {
-	color: var(--blue);
-}
-#sidebar.hide .side-menu li a {
-	width: calc(48px - (4px * 2));
-	transition: width .3s ease;
-}
-#sidebar .side-menu li a.logout {
-	color: var(--red);
-}
-#sidebar .side-menu.top li a:hover {
-	color: var(--blue);
-}
-#sidebar .side-menu li a .bx {
-	min-width: calc(60px  - ((4px + 6px) * 2));
-	display: flex;
-	justify-content: center;
-}
-
-#sidebar .side-menu.bottom li:nth-last-of-type(-n+2) { /* Son iki <li>'yi seç */
-  position: absolute; /* Ebeveynine göre konumlandır */
-  bottom: 0; /* En alt */
-  left: 0;
-  right: 0;
-  text-align: center;
-}
-
-/* Birbirinin üzerine binmesini engellemek için */
-#sidebar .side-menu.bottom li:nth-last-of-type(2) {
-  bottom: 40px; /* İkinci son öğeyi yukarı kaydır */
-}
-/* SIDEBAR */
-
-
-
-
-
-/* CONTENT */
-#content {
-	position: relative;
-	width: calc(100% - 220px);
-	left: 220px;
-	transition: .3s ease;
-}
-#sidebar.hide ~ #content {
-	width: calc(100% - 60px);
-	left: 60px;
-}
-
-
-
-
-/* NAVBAR */
-#content nav {
-	height: 56px;
-	background: var(--light);
-	padding: 0 24px;
-	display: flex;
-	align-items: center;
-	grid-gap: 24px;
-	font-family: var(--lato);
-	position: sticky;
-	top: 0;
-	left: 0;
-	z-index: 1000;
-}
-#content nav::before {
-	content: '';
-	position: absolute;
-	width: 40px;
-	height: 40px;
-	bottom: -40px;
-	left: 0;
-	border-radius: 50%;
-	box-shadow: -20px -20px 0 var(--light);
-}
-#content nav a {
-	color: var(--dark);
-}
-#content nav .bx.bx-menu {
-	cursor: pointer;
-	color: var(--dark);
-}
-#content nav .nav-link {
-	font-size: 16px;
-	transition: .3s ease;
-}
-#content nav .nav-link:hover {
-	color: var(--blue);
-}
-
-.categories-menu {
-    display: none;
-    position: absolute;
-    top: 56px; /* Navbar yüksekliği kadar aşağıda */
-    left: 60px; /* Categories linkinin solundan başlar */
-    background: var(--light);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    border-radius: 15px;
-    width: 200px;
-    z-index: 9999;
-    font-family: var(--lato);
-	opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
-}
-
-.categories-menu ul {
-    list-style: none;
-    padding: 10px;
-    margin: 0;
-}
-
-.categories-menu li {
-    padding: 10px;
-    border-bottom: 1px solid var(--grey);
-}
-
-.categories-menu li:hover {
-    background-color: var(--light-blue);
-}
-
-.categories-menu li a {
-    color: var(--dark);
-    font-size: 16px;
-    text-decoration: none;
-}
-.categories-menu li a i {
-    margin-right: 10px;
-}
-.categories-menu li:hover a {
-    color: var(--blue);
-}
-
-.categories-menu li:hover a i {
-    color: var(--blue);
-}
-
-.categories-menu.show {
-    display: block;
-	opacity: 1;
-    visibility: visible;
-}
-
-#content nav form {
-	max-width: 400px;
-	width: 100%;
-	margin-right: auto;
-}
-#content nav form .form-input {
-	display: flex;
-	align-items: center;
-	height: 36px;
-}
-#content nav form .form-input input {
-	flex-grow: 1;
-	padding: 0 16px;
-	height: 100%;
-	border: none;
-	background: var(--grey);
-	border-radius: 36px 0 0 36px;
-	outline: none;
-	width: 100%;
-	color: var(--dark);
-}
-#content nav form .form-input button {
-	width: 36px;
-	height: 100%;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	background: var(--blue);
-	color: var(--light);
-	font-size: 18px;
-	border: none;
-	outline: none;
-	border-radius: 0 36px 36px 0;
-	cursor: pointer;
-}
-#content nav .notification {
-	font-size: 20px;
-	position: relative;
-}
-#content nav .notification .num {
-    position: absolute;
-    top: -6px;
-    right: -6px;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    border: 2px solid var(--light);
-    background: var(--red);
-    color: var(--light);
-    font-weight: 700;
-    font-size: 12px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-/* Notification Dropdown */
-#content nav .notification-menu {
-    display: none;
-    position: absolute;
-    top: 56px;
-    right: 0;
-    background: var(--light);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    border-radius: 15px;
-    width: 250px;
-    max-height: 300px;
-    overflow-y: auto;
-    z-index: 9999;
-    font-family: var(--lato);
-}
-
-#content nav .notification-menu ul {
-    list-style: none;
-    padding: 10px;
-    margin: 0;
-}
-
-#content nav .notification-menu li {
-    padding: 10px;
-    border-bottom: 1px solid var(--grey);
-	color: var(--dark);
-}
-
-#content nav .notification-menu li:hover {
-    background-color: var(--light-blue);
-	color: var(--dark);
-}
-#content nav .notification-menu li:hover a{
-    background-color: var(--dark-grey);
-	color: var(--light);
-}
-body.dark #content nav .notification-menu li:hover {
-    background-color: var(--light-blue);
-	color: var(--light);
-}
-body.dark #content nav .notification-menu li a{
-    background-color: var(--dark-grey);
-	color: var(--light);
-}
-#content nav .profile img {
-	width: 36px;
-	height: 36px;
-	object-fit: cover;
-	border-radius: 50%;
-}
-#content nav .profile-menu {
-    display: none;
-    position: absolute;
-    top: 56px;
-    right: 0;
-    background: var(--light);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    border-radius: 15px;
-    width: 200px;
-    z-index: 9999;
-    font-family: var(--lato);
-}
-
-#content nav .profile-menu ul {
-    list-style: none;
-    padding: 10px;
-    margin: 0;
-}
-
-#content nav .profile-menu li {
-    padding: 10px;
-    border-bottom: 1px solid var(--grey);
-}
-
-#content nav .profile-menu li:hover {
-    background-color: var(--light-blue);
-	color: var(--dark);
-}
-#content nav .profile-menu li a {
-    color: var(--dark);
-    font-size: 16px;
-}
-body.dark #content nav .profile-menu li:hover a {
-    color: var(--light);
-}
-body.dark #content nav .profile-menu li a {
-    color: var(--dark);
-}
-#content nav .profile-menu li:hover a {
-    color: var(--dark);
-}
-/* Active State for Menus */
-#content nav .notification-menu.show,
-#content nav .profile-menu.show {
-    display: block;
-}
-
-#content nav .switch-mode {
-	display: block;
-	min-width: 50px;
-	height: 25px;
-	border-radius: 25px;
-	background: var(--grey);
-	cursor: pointer;
-	position: relative;
-}
-#content nav .switch-mode::before {
-	content: '';
-	position: absolute;
-	top: 2px;
-	left: 2px;
-	bottom: 2px;
-	width: calc(25px - 4px);
-	background: var(--blue);
-	border-radius: 50%;
-	transition: all .3s ease;
-}
-#content nav #switch-mode:checked + .switch-mode::before {
-	left: calc(100% - (25px - 4px) - 2px);
-}
-
-
-#content nav .swith-lm {
-	background-color:  var(--grey);
-	border-radius: 50px;
-	cursor: pointer;
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	padding: 3px;
-	position: relative;
-	height: 21px;
-	width: 45px;
-	transform: scale(1.5);
-}
-
-#content nav .swith-lm .ball {
-	background-color: var(--blue);
-	border-radius: 50%;
-	position: absolute;
-	top: 2px;
-	left: 2px;
-	height: 18px;
-	width: 18px;
-	transform: translateX(0px);
-	transition: transform 0.3s ease, background-color 0.3s ease;
-}
-
-#content nav .checkbox:checked + .swith-lm .ball {
-	transform: translateX(22px);
-	 background-color: var(--orange); /* Açık modda top rengi */
-}
-.bxs-moon {
-	color: var(--yellow);
-}
-
-.bx-sun {
-	color: var(--orange);
-	animation: shakeOn .7s;
-}
-
-
-
-/* NAVBAR */
-
-
-
-
-
-/* MAIN */
-#content main {
-	width: 100%;
-	padding: 36px 24px;
-	font-family: var(--poppins);
-	max-height: calc(100vh - 56px);
-	overflow-y: auto;
-}
-#content main .head-title {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	grid-gap: 16px;
-	flex-wrap: wrap;
-}
-#content main .head-title .left h1 {
-	font-size: 36px;
-	font-weight: 600;
-	margin-bottom: 10px;
-	color: var(--dark);
-}
-#content main .head-title .left .breadcrumb {
-	display: flex;
-	align-items: center;
-	grid-gap: 16px;
-}
-#content main .head-title .left .breadcrumb li {
-	color: var(--dark);
-}
-#content main .head-title .left .breadcrumb li a {
-	color: var(--dark-grey);
-	pointer-events: none;
-}
-#content main .head-title .left .breadcrumb li a.active {
-	color: var(--blue);
-	pointer-events: unset;
-}
-#content main .head-title .btn-download {
-	height: 36px;
-	padding: 0 16px;
-	border-radius: 36px;
-	background: var(--blue);
-	color: var(--light);
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	grid-gap: 10px;
-	font-weight: 500;
-}
-
-
-
-
-#content main .box-info {
-	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-	grid-gap: 24px;
-	margin-top: 36px;
-}
-#content main .box-info li {
-	padding: 24px;
-	background: var(--light);
-	border-radius: 20px;
-	display: flex;
-	align-items: center;
-	grid-gap: 24px;
-}
-#content main .box-info li .bx {
-	width: 80px;
-	height: 80px;
-	border-radius: 10px;
-	font-size: 36px;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-}
-#content main .box-info li:nth-child(1) .bx {
-	background: var(--light-blue);
-	color: var(--blue);
-}
-#content main .box-info li:nth-child(2) .bx {
-	background: var(--light-yellow);
-	color: var(--yellow);
-}
-#content main .box-info li:nth-child(3) .bx {
-	background: var(--light-orange);
-	color: var(--orange);
-}
-#content main .box-info li .text h3 {
-	font-size: 24px;
-	font-weight: 600;
-	color: var(--dark);
-}
-#content main .box-info li .text p {
-	color: var(--dark);	
-}
-
-
-
-
-
-#content main .table-data {
-	display: flex;
-	flex-wrap: wrap;
-	grid-gap: 24px;
-	margin-top: 24px;
-	width: 100%;
-	color: var(--dark);
-}
-#content main .table-data > div {
-	border-radius: 20px;
-	background: var(--light);
-	padding: 24px;
-	overflow-x: auto;
-}
-#content main .table-data .head {
-	display: flex;
-	align-items: center;
-	grid-gap: 16px;
-	margin-bottom: 24px;
-}
-#content main .table-data .head h3 {
-	margin-right: auto;
-	font-size: 24px;
-	font-weight: 600;
-}
-#content main .table-data .head .bx {
-	cursor: pointer;
-}
-
-#content main .table-data .order {
-	flex-grow: 1;
-	flex-basis: 500px;
-}
-#content main .table-data .order table {
-	width: 100%;
-	border-collapse: collapse;
-}
-#content main .table-data .order table th {
-	padding-bottom: 12px;
-	font-size: 13px;
-	text-align: left;
-	border-bottom: 1px solid var(--grey);
-}
-#content main .table-data .order table td {
-	padding: 16px 0;
-}
-#content main .table-data .order table tr td:first-child {
-	align-items: center; /* Resmi üst hizaya yerleştir */
-    position: relative; /* İç öğeleri pozisyonlayabilmek için relative yapılır */
-	grid-gap: 12px;
-	padding-left: 6px;
-	object-fit: cover;
-}
-#content main .table-data .order table tr td:last-child {
-	align-items: center; /* Resmi üst hizaya yerleştir */
-    position: relative; /* İç öğeleri pozisyonlayabilmek için relative yapılır */
-	grid-gap: 12px;
-	padding-left: 6px;
-	object-fit: cover;
-}
-#content main .table-data .order table td img {
-	width: 36px;
-	height: 36px;
-	border-radius: 50%;
-	object-fit: cover;
-}
-#content main .table-data .order table tbody tr:hover {
-	background: var(--grey);
-}
-#content main .table-data .order table tr td .status {
-	font-size: 10px;
-	padding: 6px 16px;
-	color: var(--light);
-	border-radius: 20px;
-	font-weight: 700;
-}
-#content main .table-data .order table tr td .status.completed {
-	background: var(--blue);
-}
-#content main .table-data .order table tr td .status.process {
-	background: var(--yellow);
-}
-#content main .table-data .order table tr td .status.pending {
-	background: var(--orange);
-}
-
-#content main .todo-filters button {
-	padding: 8px;
-	border-radius: 8px;
-	border: none;
-	background: none;
-	cursor: pointer;
-	margin-right: 10px;
-	color: var(--foreground);
-	background: var(--background);
-}
-#content main .todo-filters button.completed {
-	background: var(--blue);
-}
-#content main .todo-filters button.pending {
-	background: var(--orange);
-}
-#content main .table-data .todo {
-	flex-grow: 1;
-	flex-basis: 300px;
-}
-#content main .table-data .todo .todo-list {
-	width: 100%;
-}
-#content main .table-data .todo .todo-list li {
-	width: 100%;
-	margin-bottom: 16px;
-	background: var(--grey);
-	border-radius: 10px;
-	padding: 24px 20px;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-}
-#content main .table-data .todo .todo-list li .bx {
-	cursor: pointer;
-}
-
-#content main .table-data .todo .todo-list li.completed {
-    border-left: 10px solid var(--blue);
-    position: relative;
-}
-
-#content main .table-data .todo .todo-list li.not-completed {
-    border-left: 10px solid var(--orange);
-    position: relative;
-}
-
-#content main .table-data .todo .todo-list li::before {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: var(--progress-width, 100%); /* 'data-progress' üzerinden dinamik olarak belirleniyor */
-    height: 3px;
-    background-color: #ddd; /* Gri bir çizgi rengi */
-}
-
-#content main .table-data .todo .todo-list li.completed::before {
-    background-color: var(--blue); /* Completed öğesi için mavi renk */
-}
-
-#content main .table-data .todo .todo-list li.not-completed::before {
-    background-color: var(--orange); /* Not completed öğesi için turuncu renk */
-}
-
-#content main .table-data .todo .todo-list li span {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-	padding-left: -30px;
-}
-#content main .table-data .todo .todo-list li.not-completed span {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-	padding-left: -30px;
-}
-
-#content main .table-data .todo .todo-list li:last-child {
-	margin-bottom: 0;
-}
-/* MAIN */
-/* CONTENT */
-
-
-/* Menü İkonu */
-.menu-icon {
-    position: relative;
-    cursor: pointer;
-}
-
-/* Menü Liste Stili */
-dl.content-menu {
-    display: none;
-    position: absolute;
-    right: 0;
-    top: 100%;
-    background-color: var(--light);
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    z-index: 10;
-    width: 150px;
-}
-
-/* Menü öğeleri */
-dt.menu-item {
-    padding: 10px;
-}
-
-/* Menü öğelerine hover efekti */
-dt.menu-item a {
-    text-decoration: none;
-    display: block;
-}
-dt.menu-item a, dt.menu-item {
-	background: var(--light);
-	color: var(--dark);
-    
-}	
-dt.menu-item a:hover, dt.menu-item:hover *{
-    background-color: var(--light-blue);
-	color: var(--light);
-}
-
-/* Menü öğelerinin görünür olmasını sağla */
-dt.menu-icon:hover dt.content-menu {
-    display: block;
-}
-
-
-
-
-
-
-/* Media Query for Smaller Screens */
-@media screen and (max-width: 768px) {
-    /* Reduce width of notification and profile menu */
-    #content nav .notification-menu,
-    #content nav .profile-menu {
-        width: 180px;
-    }
-	#sidebar {
-		width: 200px;
-	}
-
-	#content {
-		width: calc(100% - 60px);
-		left: 200px;
-	}
-
-	#content nav .nav-link {
-		display: none;
-	}
-	.categories-menu {
-        left: 20px; /* Mobilde sola yasla */
-        width: 180px; /* Mobilde genişlik azalt */
-    }
-}
-
-
-
-
-@media screen and (max-width: 576px) {
-    #content nav .notification-menu,
-    #content nav .profile-menu {
-        width: 150px;
-    }
-	#content nav form .form-input input {
-		display: none;
-	}
-
-	#content nav form .form-input button {
-		width: auto;
-		height: auto;
-		background: transparent;
-		border-radius: none;
-		color: var(--dark);
-	}
-
-	#content nav form.show .form-input input {
-		display: block;
-		width: 100%;
-	}
-	#content nav form.show .form-input button {
-		width: 36px;
-		height: 100%;
-		border-radius: 0 36px 36px 0;
-		color: var(--light);
-		background: var(--red);
-	}
-
-	#content nav form.show ~ .notification,
-	#content nav form.show ~ .profile {
-		display: none;
-	}
-
-	#content main .box-info {
-		grid-template-columns: 1fr;
-	}
-
-	#content main .table-data .head {
-		min-width: 420px;
-	}
-	#content main .table-data .order table {
-		min-width: 420px;
-	}
-	#content main .table-data .todo .todo-list {
-		min-width: 420px;
-	}
-}
+
+    <!-- [FILE START: script.js] Copy content between script tags to a separate JS file -->
+    <script>
+        const Dashboard = {
+            // [INTEGRATION POINT] User Object - Default Empty State
+            user: {
+                username: "Artist", // Default Name
+                credits: 0,
+                role: "Producer",
+                settings: {
+                    displayname: "",
+                    role: "producer",
+                    avatar: null,
+                    theme: "default",
+                    font: "inter",
+                    // Visual Settings State
+                    uiScale: 100,
+                    blurAmt: 10,
+                    parallax: true,
+                    motion: false,
+                    waveform: true,
+                    contrast: false,
+                    unlockedItems: [],
+                    isAdmin: false 
+                },
+                tracks: [] // Empty Array implies "Nothing Added"
+            },
+            
+            pendingTx: { amount: 0, cost: 0 },
+
+            init: function() {
+                // [INTEGRATION POINT] Call your backend fetch here instead of loadMockData
+                this.loadMockData();
+                this.setupEventListeners();
+                this.updateUI();
+                this.checkPurchases();
+                this.renderTracks(); 
+                
+                // Apply persisted visual settings on load
+                this.applyVisualSettings();
+            },
+
+            loadMockData: function() {
+                const savedUser = localStorage.getItem('nee_artist_data');
+                if (savedUser) {
+                    this.user = JSON.parse(savedUser);
+                    if(!this.user.settings.unlockedItems) this.user.settings.unlockedItems = [];
+                    if(!this.user.tracks) this.user.tracks = [];
+                    // Ensure settings object exists
+                    if(!this.user.settings) this.user.settings = { displayname: this.user.username };
+                } else {
+                    // Default State
+                    this.user.credits = 0; 
+                }
+            },
+
+            applyVisualSettings: function() {
+                const s = this.user.settings;
+
+                // Apply Theme
+                if(s.theme && s.theme !== 'default') {
+                    document.body.classList.add(`theme-${s.theme}`);
+                    const themeSelect = document.getElementById('setting-theme');
+                    if(themeSelect) themeSelect.value = s.theme;
+                }
+                // Apply Font
+                if(s.font) {
+                    const fonts = {
+                        'inter': "'Inter', sans-serif",
+                        'jetbrains': "'JetBrains Mono', monospace",
+                        'poppins': "'Poppins', sans-serif",
+                        'serif': "'Playfair Display', serif"
+                    };
+                    if(fonts[s.font]) {
+                         document.body.style.fontFamily = fonts[s.font];
+                         const fontSelect = document.getElementById('setting-font');
+                         if(fontSelect) fontSelect.value = s.font;
+                    }
+                }
+                // Apply Other Visuals
+                if(s.uiScale) {
+                    document.body.style.zoom = `${s.uiScale}%`;
+                    const scaleInput = document.getElementById('setting-ui-scale');
+                    if(scaleInput) scaleInput.value = s.uiScale;
+                }
+                if(s.blurAmt !== undefined) {
+                    document.documentElement.style.setProperty('--blur-amt', `${s.blurAmt}px`);
+                    const blurInput = document.getElementById('setting-blur');
+                    if(blurInput) blurInput.value = s.blurAmt;
+                }
+                if(s.contrast) {
+                    document.body.classList.add('high-contrast');
+                    const contrastInput = document.getElementById('setting-contrast');
+                    if(contrastInput) contrastInput.checked = true;
+                }
+                
+                // Apply toggles to UI state (purely visual sync for settings menu)
+                if(document.getElementById('setting-parallax')) document.getElementById('setting-parallax').checked = s.parallax;
+                if(document.getElementById('setting-motion')) document.getElementById('setting-motion').checked = s.motion;
+                if(document.getElementById('setting-waveform')) document.getElementById('setting-waveform').checked = s.waveform;
+            },
+
+            setupEventListeners: function() {
+                // Tab Logic
+                document.querySelectorAll('.nav-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                        e.currentTarget.classList.add('active');
+                        
+                        document.querySelectorAll('.dash-view').forEach(view => view.classList.remove('active'));
+                        const tabId = e.currentTarget.getAttribute('data-tab');
+                        document.getElementById(`tab-${tabId}`).classList.add('active');
+                        
+                        const titles = {
+                            'overview': 'Dashboard',
+                            'tracks': 'My Tracks',
+                            'profile': 'Edit Profile',
+                            'visuals': 'Visual Customization',
+                            'verification': 'Claim Artist ID',
+                            'store': 'Aura Store',
+                            'settings': 'System Settings',
+                            'admin': 'System Administration'
+                        };
+                        document.getElementById('page-title').textContent = titles[tabId];
+                    });
+                });
+
+                // --- VISUAL SETTINGS LISTENERS ---
+                
+                // 1. Theme Switcher
+                document.getElementById('setting-theme').addEventListener('change', (e) => {
+                    document.body.className = ''; // Reset classes
+                    if(e.target.value !== 'default') {
+                        document.body.classList.add(`theme-${e.target.value}`);
+                    }
+                    if(document.getElementById('setting-contrast').checked) {
+                        document.body.classList.add('high-contrast');
+                    }
+                });
+
+                // 2. Font Switcher
+                document.getElementById('setting-font').addEventListener('change', (e) => {
+                    const fonts = {
+                        'inter': "'Inter', sans-serif",
+                        'jetbrains': "'JetBrains Mono', monospace",
+                        'poppins': "'Poppins', sans-serif",
+                        'serif': "'Playfair Display', serif"
+                    };
+                    document.body.style.fontFamily = fonts[e.target.value];
+                });
+
+                // 3. UI Scale (Zoom)
+                document.getElementById('setting-ui-scale').addEventListener('input', (e) => {
+                    document.body.style.zoom = `${e.target.value}%`;
+                });
+
+                // 4. Blur Intensity
+                document.getElementById('setting-blur').addEventListener('input', (e) => {
+                    document.documentElement.style.setProperty('--blur-amt', `${e.target.value}px`);
+                });
+
+                // 5. High Contrast Toggle
+                document.getElementById('setting-contrast').addEventListener('change', (e) => {
+                    if(e.target.checked) {
+                        document.body.classList.add('high-contrast');
+                    } else {
+                        document.body.classList.remove('high-contrast');
+                    }
+                });
+
+
+                // Avatar Upload (File)
+                document.getElementById('upload-avatar-input').addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            // [INTEGRATION POINT] Upload file to S3/Blob storage here
+                            this.user.settings.avatar = e.target.result;
+                            this.saveData();
+                            this.updateUI();
+                            alert('Avatar Updated!');
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+
+                // Avatar Upload (URL)
+                document.getElementById('avatar-url-input').addEventListener('change', (e) => {
+                    const url = e.target.value;
+                    if(url) {
+                        this.user.settings.avatar = url;
+                        this.saveData();
+                        this.updateUI();
+                        // Show quick visual confirmation
+                        const preview = document.getElementById('avatar-preview');
+                        if(preview) {
+                            preview.style.backgroundImage = `url('${url}')`;
+                            preview.style.display = 'block';
+                            document.getElementById('avatar-placeholder').style.display = 'none';
+                        }
+                    }
+                });
+            },
+
+            // --- TRACK FUNCTIONS ---
+            renderTracks: function(filter = "") {
+                const listBody = document.getElementById('track-list-body');
+                listBody.innerHTML = '';
+                
+                let totalPlays = 0;
+                let totalLikes = 0;
+
+                // Filter Logic
+                const tracksToShow = this.user.tracks.filter(t => t.title.toLowerCase().includes(filter.toLowerCase()));
+
+                // [INTEGRATION POINT] EMPTY STATE LOGIC
+                if(tracksToShow.length === 0) {
+                    listBody.innerHTML = `
+                        <div style="padding:40px; text-align:center; color:var(--text-muted); display:flex; flex-direction:column; align-items:center; gap:10px;">
+                            <i class="fas fa-music fa-3x" style="opacity:0.2; margin-bottom:10px;"></i>
+                            <span>Nothing Added Yet.</span>
+                            <button class="btn-emerald-sm" onclick="document.getElementById('add-track-form').style.display = 'grid';">
+                                + Upload Your First Track
+                            </button>
+                        </div>
+                    `;
+                    // Update stats to 0 if no tracks
+                    document.getElementById('total-plays').innerText = "0";
+                    document.getElementById('total-likes').innerText = "0";
+                    return;
+                }
+
+                tracksToShow.forEach(track => {
+                    totalPlays += track.plays;
+                    totalLikes += track.likes;
+
+                    const row = document.createElement('div');
+                    row.className = 'track-row';
+                    row.innerHTML = `
+                        <div class="track-art"></div>
+                        <div>
+                            <div class="track-title">${track.title}</div>
+                            <div class="track-meta">${track.date}</div>
+                        </div>
+                        <div class="track-meta">${track.genre}</div>
+                        <div><span style="background:${track.status === 'Published' ? 'rgba(0,245,212,0.1)' : 'rgba(255,255,255,0.1)'}; color:${track.status === 'Published' ? 'var(--emerald)' : '#ccc'}; padding:4px 8px; border-radius:4px; font-size:0.7rem; font-weight:700;">${track.status}</span></div>
+                        <div class="track-stat">${track.plays.toLocaleString()}</div>
+                        <div class="track-stat">${track.likes.toLocaleString()}</div>
+                        <div class="track-actions">
+                            <button class="btn-icon"><i class="fas fa-chart-bar"></i></button>
+                            <button class="btn-icon"><i class="fas fa-edit"></i></button>
+                            <button class="btn-icon" style="color:#ff4757" onclick="Dashboard.deleteTrack(${track.id})"><i class="fas fa-trash"></i></button>
+                        </div>
+                    `;
+                    listBody.appendChild(row);
+                });
+
+                document.getElementById('total-plays').innerText = totalPlays.toLocaleString();
+                document.getElementById('total-likes').innerText = totalLikes.toLocaleString();
+            },
+
+            addTrack: function() {
+                // [INTEGRATION POINT] This function simulates adding to DB
+                const name = document.getElementById('add-track-name').value;
+                const genre = document.getElementById('add-track-genre').value;
+                const date = document.getElementById('add-track-date').value || new Date().toISOString().split('T')[0];
+                
+                if(name) {
+                    const newTrack = {
+                        id: Date.now(),
+                        title: name,
+                        genre: genre,
+                        status: "Published",
+                        plays: 0,
+                        likes: 0,
+                        date: date
+                    };
+                    
+                    this.user.tracks.unshift(newTrack); 
+                    this.saveData();
+                    this.renderTracks();
+                    document.getElementById('add-track-form').style.display = 'none';
+                    document.getElementById('add-track-name').value = '';
+                    alert("Track Added to Profile!");
+                } else {
+                    alert("Please enter a track name.");
+                }
+            },
+
+            deleteTrack: function(id) {
+                if(confirm("Are you sure you want to delete this track?")) {
+                    // [INTEGRATION POINT] Send DELETE request to API
+                    this.user.tracks = this.user.tracks.filter(t => t.id !== id);
+                    this.saveData();
+                    this.renderTracks();
+                }
+            },
+
+            filterTracks: function(val) {
+                this.renderTracks(val);
+            },
+
+            filterGenre: function(genre) {
+                if(genre === 'all') {
+                    this.renderTracks();
+                } else {
+                    const filtered = this.user.tracks.filter(t => t.genre.toLowerCase() === genre);
+                    // Override render logic for filter
+                    const listBody = document.getElementById('track-list-body');
+                    listBody.innerHTML = '';
+                    if(filtered.length === 0) {
+                         listBody.innerHTML = '<div style="padding:30px; text-align:center; color:var(--text-muted);">No tracks found for this genre.</div>';
+                         return;
+                    }
+                    filtered.forEach(track => {
+                         const row = document.createElement('div');
+                        row.className = 'track-row';
+                        row.innerHTML = `
+                            <div class="track-art"></div>
+                            <div>
+                                <div class="track-title">${track.title}</div>
+                                <div class="track-meta">${track.date}</div>
+                            </div>
+                            <div class="track-meta">${track.genre}</div>
+                            <div><span style="background:${track.status === 'Published' ? 'rgba(0,245,212,0.1)' : 'rgba(255,255,255,0.1)'}; color:${track.status === 'Published' ? 'var(--emerald)' : '#ccc'}; padding:4px 8px; border-radius:4px; font-size:0.7rem; font-weight:700;">${track.status}</span></div>
+                            <div class="track-stat">${track.plays.toLocaleString()}</div>
+                            <div class="track-stat">${track.likes.toLocaleString()}</div>
+                            <div class="track-actions">
+                                <button class="btn-icon"><i class="fas fa-chart-bar"></i></button>
+                                <button class="btn-icon"><i class="fas fa-edit"></i></button>
+                                <button class="btn-icon" style="color:#ff4757" onclick="Dashboard.deleteTrack(${track.id})"><i class="fas fa-trash"></i></button>
+                            </div>
+                        `;
+                        listBody.appendChild(row);
+                    });
+                }
+            },
+
+            updateUI: function() {
+                // [INTEGRATION POINT] Update DOM elements with User Data
+                const displayName = this.user.settings.displayname || this.user.username;
+                document.getElementById('sidebar-username').textContent = displayName;
+                document.getElementById('overview-name').textContent = displayName;
+                document.getElementById('credit-display').textContent = `${this.user.credits} Aura`;
+                document.getElementById('sidebar-role').textContent = this.user.settings.role || "Producer";
+                
+                if (this.user.settings.displayname) {
+                    document.getElementById('set-displayname').value = this.user.settings.displayname;
+                }
+                if (this.user.settings.role) {
+                    document.getElementById('set-role').value = this.user.settings.role;
+                }
+                
+                // Check for admin flag set via login
+                const adminLink = document.getElementById('nav-admin');
+                const devLoginBtn = document.getElementById('btn-dev-login');
+                const devLogoutBtn = document.getElementById('btn-dev-logout');
+
+                if(this.user.settings.isAdmin) {
+                    adminLink.style.display = 'flex';
+                    if(devLoginBtn) devLoginBtn.style.display = 'none';
+                    if(devLogoutBtn) devLogoutBtn.style.display = 'block';
+                } else {
+                    adminLink.style.display = 'none';
+                    if(devLoginBtn) devLoginBtn.style.display = 'block';
+                    if(devLogoutBtn) devLogoutBtn.style.display = 'none';
+                }
+
+                if (this.user.settings.avatar) {
+                    const miniAvatar = document.getElementById('mini-avatar');
+                    miniAvatar.style.backgroundImage = `url('${this.user.settings.avatar}')`;
+                    
+                    const preview = document.getElementById('avatar-preview');
+                    const placeholder = document.getElementById('avatar-placeholder');
+                    if(preview && placeholder) {
+                        preview.style.backgroundImage = `url('${this.user.settings.avatar}')`;
+                        preview.style.display = 'block';
+                        placeholder.style.display = 'none';
+                    }
+                }
+                
+                this.checkPurchases();
+            },
+
+            switchTab: function(tabName) {
+                document.querySelector(`.nav-btn[data-tab="${tabName}"]`).click();
+            },
+            
+            toggleUserMenu: function() {
+                const menu = document.getElementById('user-menu-popup');
+                menu.classList.toggle('show');
+                
+                // Close when clicking outside (simple implementation)
+                if(menu.classList.contains('show')) {
+                    setTimeout(() => {
+                         document.addEventListener('click', function closeMenu(e) {
+                            if(!e.target.closest('.user-mini-profile') && !e.target.closest('.user-menu-popup')) {
+                                menu.classList.remove('show');
+                                document.removeEventListener('click', closeMenu);
+                            }
+                        });
+                    }, 10);
+                }
+            },
+
+            initiatePayment: function(amount) {
+                // Define prices
+                const prices = { 500: 4.99, 1200: 9.99, 2500: 19.99 };
+                this.pendingTx = { amount: amount, cost: prices[amount] };
+                
+                // Update Modal UI
+                document.getElementById('pay-item-name').innerText = `${amount} Aura Pack`;
+                document.getElementById('pay-total').innerText = `$${prices[amount]}`;
+                
+                // Clear inputs
+                document.getElementById('pay-card-num').value = '';
+                document.getElementById('pay-expiry').value = '';
+                document.getElementById('pay-cvc').value = '';
+
+                // Show Modal
+                document.getElementById('payment-modal').style.display = 'flex';
+            },
+            
+            processPayment: function() {
+                const cardNum = document.getElementById('pay-card-num').value.trim();
+                const cardExp = document.getElementById('pay-expiry').value.trim();
+                const cardCVC = document.getElementById('pay-cvc').value.trim();
+                const btn = document.getElementById('btn-confirm-pay');
+
+                // Realistic Validation Logic
+                if(cardNum.length < 12 || isNaN(cardNum.replace(/\s/g, ''))) {
+                    alert("Transaction Failed: Invalid Card Number.");
+                    return;
+                }
+                if(cardExp.length < 4 || !cardExp.includes('/')) {
+                    alert("Transaction Failed: Invalid Expiry Date.");
+                    return;
+                }
+                if(cardCVC.length < 3 || isNaN(cardCVC)) {
+                    alert("Transaction Failed: Invalid Security Code (CVC).");
+                    return;
+                }
+
+                // Simulate Processing State
+                btn.innerText = "Authorizing...";
+                btn.disabled = true;
+                btn.style.opacity = "0.7";
+                
+                setTimeout(() => {
+                    // [INTEGRATION POINT] Call Stripe/PayPal API here
+                    btn.innerText = "Capturing Funds...";
+                    
+                    setTimeout(() => {
+                         this.user.credits += this.pendingTx.amount;
+                        this.saveData();
+                        this.updateUI();
+                        
+                        btn.innerText = "Pay Now"; // Reset btn
+                        btn.disabled = false;
+                        btn.style.opacity = "1";
+                        this.closePaymentModal();
+                        alert(`Payment Successful! Added ${this.pendingTx.amount} Aura.`);
+                        this.pendingTx = { amount: 0, cost: 0 }; // Clear pending
+                    }, 1500);
+                }, 1500);
+            },
+            
+            closePaymentModal: function() {
+                document.getElementById('payment-modal').style.display = 'none';
+            },
+
+            // --- DEVELOPER LOGIN LOGIC ---
+            openDevLogin: function() {
+                document.getElementById('dev-login-modal').style.display = 'flex';
+            },
+
+            closeDevLogin: function() {
+                document.getElementById('dev-login-modal').style.display = 'none';
+            },
+
+            logoutDev: function() {
+                this.user.settings.isAdmin = false;
+                this.saveData();
+                this.updateUI();
+                // Switch back to overview if currently on admin tab
+                if(document.querySelector('.nav-btn[data-tab="admin"]').classList.contains('active')) {
+                    this.switchTab('overview');
+                }
+                alert("Logged out of Developer Mode.");
+            },
+
+            submitDevLogin: function() {
+                const user = document.getElementById('dev-username').value;
+                const pass = document.getElementById('dev-password').value;
+
+                if(user === "ERLDeveloper" && pass === "@NeverEndEver2021") {
+                    this.user.settings.isAdmin = true;
+                    this.saveData();
+                    this.updateUI();
+                    this.closeDevLogin();
+                    alert("Access Granted: Admin Panel Unlocked.");
+                } else {
+                    alert("Access Denied: Invalid Credentials.");
+                }
+            },
+
+            purchase: function(itemId) {
+                // [INTEGRATION POINT] Validate purchase against user credits on server
+                const prices = {
+                    'glow_neon': 500, 'glow_gold': 800, 'border_fire': 1200, 'effect_frost': 1200, 'badge_storm': 300,
+                    'theme_cyber': 1500, 'theme_midnight': 1000, 'theme_sunset': 1000, 'theme_phantom': 2000,
+                    'frame_tech': 800, 'frame_king': 5000, 'frame_phones': 600, 'frame_vinyl': 900
+                };
+
+                if(this.user.settings.unlockedItems.includes(itemId)) {
+                    return alert('You already own this item!');
+                }
+
+                const cost = prices[itemId];
+                if (this.user.credits >= cost) {
+                    if (confirm(`Purchase for ${cost} Aura?`)) {
+                        this.user.credits -= cost;
+                        this.user.settings.unlockedItems.push(itemId);
+                        this.saveData();
+                        this.updateUI();
+                        alert("Item Unlocked! Added to your inventory.");
+                    }
+                } else {
+                    alert("Insufficient Aura! Top up at the top of the page.");
+                }
+            },
+
+            checkPurchases: function() {
+                if(this.user.settings.unlockedItems) {
+                    this.user.settings.unlockedItems.forEach(id => {
+                        const btn = document.querySelector(`button[onclick="Dashboard.purchase('${id}')"]`);
+                        if(btn) {
+                            btn.innerText = "Owned";
+                            btn.classList.add('unlocked');
+                        }
+                    });
+                }
+            },
+
+            saveSettings: function() {
+                // [INTEGRATION POINT] Send updated settings object to API
+                
+                // Save Profile
+                this.user.settings.displayname = document.getElementById('set-displayname').value;
+                this.user.settings.role = document.getElementById('set-role').value;
+                
+                // Save Visuals (Theme & Font)
+                this.user.settings.theme = document.getElementById('setting-theme').value;
+                this.user.settings.font = document.getElementById('setting-font').value;
+                
+                // Save Visual Toggles
+                this.user.settings.uiScale = document.getElementById('setting-ui-scale').value;
+                this.user.settings.blurAmt = document.getElementById('setting-blur').value;
+                this.user.settings.contrast = document.getElementById('setting-contrast').checked;
+                this.user.settings.parallax = document.getElementById('setting-parallax').checked;
+                this.user.settings.motion = document.getElementById('setting-motion').checked;
+                this.user.settings.waveform = document.getElementById('setting-waveform').checked;
+                
+                this.saveData();
+                this.updateUI();
+                alert("Settings Saved Successfully!");
+            },
+
+            submitClaim: function() {
+                // [INTEGRATION POINT] Submit verification request
+                const btn = document.getElementById('btn-claim-submit');
+                btn.innerText = "Submitting...";
+                setTimeout(() => {
+                    btn.innerText = "Pending Review";
+                    btn.style.background = "#555";
+                    btn.style.cursor = "default";
+                    alert("Claim submitted for review!");
+                }, 1500);
+            },
+
+            saveData: function() {
+                // [INTEGRATION POINT] Replace LocalStorage with DB sync
+                localStorage.setItem('nee_artist_data', JSON.stringify(this.user));
+            }
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            Dashboard.init();
+        });
+    </script>

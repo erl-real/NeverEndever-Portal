@@ -1,44 +1,1360 @@
+<!-- [FILE START: index.html] Structure -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>My Page</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artist Dashboard | Endever Live</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500;700&family=Poppins:wght@600;800&family=Playfair+Display:wght@600;800&display=swap" rel="stylesheet">
+    
+    <!-- [FILE START: style.css] Copy content between style tags to a separate CSS file -->
+    <style>
+        /* --- CORE THEME & DASHBOARD CSS --- */
+        :root {
+            /* Default Theme Variables */
+            --bg-app: #050505;
+            --bg-panel: #0a0a0e;
+            --card-bg: rgba(15, 16, 22, 0.6);
+            --border: rgba(255, 255, 255, 0.08);
+            --emerald: #00f5d4; /* Primary Accent */
+            --purple: #9d4edd;   /* Secondary Accent */
+            --gold: #ffd700;     /* Premium Accent */
+            --danger: #ff4757;
+            --text-main: #f0f0f0; 
+            --text-muted: #9ca3af;
+            
+            --sidebar-width: 260px;
+            --header-height: 70px;
+            --blur-amt: 10px; /* Dynamic Blur */
+        }
 
-  <!-- Sidebar styles -->
-  <link rel="stylesheet" href="bar.css">
+        /* THEME: Midnight Blue */
+        body.theme-midnight {
+            --bg-app: #020410;
+            --bg-panel: #060b1e;
+            --card-bg: rgba(10, 20, 40, 0.6);
+            --emerald: #4cc9f0;
+            --purple: #4361ee;
+        }
 
-  <!-- Ionicons for icons -->
-  <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+        /* THEME: Monochrome */
+        body.theme-mono {
+            --bg-app: #111;
+            --bg-panel: #000;
+            --card-bg: #222;
+            --emerald: #fff;
+            --purple: #aaa;
+            --gold: #fff;
+            --text-muted: #888;
+        }
 
-  <!-- Bootstrap for accordion dropdowns -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        /* THEME: Cyberpunk */
+        body.theme-cyber {
+            --bg-app: #050014;
+            --bg-panel: #0a001f;
+            --card-bg: rgba(20, 0, 40, 0.6);
+            --emerald: #ff00ff; /* Magenta */
+            --purple: #00ffff;  /* Cyan */
+            --border: rgba(255, 0, 255, 0.2);
+        }
+
+        /* HIGH CONTRAST MODE */
+        body.high-contrast {
+            --bg-app: #000000;
+            --bg-panel: #000000;
+            --card-bg: #1a1a1a;
+            --border: #ffffff;
+            --text-muted: #e0e0e0;
+            --text-main: #ffffff;
+        }
+        body.high-contrast .dash-content { background: black !important; }
+        body.high-contrast .dash-header { backdrop-filter: none !important; background: #000; border-bottom: 2px solid white; }
+
+        * { box-sizing: border-box; outline: none; }
+
+        body { 
+            margin: 0; 
+            font-family: 'Inter', sans-serif; 
+            background: var(--bg-app); 
+            color: var(--text-main); 
+            height: 100vh; 
+            overflow: hidden; 
+            display: flex; 
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        /* --- SIDEBAR --- */
+        .dash-sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-panel);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            flex-shrink: 0;
+            z-index: 20;
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+
+        .sidebar-header {
+            display: flex; align-items: center; gap: 12px; margin-bottom: 40px; padding-left: 10px;
+        }
+        
+        .sidebar-brand-link {
+            font-family: 'Inter', sans-serif; 
+            font-size: 1.2rem; 
+            font-weight: 800; 
+            display: flex;
+            align-items: center;
+            cursor: default;
+        }
+        .sidebar-brand-text {
+            background: linear-gradient(to right, var(--purple), var(--emerald)); 
+            -webkit-background-clip: text; 
+            background-clip: text; 
+            color: transparent;
+        }
+        .sidebar-brand-icon {
+            color: var(--emerald); 
+            margin-right: 8px;
+            font-size: 1em;
+        }
+        
+        .sidebar-menu { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+
+        .nav-btn {
+            background: transparent; border: none; color: var(--text-muted);
+            text-align: left; padding: 12px 16px; border-radius: 8px; cursor: pointer;
+            font-size: 0.95rem; display: flex; align-items: center; gap: 12px;
+            transition: all 0.2s;
+        }
+        .nav-btn:hover { color: white; background: rgba(255, 255, 255, 0.05); }
+        .nav-btn.active { background: rgba(255, 255, 255, 0.05); color: var(--emerald); font-weight: 600; border-left: 3px solid var(--emerald); }
+        .nav-btn i { width: 20px; text-align: center; }
+        /* Admin Nav Item Special Style */
+        .nav-btn.admin-link { color: var(--danger); border-left-color: var(--danger); }
+        .nav-btn.admin-link.active { background: rgba(255, 71, 87, 0.1); color: var(--danger); }
+        
+        .badge-store {
+            margin-left: auto; font-size: 0.6rem; background: var(--gold);
+            color: black; padding: 2px 6px; border-radius: 4px; font-weight: 700;
+        }
+
+        .sidebar-footer {
+            border-top: 1px solid var(--border); padding-top: 20px;
+            display: flex; align-items: center; justify-content: space-between;
+            position: relative; /* Context for popup menu */
+        }
+        .user-mini-profile { 
+            display: flex; align-items: center; gap: 10px; cursor: pointer; 
+            padding: 8px; border-radius: 8px; transition: background 0.2s;
+            flex: 1;
+        }
+        .user-mini-profile:hover { background: rgba(255,255,255,0.05); }
+        
+        .mini-avatar {
+            width: 36px; height: 36px; background: #333; border-radius: 50%;
+            border: 2px solid var(--emerald); background-size: cover; background-position: center;
+        }
+        .mini-info { display: flex; flex-direction: column; }
+        .mini-name { font-size: 0.85rem; font-weight: 600; color: white; }
+        .mini-role { font-size: 0.7rem; color: var(--text-muted); }
+        .logout-btn { background: none; border: none; color: #6b7280; cursor: pointer; }
+        .logout-btn:hover { color: #ef4444; }
+        
+        /* USER MENU POPUP */
+        .user-menu-popup {
+            display: none; position: absolute; bottom: 70px; left: 0; width: 100%;
+            background: var(--bg-panel); border: 1px solid var(--border);
+            border-radius: 12px; padding: 8px; flex-direction: column; gap: 2px;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.5); z-index: 100;
+            animation: slideUpMenu 0.2s ease;
+        }
+        .user-menu-popup.show { display: flex; }
+        @keyframes slideUpMenu { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); }}
+        
+        .menu-item {
+            text-decoration: none; color: var(--text-main); font-size: 0.85rem;
+            padding: 10px 12px; border-radius: 6px; display: flex; align-items: center; gap: 10px;
+            transition: 0.2s;
+        }
+        .menu-item:hover { background: rgba(255,255,255,0.05); color: var(--emerald); }
+        .menu-item i { width: 20px; text-align: center; color: var(--text-muted); }
+        .menu-item:hover i { color: var(--emerald); }
+        .menu-item.danger { color: var(--danger); }
+        .menu-item.danger:hover { background: rgba(255, 71, 87, 0.1); }
+        .menu-divider { height: 1px; background: var(--border); margin: 5px 0; }
+
+        /* --- MAIN CONTENT --- */
+        .dash-content {
+            flex: 1; display: flex; flex-direction: column;
+            background: radial-gradient(circle at 90% 10%, #1a1b26 0%, var(--bg-app) 40%);
+            overflow-y: auto; position: relative;
+            transition: background 0.3s ease;
+        }
+
+        /* HEADER */
+        .dash-header {
+            height: var(--header-height); display: flex; align-items: center;
+            justify-content: space-between; padding: 0 40px;
+            border-bottom: 1px solid var(--border); 
+            background: rgba(5, 5, 8, 0.6); 
+            backdrop-filter: blur(var(--blur-amt)); 
+            position: sticky; top: 0; z-index: 10;
+            transition: backdrop-filter 0.2s, border-color 0.3s;
+        }
+
+        .header-actions { display: flex; align-items: center; gap: 20px; }
+
+        .credit-balance {
+            background: rgba(0, 0, 0, 0.4); border: 1px solid var(--border);
+            padding: 6px 16px; border-radius: 20px; display: flex; align-items: center;
+            gap: 8px; cursor: pointer; transition: border-color 0.2s;
+        }
+        .credit-balance:hover { border-color: var(--emerald); }
+        .add-credit-icon { color: #6b7280; font-size: 0.8rem; }
+
+        /* SECTIONS & ANIMATIONS */
+        .dash-view {
+            display: none; padding: 40px; max-width: 1200px; width: 100%; margin: 0 auto;
+            animation: fadeIn 0.3s ease;
+        }
+        .dash-view.active { display: block; }
+        @keyframes fadeIn { from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+
+        /* WELCOME / OVERVIEW */
+        .welcome-banner h1 { font-size: 2.5rem; margin-bottom: 10px; margin-top: 0; }
+        .welcome-banner p { color: var(--text-muted); margin-bottom: 20px; }
+        .text-emerald { color: var(--emerald); }
+
+        .setup-progress {
+            background: rgba(255,255,255,0.05); border-radius: 8px; padding: 15px; max-width: 500px;
+        }
+        .progress-label { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 5px; color: var(--text-muted); }
+        .progress-track { height: 6px; background: #222; border-radius: 3px; overflow:hidden; }
+        .progress-fill { height: 100%; background: var(--emerald); transition: width 1s ease; }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 40px; }
+        .stat-card { background: var(--card-bg); border: 1px solid var(--border); padding: 25px; border-radius: 12px; }
+        .stat-icon { font-size: 1.5rem; color: var(--purple); margin-bottom: 10px; }
+        .stat-value { font-size: 2rem; font-weight: 800; font-family: 'JetBrains Mono'; }
+        .stat-label { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+
+        /* FORMS & GRIDS */
+        .settings-grid, .visuals-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .span-2 { grid-column: span 2; }
+        .span-3 { grid-column: span 3; }
+        .span-full { grid-column: 1 / -1; }
+
+        .panel-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid var(--border);
+        }
+
+        .form-group { display: flex; flex-direction: column; gap: 8px; }
+        .form-group label { font-size: 0.85rem; color: #d1d5db; font-weight: 600; }
+        .form-group input, .form-group select, .form-group textarea {
+            background: rgba(0,0,0,0.3); border: 1px solid var(--border);
+            padding: 12px; border-radius: 6px; color: white; font-family: 'Inter'; width: 100%;
+        }
+        /* Fix inputs inheriting font when font setting changes */
+        .form-group input, .form-group select, .form-group textarea { font-family: inherit; }
+
+        .form-group input:focus { border-color: var(--emerald); }
+        .input-prefix { 
+            display: flex; align-items: center; background: rgba(0,0,0,0.3); 
+            border: 1px solid var(--border); border-radius: 6px; overflow: hidden;
+        }
+        .input-prefix span { padding: 0 12px; background: rgba(255,255,255,0.05); color: #888; font-size: 0.9rem; border-right: 1px solid var(--border); }
+        .input-prefix input { border: none; background: transparent; width: 100%; }
+        .input-prefix input:focus { border: none; box-shadow: none; }
+        
+        /* TOGGLES */
+        .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 10px; background: rgba(255,255,255,0.02); border-radius: 6px; }
+        .toggle-label { font-size: 0.9rem; color: #ccc; }
+        .toggle-switch {
+            position: relative; width: 40px; height: 20px; -webkit-appearance: none;
+            background: #333; border-radius: 20px; transition: 0.3s; cursor: pointer; outline: none;
+        }
+        .toggle-switch:checked { background: var(--emerald); }
+        .toggle-switch::after {
+            content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px;
+            background: white; border-radius: 50%; transition: 0.3s;
+        }
+        .toggle-switch:checked::after { left: 22px; }
+
+        .section-divider {
+            margin: 30px 0 15px 0; border-bottom: 1px solid var(--border);
+            color: var(--emerald); font-size: 0.8rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+
+        /* STORE & SERVICES */
+        .store-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; margin-bottom: 40px; }
+        
+        .store-item {
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 12px; padding: 20px; display: flex; flex-direction: column;
+            transition: 0.2s; position: relative; overflow: hidden;
+        }
+        .store-item:hover { border-color: var(--purple); transform: translateY(-5px); }
+        
+        .item-preview {
+            height: 100px; background: rgba(0,0,0,0.3); border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 15px; font-size: 2rem; color: var(--text-muted);
+        }
+        .item-name { font-weight: 700; font-size: 0.9rem; margin-bottom: 5px; }
+        .item-desc { font-size: 0.75rem; color: var(--text-muted); flex-grow: 1; margin-bottom: 15px; }
+        .item-price { font-family: 'JetBrains Mono'; font-weight: 700; color: var(--emerald); font-size: 0.9rem; }
+        
+        .btn-buy {
+            width: 100%; background: transparent; border: 1px solid var(--purple);
+            color: var(--purple); padding: 8px; border-radius: 6px; cursor: pointer;
+            font-weight: 600; transition: 0.2s; margin-top: 10px;
+        }
+        .btn-buy:hover { background: var(--purple); color: white; }
+        .btn-buy.unlocked { border-color: var(--emerald); color: var(--emerald); cursor: default; }
+        .btn-buy.unlocked:hover { background: transparent; }
+
+        /* SERVICE CARDS */
+        .services-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 40px; }
+        .service-card {
+            background: linear-gradient(145deg, rgba(157, 77, 221, 0.1), rgba(0,0,0,0));
+            border: 1px solid var(--purple); border-radius: 12px; padding: 25px;
+            position: relative; overflow: hidden;
+        }
+        .service-card h3 { margin-top: 0; margin-bottom: 10px; font-size: 1.2rem; }
+        .service-card p { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px; }
+        .service-icon { position: absolute; top: -10px; right: -10px; font-size: 5rem; opacity: 0.1; color: var(--purple); }
+
+        .btn-service {
+            background: var(--purple); color: white; border: none; padding: 10px 20px;
+            border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 0.85rem;
+        }
+        .btn-service:hover { filter: brightness(1.1); }
+
+        /* UPLOAD ZONE */
+        .upload-zone {
+            border: 2px dashed var(--border); border-radius: 8px; padding: 30px;
+            text-align: center; color: #6b7280; cursor: pointer; transition: 0.2s;
+            display: flex; flex-direction: column; align-items: center; gap: 10px;
+            position: relative; overflow: hidden;
+        }
+        .upload-zone:hover { border-color: var(--emerald); color: white; }
+        .upload-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+        .upload-preview {
+            width: 100px; height: 100px; border-radius: 50%; background-size: cover; background-position: center;
+            display: none; margin-bottom: 10px; border: 2px solid var(--emerald);
+        }
+
+        /* VERIFICATION */
+        .verification-container { max-width: 600px; margin: 0 auto; text-align: center; }
+        .verify-icon { font-size: 4rem; margin-bottom: 20px; }
+        .verify-steps { display: flex; justify-content: space-between; margin: 40px 0; position: relative; }
+        .verify-steps::before {
+            content: ''; position: absolute; top: 20px; left: 0; right: 0;
+            height: 2px; background: #333; z-index: 0;
+        }
+        .step-item { position: relative; z-index: 1; background: #050505; padding: 0 10px; }
+        .step-num {
+            width: 40px; height: 40px; background: #333; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; margin: 0 auto 10px;
+            font-weight: 700;
+        }
+        .step-item.completed .step-num { background: var(--emerald); color: black; }
+        .step-item.active .step-num { border: 2px solid var(--emerald); color: var(--emerald); }
+        .verify-form { background: var(--card-bg); padding: 30px; border-radius: 12px; border: 1px solid var(--border); text-align: left; display: flex; flex-direction: column; gap: 15px; }
+
+        /* WALLET / AURA */
+        .credit-packages { display: flex; gap: 20px; justify-content: center; margin-top: 20px; }
+        .credit-pack {
+            background: var(--card-bg); border: 1px solid var(--border);
+            padding: 30px; border-radius: 12px; text-align: center; width: 200px;
+            position: relative; transition: 0.2s;
+        }
+        .credit-pack:hover { transform: translateY(-5px); border-color: var(--emerald); }
+        .credit-pack.best-value { border-color: var(--purple); box-shadow: 0 0 20px rgba(157, 77, 221, 0.2); }
+        .pack-amount { font-size: 1.5rem; font-weight: 800; font-family: 'JetBrains Mono'; color: white; }
+        .pack-price { font-size: 1.2rem; color: var(--text-muted); margin: 10px 0 20px 0; }
+        .badge {
+            position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+            background: var(--purple); color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 700;
+        }
+
+        /* --- PAYMENT MODAL & LOGIN MODAL --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.85); z-index: 100;
+            display: none; align-items: center; justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background: #0f1016; border: 1px solid var(--border); width: 400px;
+            padding: 30px; border-radius: 12px; box-shadow: 0 0 40px rgba(0,0,0,0.5);
+            animation: slideUp 0.3s ease;
+        }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; }}
+        .payment-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .payment-title { font-size: 1.2rem; font-weight: 700; color: white; }
+        .close-modal { background: none; border: none; color: #666; cursor: pointer; font-size: 1.2rem; }
+        .close-modal:hover { color: white; }
+        .payment-summary { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 6px; margin-bottom: 20px; }
+        .summary-row { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.9rem; color: #ccc; }
+        .summary-total { display: flex; justify-content: space-between; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-weight: 700; color: white; font-size: 1.1rem; }
+        
+        /* --- NEW: TRACK LIST STYLES --- */
+        .track-toolbar { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
+        .search-box { flex: 1; display: flex; align-items: center; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 6px; padding: 0 12px; }
+        .search-box input { border: none; background: transparent; color: white; width: 100%; padding: 10px 0; }
+        .search-box i { color: var(--text-muted); margin-right: 10px; }
+        
+        .track-list-container { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+        .track-row { display: grid; grid-template-columns: 50px 2fr 1fr 1fr 1fr 1fr 60px; align-items: center; padding: 12px 20px; border-bottom: 1px solid var(--border); transition: 0.1s; gap: 15px; }
+        .track-row:hover { background: rgba(255,255,255,0.03); }
+        .track-row:last-child { border-bottom: none; }
+        
+        .track-header { background: rgba(0,0,0,0.5); font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
+        
+        .track-art { width: 40px; height: 40px; background: #333; border-radius: 4px; background-size: cover; }
+        .track-title { font-weight: 600; color: white; font-size: 0.9rem; }
+        .track-meta { color: var(--text-muted); font-size: 0.8rem; }
+        .track-stat { font-family: 'JetBrains Mono'; color: var(--emerald); font-size: 0.85rem; }
+        .track-actions { display: flex; gap: 10px; justify-content: flex-end; }
+        .btn-icon { background: transparent; border: none; color: var(--text-muted); cursor: pointer; transition: 0.2s; }
+        .btn-icon:hover { color: white; }
+
+        /* BUTTONS */
+        .btn-emerald { background: var(--emerald); color: black; border: none; padding: 12px 20px; border-radius: 6px; font-weight: 700; cursor: pointer; width: 100%; transition: 0.2s; }
+        .btn-emerald:hover { filter: brightness(1.1); transform: translateY(-1px); }
+        .btn-emerald-sm { background: var(--emerald); color: black; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; }
+        .btn-outline { background: transparent; border: 1px solid white; color: white; padding: 10px 20px; border-radius: 6px; cursor: pointer; width: 100%; }
+        .btn-outline:hover { background: white; color: black; }
+
+        /* MOBILE RESPONSIVE */
+        @media (max-width: 768px) {
+            body { flex-direction: column; overflow-y: auto; height: auto; }
+            .dash-sidebar { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
+            .dash-header { padding: 0 20px; }
+            .stats-grid, .settings-grid, .visuals-grid, .services-row, .store-grid { grid-template-columns: 1fr; }
+            .track-row { grid-template-columns: 50px 1fr 60px; gap: 10px; }
+            .track-row > *:nth-child(3), .track-row > *:nth-child(4), .track-row > *:nth-child(5), .track-row > *:nth-child(6) { display: none; } /* Hide details on mobile */
+            .span-2, .span-3 { grid-column: auto; }
+            .credit-packages { flex-direction: column; align-items: center; }
+            .credit-pack { width: 100%; max-width: 300px; }
+            .modal-content { width: 90%; }
+        }
+    </style>
+    <!-- [FILE END: style.css] -->
 </head>
 <body>
 
-  <!-- Sidebar placeholder -->
-  <div id="nav-placeholder"></div>
+    <!-- [FILE START: index.html] Content -->
+    
+    <!-- SIDEBAR NAVIGATION -->
+    <nav class="dash-sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-brand-link">
+                <i class="fas fa-star sidebar-brand-icon" title="Endever Live Platform"></i>
+                <span class="sidebar-brand-text">Endever Live</span>
+            </div>
+        </div>
 
-  <!-- Main content -->
-  <div id="main">
-    <h1>Welcome</h1>
-    <p>This is your page content.</p>
-  </div>
+        <div class="sidebar-menu">
+            <button class="nav-btn active" data-tab="overview">
+                <i class="fas fa-home"></i> <span>Overview</span>
+            </button>
+            
+            <button class="nav-btn" data-tab="tracks">
+                <i class="fas fa-music"></i> <span>My Tracks</span>
+            </button>
 
-  <!-- Load sidebar HTML -->
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      fetch('nav.html')
-        .then(res => res.text())
-        .then(html => {
-          document.getElementById('nav-placeholder').innerHTML = html;
-        });
-    });
-  </script>
+            <button class="nav-btn" data-tab="profile">
+                <i class="fas fa-sliders-h"></i> <span>Edit Profile</span>
+            </button>
+            <button class="nav-btn" data-tab="visuals">
+                <i class="fas fa-paint-brush"></i> <span>Visuals & Theme</span>
+            </button>
+            <button class="nav-btn" data-tab="verification">
+                <i class="fas fa-check-circle"></i> <span>Claim Artist ID</span>
+            </button>
+            <button class="nav-btn" data-tab="store">
+                <i class="fas fa-shopping-cart"></i> <span>Store</span>
+                <span class="badge-store">NEW</span>
+            </button>
+            
+            <button class="nav-btn" data-tab="settings">
+                <i class="fas fa-cog"></i> <span>System Settings</span>
+            </button>
+            
+            <!-- NEW ADMIN BUTTON (Hidden by Default) -->
+            <button class="nav-btn admin-link" data-tab="admin" id="nav-admin" style="display: none;">
+                <i class="fas fa-user-shield"></i> <span>Admin Panel</span>
+            </button>
+        </div>
 
-  <!-- Sidebar logic -->
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-  <script src="bar.js" defer></script>
+        <div class="sidebar-footer">
+            <!-- POPUP MENU FOR USER OPTIONS (Integrated Link Logic Here) -->
+            <div class="user-menu-popup" id="user-menu-popup">
+                <a href="#" onclick="alert('Action: Navigate to Homepage')" class="menu-item"><i class="fas fa-home"></i> Home</a>
+                <a href="#" onclick="alert('Action: Open Password Reset Modal')" class="menu-item"><i class="fas fa-key"></i> Reset Password</a>
+                <a href="#" onclick="alert('Action: Navigate to About Us Page')" class="menu-item"><i class="fas fa-info-circle"></i> About Us</a>
+                <a href="#" onclick="alert('Action: Navigate to Help Center')" class="menu-item"><i class="fas fa-question-circle"></i> Help</a>
+                <div class="menu-divider"></div>
+                <a href="login.html" class="menu-item danger"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
+            </div>
+            
+            <div class="user-mini-profile" onclick="Dashboard.toggleUserMenu()">
+                <!-- [INTEGRATION POINT] Load user Avatar here -->
+                <div class="mini-avatar" id="mini-avatar"></div>
+                <div class="mini-info">
+                    <!-- [INTEGRATION POINT] Load user Name/Role here -->
+                    <span class="mini-name" id="sidebar-username">Loading...</span>
+                    <span class="mini-role" id="sidebar-role">Producer</span>
+                </div>
+                <i class="fas fa-chevron-up" style="font-size: 0.7rem; color: var(--text-muted);"></i>
+            </div>
+        </div>
+    </nav>
 
-</body>
-</html>
+    <!-- MAIN CONTENT AREA -->
+    <main class="dash-content">
+        
+        <!-- TOP BAR -->
+        <header class="dash-header">
+            <h2 id="page-title">Dashboard</h2>
+            <div class="header-actions">
+                <button class="btn-emerald-sm" onclick="Dashboard.switchTab('tracks'); setTimeout(()=> document.getElementById('add-track-name').focus(), 200)">
+                    <i class="fas fa-plus"></i> Add Track
+                </button>
+                <div class="credit-balance" onclick="Dashboard.switchTab('store')">
+                    <i class="fas fa-bolt text-emerald"></i>
+                    <!-- [INTEGRATION POINT] Load user Credits here -->
+                    <span id="credit-display" class="font-mono">0 Aura</span>
+                    <i class="fas fa-plus-circle add-credit-icon"></i>
+                </div>
+                <button class="logout-btn"><i class="fas fa-bell"></i></button>
+            </div>
+        </header>
+
+        <!-- TAB: OVERVIEW -->
+        <section id="tab-overview" class="dash-view active">
+            <div class="welcome-banner">
+                <!-- [INTEGRATION POINT] Inject User Name -->
+                <h1>Welcome to the Collective, <span class="text-emerald" id="overview-name">Artist</span>.</h1>
+                <p>Complete your setup to rank on the ELO leaderboards.</p>
+                <div class="setup-progress">
+                    <!-- [INTEGRATION POINT] Calculate Progress % -->
+                    <div class="progress-label"><span>Profile Completion</span> <span id="prog-text">0%</span></div>
+                    <div class="progress-track"><div class="progress-fill" id="prog-bar" style="width: 0%"></div></div>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-trophy"></i></div>
+                    <!-- [INTEGRATION POINT] Load ELO -->
+                    <div class="stat-value">Unranked</div>
+                    <div class="stat-label">Current ELO</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-heart"></i></div>
+                    <!-- [INTEGRATION POINT] Sum total likes -->
+                    <div class="stat-value" id="total-likes">0</div>
+                    <div class="stat-label">Total Likes</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-play"></i></div>
+                    <!-- [INTEGRATION POINT] Sum total plays -->
+                    <div class="stat-value" id="total-plays">0</div>
+                    <div class="stat-label">Total Plays</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                    <div class="stat-value">+0%</div>
+                    <div class="stat-label">Weekly Growth</div>
+                </div>
+                 <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-users"></i></div>
+                    <div class="stat-value">0</div>
+                    <div class="stat-label">Followers</div>
+                </div>
+                 <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-globe"></i></div>
+                    <div class="stat-value">N/A</div>
+                    <div class="stat-label">Top Region</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB: MY TRACKS -->
+        <section id="tab-tracks" class="dash-view">
+            <div class="panel-header">
+                <h3>My Discography</h3>
+                <button class="btn-emerald-sm" onclick="document.getElementById('add-track-form').style.display = 'grid'">
+                    <i class="fas fa-cloud-upload-alt"></i> Manual Upload
+                </button>
+            </div>
+
+            <!-- ADD TRACK FORM -->
+            <div id="add-track-form" class="settings-grid" style="display:none; margin-bottom:20px; background:rgba(0,245,212,0.05); padding:20px; border-radius:8px; border:1px solid var(--emerald);">
+                <div class="span-full"><h4 style="margin:0">Add New Release</h4></div>
+                <div class="form-group">
+                    <label>Track Title</label>
+                    <input type="text" id="add-track-name" placeholder="e.g. Midnight Drive">
+                </div>
+                <div class="form-group">
+                    <label>Release Date</label>
+                    <input type="date" id="add-track-date">
+                </div>
+                <div class="form-group">
+                    <label>Genre</label>
+                    <select id="add-track-genre">
+                        <option>Trap</option><option>House</option><option>Lo-Fi</option><option>Dubstep</option><option>DnB</option><option>Pop</option>
+                    </select>
+                </div>
+                 <div class="form-group">
+                    <label>BPM</label>
+                    <input type="number" id="add-track-bpm" placeholder="128">
+                </div>
+                <div class="span-full">
+                    <button class="btn-emerald" onclick="Dashboard.addTrack()">Save to Profile</button>
+                </div>
+            </div>
+
+            <!-- TOOLBAR -->
+            <div class="track-toolbar">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search your tracks..." onkeyup="Dashboard.filterTracks(this.value)">
+                </div>
+                <select style="background:var(--bg-panel); color:white; border:1px solid var(--border); padding:10px; border-radius:6px;" onchange="Dashboard.filterGenre(this.value)">
+                    <option value="all">All Genres</option>
+                    <option value="trap">Trap</option>
+                    <option value="house">House</option>
+                    <option value="lo-fi">Lo-Fi</option>
+                </select>
+                <select style="background:var(--bg-panel); color:white; border:1px solid var(--border); padding:10px; border-radius:6px;">
+                    <option value="newest">Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                    <option value="popular">Most Plays</option>
+                </select>
+            </div>
+
+            <!-- TRACK LIST -->
+            <div class="track-list-container">
+                <div class="track-row track-header">
+                    <div></div>
+                    <div>Title</div>
+                    <div>Genre</div>
+                    <div>Status</div>
+                    <div>Plays</div>
+                    <div>Likes</div>
+                    <div></div>
+                </div>
+                <div id="track-list-body">
+                    <!-- [INTEGRATION POINT] Dynamic Track List Injection -->
+                    <!-- EMPTY STATE WILL BE INJECTED BY JS IF NO TRACKS EXIST -->
+                </div>
+            </div>
+
+            <div class="section-divider">Batch Metadata Operations</div>
+            <div class="settings-grid">
+                 <div class="form-group">
+                    <label>Default ISRC Prefix</label>
+                    <input type="text" placeholder="US-XXX-25...">
+                </div>
+                <div class="form-group">
+                    <label>Default Publisher</label>
+                    <input type="text" placeholder="Your Publishing Co.">
+                </div>
+                 <div class="form-group">
+                    <label>Content Rating</label>
+                    <select><option>Clean</option><option>Explicit</option></select>
+                </div>
+                <div class="form-group">
+                    <label>Auto-distribution</label>
+                    <select><option>Off</option><option>DistroKid</option><option>Tunecore</option></select>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB: EDIT PROFILE -->
+        <section id="tab-profile" class="dash-view">
+            <div class="panel-header">
+                <h3>Core Identity</h3>
+                <button class="btn-emerald-sm" onclick="Dashboard.saveSettings()">Save Changes</button>
+            </div>
+            
+            <div class="settings-grid">
+                <!-- [INTEGRATION POINT] Populate form values from DB -->
+                <div class="form-group span-2">
+                    <label>1. Display Name <span style="color:var(--emerald)">*</span></label>
+                    <input type="text" id="set-displayname" placeholder="Stage Name">
+                </div>
+                <div class="form-group">
+                    <label>2. Tagline / Status</label>
+                    <input type="text" id="set-tagline" placeholder="Cooking up beats...">
+                </div>
+                <div class="form-group">
+                    <label>3. Location</label>
+                    <input type="text" id="set-location" placeholder="City, Country">
+                </div>
+                
+                <div class="form-group">
+                    <label>4. Primary Role</label>
+                    <select id="set-role">
+                        <option value="producer">Producer</option>
+                        <option value="vocalist">Vocalist</option>
+                        <option value="engineer">Audio Engineer</option>
+                        <option value="manager">Label / Manager</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>5. Primary Genre</label>
+                    <input type="text" id="set-genre" placeholder="e.g. Trap, House, RnB">
+                </div>
+                <div class="form-group">
+                    <label>6. DAW of Choice</label>
+                    <select id="set-daw">
+                        <option value="flstudio">FL Studio</option>
+                        <option value="ableton">Ableton Live</option>
+                        <option value="logic">Logic Pro</option>
+                        <option value="protools">Pro Tools</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>7. Collab Status</label>
+                    <select id="set-collab">
+                        <option value="open">Open to Collabs</option>
+                        <option value="paid">Paid Features Only</option>
+                        <option value="closed">Closed</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>8. Website / Portfolio URL</label>
+                    <input type="text" id="set-website" placeholder="www.yourname.com">
+                </div>
+                <div class="form-group">
+                    <label>9. Label Affiliation</label>
+                    <input type="text" id="set-label" placeholder="Independent or Label Name">
+                </div>
+
+                <div class="section-divider span-full">Professional Details</div>
+                
+                <div class="form-group">
+                    <label>10. Booking Email</label>
+                    <input type="email" placeholder="book@artist.com">
+                </div>
+                <div class="form-group">
+                    <label>11. Management Contact</label>
+                    <input type="text" placeholder="Manager Name">
+                </div>
+                <div class="form-group">
+                    <label>12. PRO Affiliation</label>
+                    <select><option>ASCAP</option><option>BMI</option><option>SESAC</option><option>SOCAN</option><option>None</option></select>
+                </div>
+                <div class="form-group">
+                    <label>13. IPI / CAE Number</label>
+                    <input type="text" placeholder="000000000">
+                </div>
+                <div class="form-group span-full">
+                    <label>14. Equipment List (Gear)</label>
+                    <textarea rows="2" placeholder="Moog Sub37, Apollo Twin, Neumann U87..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>15. Vocal Range (If applicable)</label>
+                    <input type="text" placeholder="e.g. Tenor">
+                </div>
+                 <div class="form-group">
+                    <label>16. Years Active</label>
+                    <input type="number" placeholder="e.g. 5">
+                </div>
+
+                <div class="form-group span-full">
+                    <label>17. Artist Bio</label>
+                    <textarea id="set-bio" rows="4" placeholder="Tell your story..."></textarea>
+                </div>
+
+                <div class="section-divider span-full"><span>Social Connections</span></div>
+                
+                <div class="form-group">
+                    <label>18. <i class="fab fa-spotify"></i> Spotify Artist URL</label>
+                    <input type="text" id="set-spotify" placeholder="https://open.spotify.com/...">
+                </div>
+                <div class="form-group">
+                    <label>19. <i class="fab fa-soundcloud"></i> SoundCloud URL</label>
+                    <input type="text" id="set-soundcloud">
+                </div>
+                <div class="form-group">
+                    <label>20. <i class="fab fa-instagram"></i> Instagram Handle</label>
+                    <div class="input-prefix"><span>@</span><input type="text" id="set-instagram"></div>
+                </div>
+                <div class="form-group">
+                    <label>21. <i class="fab fa-twitter"></i> X / Twitter</label>
+                    <div class="input-prefix"><span>@</span><input type="text" id="set-twitter"></div>
+                </div>
+                <div class="form-group">
+                    <label>22. <i class="fab fa-discord"></i> Discord Username</label>
+                    <input type="text" id="set-discord">
+                </div>
+                 <div class="form-group">
+                    <label>23. <i class="fab fa-tiktok"></i> TikTok Handle</label>
+                    <div class="input-prefix"><span>@</span><input type="text"></div>
+                </div>
+                 <div class="form-group">
+                    <label>24. <i class="fab fa-youtube"></i> YouTube Channel</label>
+                    <input type="text">
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB: VISUALS -->
+        <section id="tab-visuals" class="dash-view">
+            <div class="panel-header">
+                <h3>Visual Customization (Free)</h3>
+                <button class="btn-emerald-sm" onclick="Dashboard.saveSettings()">Save Changes</button>
+            </div>
+
+            <div class="visuals-grid">
+                <div class="visual-card">
+                    <h4>25. Profile Avatar</h4>
+                    <div class="upload-zone" id="upload-avatar-zone">
+                        <div class="upload-preview" id="avatar-preview"></div>
+                        <div id="avatar-placeholder">
+                            <i class="fas fa-cloud-upload-alt fa-2x"></i>
+                            <span>Click to Upload</span>
+                        </div>
+                        <!-- [INTEGRATION POINT] File Upload Handling -->
+                        <input type="file" id="upload-avatar-input" accept="image/*">
+                    </div>
+                    <!-- URL INPUT OPTION -->
+                    <div class="form-group" style="margin-top: 10px;">
+                        <label style="font-size: 0.75rem; color: var(--text-muted);">Or Paste Image URL</label>
+                        <input type="text" id="avatar-url-input" placeholder="https://imgur.com/..." style="padding: 8px; font-size: 0.8rem;">
+                    </div>
+                </div>
+                <div class="visual-card span-2">
+                    <h4>26. Banner Image</h4>
+                    <div class="upload-zone" id="upload-banner-zone">
+                        <i class="fas fa-image fa-2x"></i>
+                        <span>1920x400px Recommended</span>
+                        <input type="file" id="upload-banner-input" accept="image/*">
+                    </div>
+                </div>
+
+                <div class="visual-card">
+                    <h4>27. Basic Profile Theme</h4>
+                    <select id="setting-theme" style="width: 100%; background: #111; border: 1px solid #333; color: white; padding: 8px; border-radius: 4px; margin-top: 5px;">
+                        <option value="default">Endever Dark (Default)</option>
+                        <option value="midnight">Midnight Blue</option>
+                        <option value="cyber">Cyberpunk</option>
+                        <option value="mono">Monochrome</option>
+                    </select>
+                </div>
+                 <div class="visual-card">
+                    <h4>28. Display Font</h4>
+                    <select id="setting-font" style="width: 100%; background: #111; border: 1px solid #333; color: white; padding: 8px; border-radius: 4px; margin-top: 5px;">
+                        <option value="inter">Inter (Default)</option>
+                        <option value="jetbrains">JetBrains Mono (Code)</option>
+                        <option value="poppins">Poppins (Bold)</option>
+                        <option value="serif">Playfair (Elegant)</option>
+                    </select>
+                </div>
+
+                <div class="visual-card span-full">
+                    <h4>Interface Tweaks</h4>
+                    <div class="settings-grid">
+                        <div class="form-group">
+                            <label>29. UI Scale (Zoom)</label>
+                            <input type="range" id="setting-ui-scale" min="80" max="120" value="100">
+                        </div>
+                        <div class="form-group">
+                            <label>30. Background Blur Intensity</label>
+                            <input type="range" id="setting-blur" min="0" max="20" value="10">
+                        </div>
+                        <div class="toggle-row">
+                            <span class="toggle-label">31. Enable Parallax Effect</span>
+                            <input type="checkbox" id="setting-parallax" class="toggle-switch" checked>
+                        </div>
+                        <div class="toggle-row">
+                            <span class="toggle-label">32. Reduced Motion</span>
+                            <input type="checkbox" id="setting-motion" class="toggle-switch">
+                        </div>
+                         <div class="toggle-row">
+                            <span class="toggle-label">33. Show Waveform Visualizer</span>
+                            <input type="checkbox" id="setting-waveform" class="toggle-switch" checked>
+                        </div>
+                        <div class="toggle-row">
+                            <span class="toggle-label">34. High Contrast Mode</span>
+                            <input type="checkbox" id="setting-contrast" class="toggle-switch">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group span-full">
+                    <label>35. Custom CSS (Advanced)</label>
+                    <textarea rows="3" placeholder=".body { background: red; }"></textarea>
+                </div>
+
+                <!-- Spotlight -->
+                <div class="form-group span-full">
+                    <label>36. Spotlight Track (Embed)</label>
+                    <input type="text" id="set-spotlight" placeholder="Paste SoundCloud or Spotify Embed Code">
+                    <p style="font-size: 0.75rem; color: #6b7280; margin-top: 5px;">This track will auto-play when users visit your profile.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB: VERIFICATION -->
+        <section id="tab-verification" class="dash-view">
+            <div class="verification-container">
+                <div class="verify-header">
+                    <i class="fas fa-shield-alt text-emerald verify-icon"></i>
+                    <h2>Claim Your Artist Profile</h2>
+                    <p style="color: #9ca3af;">To link your account to the ELO Leaderboard, you must verify your identity.</p>
+                </div>
+
+                <!-- Steps Container -->
+                <div class="verify-steps">
+                    <div class="step-item completed">
+                        <div class="step-num"><i class="fas fa-check"></i></div>
+                        <div class="step-text" style="font-size: 0.8rem; margin-top: 5px;">Account</div>
+                    </div>
+                    <div class="step-item active">
+                        <div class="step-num">2</div>
+                        <div class="step-text" style="font-size: 0.8rem; margin-top: 5px;">Proof</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-num">3</div>
+                        <div class="step-text" style="font-size: 0.8rem; margin-top: 5px;">Review</div>
+                    </div>
+                </div>
+
+                <div class="verify-form">
+                    <div class="settings-grid">
+                        <div class="form-group span-full">
+                            <label>37. Verification Method</label>
+                            <select id="verify-method">
+                                <option>Instagram DM Confirmation</option>
+                                <option>Twitter Post Verification</option>
+                                <option>Spotify for Artists Screenshot</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group span-full">
+                            <label>38. Proof Link / Upload</label>
+                            <input type="text" placeholder="Paste link to post or upload screenshot">
+                        </div>
+                        
+                        <div class="form-group span-full" style="border-top: 1px solid #333; padding-top: 15px; margin-top: 10px;">
+                            <label>39. Contact Email (Private)</label>
+                            <input type="email" placeholder="contact@yourdomain.com">
+                        </div>
+
+                        <div class="toggle-row span-full">
+                            <span class="toggle-label">40. I agree to the Terms of Service</span>
+                            <input type="checkbox" id="verify-tos" class="toggle-switch">
+                        </div>
+                         <div class="toggle-row span-full">
+                            <span class="toggle-label">41. I certify I am the artist listed above</span>
+                             <input type="checkbox" id="verify-auth" class="toggle-switch">
+                        </div>
+
+                        <div class="span-full">
+                            <button class="btn-emerald" id="btn-claim-submit" onclick="Dashboard.submitClaim()">Submit for Review</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB: STORE -->
+        <section id="tab-store" class="dash-view">
+            <div class="welcome-banner">
+                <h1>Aura Store</h1>
+                <p>Spend Aura on premium profile effects, exclusive services, and themes.</p>
+            </div>
+
+            <div class="credit-packages">
+                <div class="credit-pack">
+                    <div class="pack-amount">500 Aura</div>
+                    <div class="pack-price">$4.99</div>
+                    <button class="btn-outline" onclick="Dashboard.initiatePayment(500)">Purchase</button>
+                </div>
+                <div class="credit-pack best-value">
+                    <div class="badge">Best Value</div>
+                    <div class="pack-amount">1200 Aura</div>
+                    <div class="pack-price">$9.99</div>
+                    <button class="btn-emerald" onclick="Dashboard.initiatePayment(1200)">Purchase</button>
+                </div>
+                <div class="credit-pack">
+                    <div class="pack-amount">2500 Aura</div>
+                    <div class="pack-price">$19.99</div>
+                    <button class="btn-outline" onclick="Dashboard.initiatePayment(2500)">Purchase</button>
+                </div>
+            </div>
+
+            <!-- SECTION 2: PREMIUM SERVICES -->
+            <div class="section-divider">Premium Services</div>
+            <div class="services-row">
+                <div class="service-card">
+                    <i class="fas fa-video service-icon"></i>
+                    <h3>Purchase AMV</h3>
+                    <p>Professional Anime Music Video edited for your track.</p>
+                    <button class="btn-service" onclick="alert('Redirecting to AMV Request Form...')">Order Now (Starts at $50)</button>
+                </div>
+                <div class="service-card">
+                    <i class="fas fa-star service-icon"></i>
+                    <h3>Priority Review</h3>
+                    <p>Skip the queue. Get your track reviewed live next stream.</p>
+                    <button class="btn-service" onclick="alert('Redirecting to Priority Queue...')">Get Priority (2500 Aura)</button>
+                </div>
+                <div class="service-card">
+                    <i class="fas fa-handshake service-icon"></i>
+                    <h3>Other Services</h3>
+                    <p>Mixing, Mastering, Beat Leases, and Collabs.</p>
+                    <button class="btn-service" onclick="alert('Redirecting to Services Portal...')">View All Services</button>
+                </div>
+            </div>
+
+            <div class="section-divider">Profile Effects & Glows</div>
+            <div class="store-grid">
+                <div class="store-item">
+                    <div class="item-preview"><i class="fas fa-sun" style="color:#00f5d4"></i></div>
+                    <div class="item-name">Neon Glow</div>
+                    <div class="item-desc">Cyan glow effect for your ranking row.</div>
+                    <div class="item-price">500 Aura</div>
+                    <button class="btn-buy" onclick="Dashboard.purchase('glow_neon')">Unlock</button>
+                </div>
+                <div class="store-item">
+                    <div class="item-preview"><i class="fas fa-sun" style="color:#ffd700"></i></div>
+                    <div class="item-name">Golden Glow</div>
+                    <div class="item-desc">Prestigious gold glow effect.</div>
+                    <div class="item-price">800 Aura</div>
+                    <button class="btn-buy" onclick="Dashboard.purchase('glow_gold')">Unlock</button>
+                </div>
+                <div class="store-item">
+                    <div class="item-preview"><i class="fas fa-fire" style="color:#ff4757"></i></div>
+                    <div class="item-name">Inferno Border</div>
+                    <div class="item-desc">Animated fire border for your avatar.</div>
+                    <div class="item-price">1200 Aura</div>
+                    <button class="btn-buy" onclick="Dashboard.purchase('border_fire')">Unlock</button>
+                </div>
+                <div class="store-item">
+                    <div class="item-preview"><i class="fas fa-snowflake" style="color:#a5b1c2"></i></div>
+                    <div class="item-name">Frost Effect</div>
+                    <div class="item-desc">Icy particle effects on your profile.</div>
+                    <div class="item-price">1200 Aura</div>
+                    <button class="btn-buy" onclick="Dashboard.purchase('effect_frost')">Unlock</button>
+                </div>
+                <div class="store-item">
+                    <div class="item-preview"><i class="fas fa-bolt" style="color:#9d4edd"></i></div>
+                    <div class="item-name">Storm Badge</div>
+                    <div class="item-desc">Exclusive lightning badge.</div>
+                    <div class="item-price">300 Aura</div>
+                    <button class="btn-buy" onclick="Dashboard.purchase('badge_storm')">Unlock</button>
+                </div>
+            </div>
+            
+            <!-- SECTION 4: THEMES -->
+            <div class="section-divider">Premium Themes</div>
+            <div class="store-grid">
+                <div class="store-item">
+                    <div class="item-preview" style="background: linear-gradient(45deg, #ff00cc, #333399);"><i class="fas fa-palette"></i></div>
+                    <div class="item-name">Cyberpunk 2077</div>
+                    <div class="item-desc">Neon pinks, blues, and glitches.</div>
+                    <div class="item-price">1500 Aura</div>
+                    <button class="btn-buy" onclick="Dashboard.purchase('theme_cyber')">Unlock</button>
+                </div>
+                <div class="store-item">
+                    <div class="item-preview" style="background: linear-gradient(to right, #0f2027, #203a43, #2c5364);"><i class="fas fa-moon"></i></div>
+                    <div class="item-name">Midnight Glass</div>
+                    <div class="item-desc">Deep dark blues with glassmorphism.</div>
+                    <div class="item-price">1000 Aura</div>
+                    <button class="btn-buy" onclick="Dashboard.purchase('theme_midnight')">Unlock</button>
+                </div>
+                <div class="store-item">
+                    <div class="item-preview" style="background: linear-gradient(to right, #f12711, #f5af19);"><i class="fas fa-sun"></i></div>
+                    <div class="item-name">Sunset Blvd</div>
+                    <div class="item-desc">Warm orange and red gradients.</div>
+                    <div class="item-price">1000 Aura</div>
+                    <button class="btn-buy" onclick="Dashboard.purchase('theme_sunset')">Unlock</button>
+                </div>
+                 <div class="store-item">
+                    <div class="item-preview" style="background: #000; border: 1px solid #fff;"><i class="fas fa-ghost"></i></div>
+                    <div class="item-name">Phantom Black</div>
+                    <div class="item-desc">Ultra-minimalist OLED black theme.</div>
+                    <div class="item-price">2000 Aura</div>
+                    <button class="btn-buy" onclick="Dashboard.purchase('theme_phantom')">Unlock</button>
+                </div>
+            </div>
+
+            <!-- SECTION 5: AVATAR FRAMES -->
+            <div class="section-divider">Avatar Frames</div>
+             <div class="store-grid">
+                <div class="store-item">
+                    <div class="item-preview"><i class="fas fa-circle-notch fa-spin"></i></div>
+                    <div class="item-name">Spinning Tech</div>
+                    <div class="item-desc">Animated tech ring around avatar.</div>
+                    <div class="item-price">800 Aura</div>
+                    <button class="btn-buy" onclick="Dashboard.purchase('frame_tech')">Unlock</button>
+                </div>
+                <div class="store-item">
+                    <div class="item-preview"><i class="fas fa-crown" style="color:#ffd700"></i></div>
+                    <div class="item-name">King's Crown</div>
+                    <div class="item-desc">Gold crown overlay for your avatar.</div>
+                    <div class="item-price">5000 Aura</div>
+                    <button class="btn-buy" onclick="Dashboard.purchase('frame_king')">Unlock</button>
+                </div>
+                 <div class="store-item">
+                    <div class="item-preview"><i class="fas fa-headphones-alt"></i></div>
+                    <div class="item-name">Producer Headset</div>
+                    <div class="item-desc">Adds studio headphones to avatar.</div>
+                    <div class="item-price">600 Aura</div>
+                    <button class="btn-buy" onclick="Dashboard.purchase('frame_phones')">Unlock</button>
+                </div>
+                 <div class="store-item">
+                    <div class="item-preview"><i class="fas fa-record-vinyl fa-spin"></i></div>
+                    <div class="item-name">Vinyl Spinner</div>
+                    <div class="item-desc">Turns avatar into a spinning record.</div>
+                    <div class="item-price">900 Aura</div>
+                    <button class="btn-buy" onclick="Dashboard.purchase('frame_vinyl')">Unlock</button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- TAB: SYSTEM SETTINGS -->
+        <section id="tab-settings" class="dash-view">
+             <div class="panel-header">
+                <h3>System & Account Settings</h3>
+                <button class="btn-emerald-sm" onclick="Dashboard.saveSettings()">Save Changes</button>
+            </div>
+            
+            <div class="settings-grid">
+                <!-- NEW DEVELOPER ACCESS BTN -->
+                 <div class="span-full section-divider">Advanced Options</div>
+                 <div class="form-group span-full">
+                    <button id="btn-dev-login" class="btn-outline" style="border-color: var(--purple); color: var(--purple);" onclick="Dashboard.openDevLogin()">
+                        <i class="fas fa-code"></i> Developer Login
+                    </button>
+                    <button id="btn-dev-logout" class="btn-outline" style="border-color: var(--danger); color: var(--danger); display: none;" onclick="Dashboard.logoutDev()">
+                        <i class="fas fa-user-shield"></i> Logout Dev Mode
+                    </button>
+                </div>
+            
+                <div class="span-full section-divider">Notifications</div>
+                <div class="toggle-row">
+                    <span class="toggle-label">42. Email Digest (Weekly)</span>
+                    <input type="checkbox" class="toggle-switch" checked>
+                </div>
+                <div class="toggle-row">
+                    <span class="toggle-label">43. New Follower Push Alerts</span>
+                    <input type="checkbox" class="toggle-switch" checked>
+                </div>
+                <div class="toggle-row">
+                    <span class="toggle-label">44. SMS Security Alerts</span>
+                    <input type="checkbox" class="toggle-switch">
+                </div>
+                
+                <div class="span-full section-divider">Privacy & Security</div>
+                <div class="toggle-row">
+                    <span class="toggle-label">45. Two-Factor Authentication (2FA)</span>
+                    <input type="checkbox" class="toggle-switch">
+                </div>
+                <div class="toggle-row">
+                    <span class="toggle-label">46. Show "Online Now" Status</span>
+                    <input type="checkbox" class="toggle-switch" checked>
+                </div>
+                <div class="toggle-row">
+                    <span class="toggle-label">47. Streamer Mode (Hide sensitive info)</span>
+                    <input type="checkbox" class="toggle-switch">
+                </div>
+                <div class="form-group">
+                    <label>48. Session Timeout (Minutes)</label>
+                    <input type="number" value="30">
+                </div>
+                
+                <!-- Developer / Advanced -->
+                <div class="span-full section-divider">Developer Integration</div>
+                 <div class="form-group span-2">
+                    <label>49. Webhook URL (Discord Bot)</label>
+                    <input type="text" placeholder="https://discord.com/api/webhooks/...">
+                </div>
+                 <div class="form-group">
+                    <label>50. API Key</label>
+                    <div class="input-prefix">
+                        <span>KEY</span>
+                        <input type="password" value="sk-live-xxxxxxxxxxxxxxxx">
+                        <i class="fas fa-eye" style="padding:0 10px; cursor:pointer;"></i>
+                    </div>
+                </div>
+                 <div class="form-group">
+                    <label>51. Data Export</label>
+                    <button class="btn-outline">Download JSON</button>
+                </div>
+                
+                 <div class="span-full section-divider" style="color:var(--danger)">Danger Zone</div>
+                 <div class="span-full">
+                     <button class="btn-outline" style="border-color:var(--danger); color:var(--danger);">Delete Account</button>
+                 </div>
+            </div>
+        </section>
+
+        <!-- NEW TAB: ADMIN PANEL -->
+        <section id="tab-admin" class="dash-view">
+            <div class="panel-header">
+                <h3>Platform Administration</h3>
+                <span style="color:var(--danger); font-size:0.8rem; font-weight:700;">AUTHORIZED PERSONNEL ONLY</span>
+            </div>
+
+            <div class="settings-grid">
+                <!-- Global Assets -->
+                <div class="visual-card span-full">
+                    <h4>Global Branding</h4>
+                    <div class="settings-grid">
+                         <div class="upload-zone">
+                            <i class="fas fa-globe fa-2x"></i>
+                            <span>Upload Site Logo (PNG)</span>
+                            <input type="file" accept="image/png">
+                        </div>
+                        <div class="upload-zone">
+                            <i class="fas fa-image fa-2x"></i>
+                            <span>Default Hero Banner</span>
+                            <input type="file" accept="image/jpeg">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Config -->
+                <div class="visual-card span-full">
+                    <h4>System Configuration</h4>
+                    <div class="settings-grid">
+                        <div class="toggle-row">
+                            <span class="toggle-label">Maintenance Mode</span>
+                            <input type="checkbox" class="toggle-switch">
+                        </div>
+                        <div class="toggle-row">
+                            <span class="toggle-label">Allow New Registrations</span>
+                            <input type="checkbox" class="toggle-switch" checked>
+                        </div>
+                        <div class="toggle-row">
+                            <span class="toggle-label">Debug Logging</span>
+                            <input type="checkbox" class="toggle-switch">
+                        </div>
+                        <div class="form-group">
+                            <label>System Announcement Message</label>
+                            <input type="text" placeholder="Alert shown to all users...">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Management -->
+                <div class="visual-card span-full">
+                    <h4>User Management</h4>
+                    <div class="settings-grid">
+                        <div class="form-group span-2">
+                            <label>Find User (ID or Email)</label>
+                            <div class="input-prefix">
+                                <span><i class="fas fa-search"></i></span>
+                                <input type="text" placeholder="Search...">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Action</label>
+                            <select>
+                                <option>Ban User</option>
+                                <option>Reset Password</option>
+                                <option>Grant Verified Badge</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Reason</label>
+                            <input type="text">
+                        </div>
+                        <div class="span-full">
+                            <button class="btn-emerald" style="background: var(--danger); color:white;">Execute Action</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visual Overrides -->
+                 <div class="visual-card span-full">
+                    <h4>Global Visual Overrides</h4>
+                    <div class="settings-grid">
+                        <div class="form-group">
+                            <label>Primary Hex Color</label>
+                            <input type="color" value="#00f5d4" style="height:40px; width:100%;">
+                        </div>
+                        <div class="form-group">
+                            <label>Secondary Hex Color</label>
+                            <input type="color" value="#9d4edd" style="height:40px; width:100%;">
+                        </div>
+                         <div class="span-full">
+                            <button class="btn-outline">Reset to Defaults</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- PAYMENT MODAL -->
+    <div id="payment-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="payment-header">
+                <div class="payment-title"><i class="fas fa-lock text-emerald"></i> Secure Checkout</div>
+                <button class="close-modal" onclick="Dashboard.closePaymentModal()">&times;</button>
+            </div>
+            
+            <div class="payment-summary">
+                <div class="summary-row"><span>Item</span> <span id="pay-item-name">500 Aura Pack</span></div>
+                <div class="summary-row"><span>Tax</span> <span>$0.00</span></div>
+                <div class="summary-total"><span>Total</span> <span id="pay-total" class="text-emerald">$4.99</span></div>
+            </div>
+            
+            <div class="form-group">
+                <label>Card Information</label>
+                <div class="input-prefix">
+                    <span><i class="fas fa-credit-card"></i></span>
+                    <input type="text" id="pay-card-num" placeholder="0000 0000 0000 0000" maxlength="19">
+                </div>
+            </div>
+            <div class="settings-grid" style="margin-top: 10px; margin-bottom: 20px;">
+                <div class="form-group">
+                    <input type="text" id="pay-expiry" placeholder="MM / YY" maxlength="5" style="text-align: center;">
+                </div>
+                <div class="form-group">
+                    <input type="text" id="pay-cvc" placeholder="CVC" maxlength="3" style="text-align: center;">
+                </div>
+            </div>
+            
+            <button class="btn-emerald" id="btn-confirm-pay" onclick="Dashboard.processPayment()">Pay Now</button>
+        </div>
+    </div>
+
+    <!-- DEVELOPER LOGIN MODAL -->
+    <div id="dev-login-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="payment-header">
+                <div class="payment-title"><i class="fas fa-code text-emerald"></i> Developer Access</div>
+                <button class="close-modal" onclick="Dashboard.closeDevLogin()">&times;</button>
+            </div>
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label>Username</label>
+                <input type="text" id="dev-username" placeholder="Enter Username">
+            </div>
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label>Password</label>
+                <input type="password" id="dev-password" placeholder="Enter Password">
+            </div>
+            <button class="btn-emerald" onclick="Dashboard.submitDevLogin()">Login</button>
+        </div>
+    </div>
+    <script src="bar.js" defer></script>
+
+    <!-- [FILE END: index.html] -->

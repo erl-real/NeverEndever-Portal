@@ -1,15 +1,25 @@
+
+
 <!doctype html>
 <html lang="en">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Endever Live Platform</title>
+    <title>Endever Live!</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-    
+      <!-- Sidebar styles -->
+  <link rel="stylesheet" href="bar.css">
+
+  <!-- Ionicons for icons -->
+  <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+
+  <!-- Bootstrap for accordion dropdowns -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
     <style>
         /* --- THEME CONFIG --- */
         :root {
@@ -49,7 +59,8 @@
             background: rgba(5, 5, 8, 0.95); backdrop-filter: blur(10px); z-index: 50; flex-shrink: 0;
         }
         .brand { 
-            font-family: 'Poppins', sans-serif; font-size: 1.6rem; font-weight: 800; 
+            font-family: 'Poppins', sans-serif; font-size: 1.8rem; font-weight: 800; 
+padding: 30px;
             background: linear-gradient(to right, var(--accent-secondary), var(--accent-primary)); 
             -webkit-background-clip: text; background-clip: text; color: transparent; cursor: pointer;
             display: inline-flex; /* Fix for icon/text alignment */
@@ -480,6 +491,33 @@
 </head>
 <body>
 
+
+  <!-- Sidebar placeholder -->
+  <div id="nav-placeholder"></div>
+
+  <!-- Main content -->
+
+
+ 
+
+  <!-- Load sidebar HTML -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      fetch('nav.html')
+        .then(res => res.text())
+        .then(html => {
+          document.getElementById('nav-placeholder').innerHTML = html;
+        });
+    });
+  </script>
+
+  <!-- Sidebar logic -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script src="bar.js" defer></script>
+
+
+
     <!-- AUTH OVERLAY -->
     <div id="auth-overlay" class="modal-overlay" style="z-index: 300 !important;">
         <div class="auth-box">
@@ -679,17 +717,18 @@
     <!-- MAIN UI -->
     <header>
         <div class="brand" onclick="location.reload()">
-            <i class="fas fa-star" title="Endever Live Platform"></i> Endever Live
-        </div>
+            <i class="" title="Endever Live!"></i>Endever Live</div>
+<a href="https://www.twitch.tv/neverendever" </a>
+        
         <div class="header-actions-group">
-            <a href="https://www.twitch.tv/neverendever" target="_blank" class="info-button bg-purple-600 text-white" title="Visit the official Twitch channel!"><i class="fab fa-twitch"></i> Twitch Live</a>
+            <a href="https://www.twitch.tv/neverendever" target="_blank" class="info-button bg-purple-600 text-white" title="Visit the official Twitch channel!"><i class="fab fa-twitch"></i>Twitch</a>
             <button class="info-button bg-gray-700 text-white hover:bg-gray-600" onclick="Queue.open()" title="View the list of tracks currently waiting for review on the stream."><i class="fas fa-list-ol"></i> Queue</button>
-            <div class="schedule-box" id="schedule-box" title="Check the Twitch schedule for upcoming review streams." style="margin-right: 15px;">
+           <!-- <div class="schedule-box" id="schedule-box" title="Check the Twitch schedule for upcoming review streams." style="margin-right: 15px;"> 
                 <i class="fas fa-calendar-alt"></i> Loading Schedule...
             </div>
         </div>
-        <div class="header-right">
-            <button class="btn-icon" id="btn-filter" onclick="App.toggleFilter()" title="Filter the rankings to show only artists you have liked."><i class="fas fa-heart mr-2"></i> Liked Artists</button>
+        <div class="header-right">  -->
+           
             <div class="search-box">
                 <i class="fas fa-search search-icon"></i>
                 <input type="text" class="search-input" placeholder="Search Artists..." oninput="App.search(this)" title="Search the leaderboard by artist name.">
@@ -1853,5 +1892,9 @@
         });
 
     </script>
+ <!-- Footer -->
+  <footer>
+    Placeholder footer — update as needed.
+  </footer>
 </body>
 </html>
