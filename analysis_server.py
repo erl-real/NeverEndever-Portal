@@ -6,155 +6,65 @@ import soundfile as sf
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from supabase import create_client, Client
+from dotenv import load_dotenv
+
+# Load variables from .env file
+load_dotenv()
+
+# Read Supabase credentials
+SUPABASE_URL = os.getenv("SUPABASE_URL", "").strip()
+SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY", "").strip()
+
+print("SUPABASE_URL:", repr(SUPABASE_URL))
+print("SUPABASE_KEY starts with:", SUPABASE_KEY[:10] if SUPABASE_KEY else None)
+
+if not SUPABASE_URL or not SUPABASE_KEY:
+    raise RuntimeError("Missing Supabase environment variables")
+
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 app = Flask(__name__)
 CORS(app)
 
-# Load Supabase credentials from environment variables
-SUPABASE_URL = os.environ.get("https://imqfnxtornlvglwvkspi.supabase.co")
-SUPABASE_KEY = os.environ.get("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImltcWZueHRvcm5sdmdsd3Zrc3BpIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MzEzNDI2OSwiZXhwIjoyMDc4NzEwMjY5fQ.A_Dl8Q7PZDiAVUXOjnm3F8Fpdwt32pe_UbYL3sZJG34")  
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+# Example /analyze route
+@app.route("/analyze", methods=["POST"])
+def analyze():
+    if "file" not in request.files:
+        return jsonify({"error": "No file uploaded"}), 400
 
-# --- Audio Analysis Function ---
-def analyze_audio(file_path):
-    try:
-        # Load Metadata
-        info = sf.info(file_path)
-
-        # Load Audio (limit 60s)
-        y, sr = librosa.load(file_path, duration=60)
-
-        # 1. Frequency Analysis (EQ)
-        spec = np.abs(librosa.stft(y))
-        low = np.mean(spec[:20, :])
-        mid = np.mean(spec[20:100, :])
-        high = np.mean(spec[100:, :])
-        total_freq = low + mid + high if (low + mid + high) > 0 else 1
-
-        # 2. AI Detection
-        onset_env = librosa.onset.onset_strength(y=y, sr=sr)
-        tempo, _ = librosa.beat.beat_track(y=y, sr=sr)
-        _, beats = librosa.beat.beat_track(onset_envelope=onset_env, sr=sr)
-
-        if len(beats) > 4:
-            beat_times = librosa.frames_to_time(beats, sr=sr)
-            intervals = np.diff(beat_times)
-            variance = np.var(intervals)
-            ai_confidence = max(0, min(100, (1 - (variance * 1000)) * 100))
-        else:
-            ai_confidence = 50
-
-        # 3. Advanced Audio Metrics
-        rms = librosa.feature.rms(y=y)[0]
-        contrast = librosa.feature.spectral_contrast(y=y, sr=sr)
-        flatness = librosa.feature.spectral_flatness(y=y)
-        lufs = 20 * np.log10(np.mean(rms) + 1e-9)
-        dyn_range = np.std(rms) * 100
-        peak = np.max(np.abs(y))
-        peak_db = 20 * np.log10(peak + 1e-9)
-        width = np.random.randint(70, 100) if info.channels > 1 else 0
-
-        # 4. Scores & Heuristics
-        prod = min(10, dyn_range * 2)
-        mix = min(10, np.mean(contrast) / 2)
-        orig = min(10, (1 - np.mean(flatness)) * 20)
-        bpm = round(tempo)
-        key = "C Maj"  # Placeholder
-        genre = "Electronic" if bpm > 120 else "Hip Hop"
-
-        # --- NEW METRICS ---
-        market_viability = min(100, (prod * 5) + (mix * 5))
-        sync_score = min(100, (orig * 5) + 30)
-        sentiment = "Aggressive" if bpm > 140 else ("Uplifting" if bpm > 110 else "Melancholic")
-
-        # Sonic Fingerprint (Timbre)
-        fingerprint = {
-            "warmth": int(low * 1000),
-            "brightness": int(high * 1000),
-            "grit": int(np.mean(contrast) * 20)
-        }
-
-        return {
-            "success": True,
-            "ai_confidence": round(ai_confidence, 1),
-            "meta": {
-                "rate": info.samplerate,
-                "channels": info.channels,
-                "format": info.format,
-                "duration": round(info.duration, 2)
-            },
-            "eq": {
-                "low": int((low/total_freq)*100),
-                "mid": int((mid/total_freq)*100),
-                "high": int((high/total_freq)*100)
-            },
-            "advanced": {
-                "lufs": round(lufs, 1),
-                "peak_db": round(peak_db, 1),
-                "dr_score": int(dyn_range),
-                "noise_floor": -60,
-                "width": width,
-                "clipping": peak >= 1.0,
-                "dc_offset": np.mean(y) > 0.001
-            },
-            "extra": {
-                "market_viability": int(market_viability),
-                "sync_score": int(sync_score),
-                "sentiment": sentiment,
-                "fingerprint": fingerprint
-            },
-            "bpm": bpm,
-            "key": key,
-            "genre": genre,
-            "scores": {
-                "production": round(prod, 1),
-                "mixing": round(mix, 1),
-                "originality": round(orig, 1),
-                "vocals": round(np.random.uniform(5, 9), 1),
-                "lyrics": round(np.random.uniform(5, 9), 1),
-                "replayability": round((prod + orig)/2, 1)
-            }
-        }
-    except Exception as e:
-        return {"success": False, "error": str(e)}
-
-# --- Save Results to Supabase ---
-def save_analysis(user_id, song_id, analysis):
-    supabase.table("ai_event_entries").insert({
-        "user_id": user_id,
-        "song_id": song_id,
-        "market_viability": analysis["extra"]["market_viability"],
-        "sync_licensing_score": analysis["extra"]["sync_score"],
-        "vocal_sentiment": analysis["extra"]["sentiment"],
-        "sonic_fingerprint": analysis["extra"]["fingerprint"]
-    }).execute()
-
-# --- Flask Route ---
-@app.route('/analyze', methods=['POST'])
-def handle_analyze():
-    if 'file' not in request.files:
-        return jsonify({"error": "No file"}), 400
-
-    file = request.files['file']
-    path = f"temp_{int(time.time())}_{file.filename}"
-    file.save(path)
-
-    data = analyze_audio(path)
-
-    try:
-        os.remove(path)
-    except:
-        pass
-
-    # IDs passed from frontend
+    file = request.files["file"]
     user_id = request.form.get("user_id")
     song_id = request.form.get("song_id")
 
-    if user_id and song_id and data.get("success"):
-        save_analysis(user_id, song_id, data)
+    # Save temp file
+    temp_path = f"/tmp/{file.filename}"
+    file.save(temp_path)
 
-    return jsonify(data)
+    # Load audio with librosa
+    y, sr = librosa.load(temp_path, sr=None)
 
-# --- Run Server ---
-if __name__ == '__main__':
-    app.run(port=5000, debug=True)
+    # Example metrics
+    duration = librosa.get_duration(y=y, sr=sr)
+    tempo, _ = librosa.beat.beat_track(y=y, sr=sr)
+
+    result = {
+        "duration_sec": duration,
+        "tempo_bpm": tempo,
+        "ai_confidence": float(np.random.rand()),  # placeholder
+        "market_viability": float(np.random.rand()),  # placeholder
+    }
+
+    # If user_id and song_id provided, insert into Supabase
+    if user_id and song_id:
+        supabase.table("ai_event_entries").insert({
+            "user_id": user_id,
+            "song_id": song_id,
+            "metrics": result,
+            "created_at": time.strftime("%Y-%m-%d %H:%M:%S")
+        }).execute()
+
+    return jsonify(result)
+
+if __name__ == "__main__":
+    app.run(debug=True)
+
