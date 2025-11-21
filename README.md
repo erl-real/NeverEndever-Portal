@@ -23,6 +23,7 @@ Twitch reward integrations (live status, Discord piggyback).
 
 ----------future future shit
 
+RealtimeKit for vc and host cams
 Personalized Dashboards
 Dynamic nav/dashboard that adapts per user role (artist, fan, admin). One file controls the layout; changes cascade everywhere.
 Smart Recommendations--Supabase + AI embeddings for music similarity search. — powered by vector search.
@@ -43,6 +44,23 @@ Modular Microfrontends  Each feature (forums, playlists, referrals) is its own m
 
 
 ----------ABSOLUTES FOR GROWTH
+Optimize:
+
+Compress images (WebP/AVIF).
+
+Minify CSS/JS.
+
+
+Use Cloudflare Images for resizing/optimization if you scale.
+Cloudflare Pages
+Best for: Your site’s frontend (HTML, CSS, JS, images).
+Any files in a /public or root folder (like /images, /css, /js) are served as static assets.
+These assets are cached globally on Cloudflare’s CDN.
+Limits: 20,000 files per deployment   25 MB max per file    Unlimited bandwidth
+                     /public
+                          /images/logo.png
+                          /css/main.css
+                          /js/app.js
 
 Keep repos modular (frontend vs backend) for clarity.
 Componentize everything: Nav, footer, dashboard → one file, imported everywhere.
@@ -159,4 +177,5 @@ Twitch:
 Integration to show when users are live like discord
 Possibly piggyback off Discord presence 
 
-YouTube: Playlist embedding or coded integration. make stable long term whats the play list limits do we need more rdy?)
+YouTube: Playlist embedding or coded integration. make stable long term whats the play list limits do we need more rdy?
+

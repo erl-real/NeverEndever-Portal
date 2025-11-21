@@ -1,202 +1,158 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>NeverEndEver</title>
+  <meta charset="UTF-8" />
+  <title>Glider Sidebar</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="style.css">
 
-<div class="ripple-container">
-  <div class="ripple-ring"></div>
-  <div class="ripple-ring"></div>
-</div>
+  <!-- Ionicons + Font Awesome -->
+  <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-
-  <!-- Emerald Button Styles (kept inline as requested) -->
-  <style>
-    .emerald-button {
-      position: relative;
-      z-index: 0;
-      display: inline-block;
-      font-family: "Montserrat", Helvetica, sans-serif;
-      font-size: 15px;
-      font-weight: 500;
-      padding: 0.75em 1.25em;
-      padding-right: 1em;
-      background: transparent;
-      color: #2e3b8f;
-      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.35);
-      text-transform: uppercase;
-      letter-spacing: 2.5px;
-      text-decoration: none;
-      cursor: pointer;
-      transition: filter 0.2s ease, transform 0.2s ease;
-      filter: brightness(0.95);
-      border: none;
-    }
-    .emerald-button::before {
-      content: "";
-      position: absolute;
-      top: -2px; left: -2px; right: -2px; bottom: -2px;
-      background: linear-gradient(90deg, #1a1b4d, #2e3b8f, #4b5edc, #7f6fff, #c259ff, #7f6fff, #4b5edc);
-      z-index: -1;
-      background-size: 300% 100%;
-      transition: background-position 0.8s ease;
-      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-      mask-composite: exclude;
-      -webkit-mask-composite: destination-out;
-      padding: 2px;
-      box-sizing: border-box;
-    }
-    .emerald-button:hover::before { background-position: 100% 0; }
-    .emerald-button:active { transform: translateY(2px) scale(0.98); filter: brightness(0.85); }
-    .emerald-button::after {
-      content: "";
-      position: absolute; top: 0; bottom: 0; right: 1em;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1em; color: #ffffff;
-      transition: transform 0.3s ease, color 0.3s ease;
-      pointer-events: none;
-    }
-    .emerald-button:hover::after { animation: bounceright 0.4s alternate ease-in-out infinite; color: #2e3b8f; }
-    @keyframes bounceright { from { transform: translateX(0); } to { transform: translateX(4px); } }
-
-    .emerald-heading {
-      background: linear-gradient(90deg,#144d32,#1f7a54,#2f9e6f,#53d19b);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      font-weight: 700;
-      letter-spacing: 1px;
-    }
-
-
-  </style>
-
-  <!-- Importmap -->
-  <script type="importmap">
-  {
-    "imports": {
-      "three": "https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js",
-      "three/examples/jsm/controls/OrbitControls": "https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/controls/OrbitControls.js",
-      "three/examples/jsm/loaders/GLTFLoader": "https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/loaders/GLTFLoader.js",
-      "three/examples/jsm/postprocessing/EffectComposer": "https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/postprocessing/EffectComposer.js",
-      "three/examples/jsm/postprocessing/RenderPass": "https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/postprocessing/RenderPass.js",
-      "three/examples/jsm/postprocessing/UnrealBloomPass": "https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/postprocessing/UnrealBloomPass.js"
-    }
-  }
-  </script>
-
-  <!-- GSAP -->
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
-
-  <!-- dat.GUI -->
-  <script type="module" src="https://cdn.jsdelivr.net/npm/dat.gui@0.7.9/build/dat.gui.module.js"></script>
-
-  <!-- Supabase (required for auth.js) -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Styles -->
+  <link rel="stylesheet" href="/styles/sidebarmaintheme.css" />
+  <link rel="stylesheet" href="/styles/sidebartheme.css" />
 </head>
 <body>
-<canvas class="webgl"></canvas>
-    <div id="preloader" style="display: block;">
-        <!-- <div class="loder-parent">
-            <div id="loader"></div>
-        </div> -->
-        <!-- <p class="loader-text" id="loading-text">Loading</p> -->
+  <!-- Toggle Button -->
+  <button id="toggleSidebar" class="toggle-btn" aria-label="Toggle sidebar">
+    <div class="burger-menu">
+      <span class="burger-bun burger-bun--top"></span>
+      <span class="burger-bun burger-bun--mid"></span>
+      <span class="burger-bun burger-bun--bottom"></span>
+    </div>
+  </button>
+
+  <!-- Sidebar -->
+  <div class="sidebar-wrapper" id="sidebar">
+    <div class="sidebar-inner">
+      <aside class="radio-nav" style="--total-radio:24">
+        <div class="radio-nav-container">
+          <!-- Core Nav Items -->
+          <!-- Core Navigation static pages only and shorten later-->
+<input type="radio" id="nav-home" name="nav-menu" checked />
+<label for="nav-home"><i class="ion-home"></i><a href="/index">Home</a></label>
+
+<input type="radio" id="nav-notifications" name="nav-menu" />
+<label for="nav-notifications"><i class="ion-ios-bell"></i><a href="pages/notifications">Notifications</a></label>
+
+<input type="radio" id="nav-features" name="nav-menu" />
+<label for="nav-features"><i class="ion-flash"></i><a href="/pages/features">New Features</a></label>
+
+<input type="radio" id="nav-elo" name="nav-menu" />
+<label for="nav-elo"><i class="ion-ios-people"></i><a href="/pages/elo">ELO</a></label>
+
+<input type="radio" id="nav-submit" name="nav-menu" />
+<label for="nav-submit"><i class="ion-compose"></i><a href="/pages/submit">Submit to Twitch</a></label>
+
+<input type="radio" id="nav-live" name="nav-menu" />
+<label for="nav-live"><i class="ion-grid"></i><a href="/pages/live">Who's Live?</a></label>
+
+<input type="radio" id="nav-downloads" name="nav-menu" />
+<label for="nav-downloads"><i class="ion-folder"></i><a href="/pages/downloads">Downloads</a></label>
+
+<input type="radio" id="nav-services" name="nav-menu" />
+<label for="nav-services"><i class="ion-paintbrush"></i><a href="/pages/services">Services</a></label>
+
+<input type="radio" id="nav-profile" name="nav-menu" />
+<label for="nav-profile"><i class="ion-person"></i><a href="/pages/profile">Profile</a></label>
+
+<input type="radio" id="nav-messageboard" name="nav-menu" />
+<label for="nav-messageboard"><i class="ion-chatboxes"></i><a href="/pages/messageboard">Message Board</a></label>
+
+<input type="radio" id="nav-feed" name="nav-menu" />
+<label for="nav-feed"><i class="ion-ios-paper"></i><a href="/pages/feed">Feed</a></label>
+
+<input type="radio" id="nav-analytics" name="nav-menu" />
+<label for="nav-analytics"><i class="ion-stats-bars"></i><a href="/pages/analytics">Analytics</a></label>
+
+<input type="radio" id="nav-staffdashboard" name="nav-menu" />
+<label for="nav-staffdashboard"><i class="ion-wrench"></i><a href="/pages/staffdashboard">Staff Tools</a></label>
+
+<input type="radio" id="nav-dashboard" name="nav-menu" />
+<label for="nav-dashboard"><i class="ion-speedometer"></i><a href="/pages/dashboard">Dashboard</a></label>
+
+<input type="radio" id="nav-admin" name="nav-menu" />
+<label for="nav-admin"><i class="ion-locked"></i><a href="/pages/admin">Admin</a></label>
+
+<!-- Informational Pages -->
+<input type="radio" id="nav-about" name="nav-menu" />
+<label for="nav-about"><i class="ion-information-circled"></i><a href="/pages/about">About Us</a></label>
+
+<input type="radio" id="nav-pricing" name="nav-menu" />
+<label for="nav-pricing"><i class="ion-cash"></i><a href="/pages/pricing">Pricing</a></label>
+
+<input type="radio" id="nav-contact" name="nav-menu" />
+<label for="nav-contact"><i class="ion-email"></i><a href="/pages/contact">Contact</a></label>
+
+<input type="radio" id="nav-faq" name="nav-menu" />
+<label for="nav-faq"><i class="ion-help-buoy"></i><a href="/pages/faq">FAQ</a></label>
+
+<!-- Content / Community -->
+<input type="radio" id="nav-showcase" name="nav-menu" />
+<label for="nav-showcase"><i class="fa-solid fa-images"></i><a href="/pages/showcase">Showcase</a></label>
+
+<input type="radio" id="nav-playlist" name="nav-menu" />
+<label for="nav-playlist"><i class="fa-solid fa-list"></i><a href="/pages/playlist">Playlist</a></label>
+
+<input type="radio" id="nav-guidelines" name="nav-menu" />
+<label for="nav-guidelines"><i class="fa-solid fa-scale-balanced"></i><a href="/pages/guidelines">Community Guidelines</a></label>
+
+<input type="radio" id="nav-privacy" name="nav-menu" />
+<label for="nav-privacy"><i class="fa-solid fa-user-shield"></i><a href="/pages/privacy">Privacy Policy</a></label>
+
+<input type="radio" id="nav-reviews" name="nav-menu" />
+<label for="nav-reviews"><i class="fa-solid fa-star"></i><a href="/pages/reviews">Reviews</a></label>
+
+<input type="radio" id="nav-partners" name="nav-menu" />
+<label for="nav-partners"><i class="fa-solid fa-handshake"></i><a href="/pages/partners">Partners</a></label>
+
+<input type="radio" id="nav-terms" name="nav-menu" />
+<label for="nav-terms"><i class="fa-solid fa-file-contract"></i><a href="/pages/terms">Terms of Service</a></label>
+
+<input type="radio" id="nav-news" name="nav-menu" />
+<label for="nav-news"><i class="fa-solid fa-newspaper"></i><a href="/pages/news">News</a></label>
+
+<input type="radio" id="nav-games" name="nav-menu" />
+<label for="nav-games"><i class="fa-solid fa-gamepad"></i><a href="/pages/games">Games</a></label>
+
+<input type="radio" id="nav-artist" name="nav-menu" />
+<label for="nav-artist"><i class="fa-solid fa-paintbrush"></i><a href="/pages/artist">Affiliated Artist</a></label>
+
+<input type="radio" id="nav-products" name="nav-menu" />
+<label for="nav-products"><i class="fa-solid fa-box-open"></i><a href="/pages/products">Products</a></label>
+
+<input type="radio" id="nav-merch" name="nav-menu" />
+<label for="nav-merch"><i class="fa-solid fa-shirt"></i><a href="/pages/merch">Merch</a></label>
+
+<input type="radio" id="nav-amv" name="nav-menu" />
+<label for="nav-amv"><i class="fa-solid fa-film"></i><a href="/pages/amv">AMV</a></label>
+
+<input type="radio" id="nav-members" name="nav-menu" />
+<label for="nav-members"><i class="fa-solid fa-lock"></i><a href="/pages/members">Members Only</a></label>
+
+<!-- External / Social -->
+<input type="radio" id="nav-twitch" name="nav-menu" />
+<label for="nav-twitch"><i class="fa-brands fa-twitch"></i><a href="https://twitch.tv/neverendever" target="_blank">Twitch</a></label>
+
+<input type="radio" id="nav-discord" name="nav-menu" />
+<label for="nav-discord"><i class="fa-brands fa-discord"></i><a href="https://discord.gg/7KHEXXTaVG" target="_blank">Discord</a></label>
+
+<input type="radio" id="nav-youtube" name="nav-menu" />
+<label for="nav-youtube"><i class="fa-brands fa-youtube"></i><a href="https://www.youtube.com/@NEVRAMV" target="_blank">YouTube</a></label>
+
+<input type="radio" id="nav-instagram" name="nav-menu" />
+<label for="nav-instagram"><i class="fa-brands fa-instagram"></i><a href="https://www.instagram.com/endeverrecords/" target="_blank">Instagram</a></label>
+
+          <!-- Glider -->
+          <div class="glider-container">
+            <div class="glider"></div>
+          </div>
+        </div>
+      </aside>
+    </div>
   </div>
-
-
-<main>
-  <header class="header">
-    <a href="#" class="logo">
-      <img src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/endever%20logo%20home%20header.png" alt="Logo">
-    </a>
-    <div class="nav-link-container">
-      <a href="">Home</a>
-      <a href="">ELO</a>
-      <a href="">Store</a>
-
-      <!-- Toggle button for dropdown -->
-      <button class="toggle-btn" id="menu-toggle">
-        <img src="https://webprojects.cloud/r&d/roman-structure/images/menu_icon.svg" alt="menu_icon">
-      </button>
-    </div>
-
-    <!-- Dropdown menu (initially hidden) -->
-    <div class="dropdown-menu hidden" id="dropdown">
-      <a href="#">About</a>
-      <a href="#">Contact</a>
-      <a href="#">Support</a>
-    </div>
-  </header>
-</main>
-
-
-   <section>
-    <div class="banner-section">
-      <h1>THE FUTURE OF MUSIC PLATFORMS IS COMING</h1>
-      <p>Submit For Music Events, Meet and Collaborate with Other Artist, See Where You Rank In ELO, and Get Help with Your Next Project.</p>
-      <a href="#">
-
-      </a>
-    </div>
-  </section>
-
-   <!-- Auth Buttons -->
-<div class="centered-buttons splash-auth">
-  <!-- Log In Link -->
-  <a
-    class="emerald-button"
-    href="login.html">
-    Log In
-  </a>
-
-  <!-- Sign Up Link -->
-  <a
-    class="emerald-button"
-    href="signup.html">
-    Sign Up Now
-  </a>
-</div>
-
-    <!-- Media grid -->
-    <section class="images-container">
-      <div class="img"><div class="img-main"><img loading="lazy" src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/realisrareofnc.png" alt="real"></div></div>
-      <div class="img"><div class="img-main"><img loading="lazy" src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/KXT.png" alt="kxtxxx"></div></div>
-      <div class="img"><div class="img-main"><img loading="lazy" src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/fu2.png" alt="FU2"></div></div>
-      <div class="img"><div class="img-main"><img loading="lazy" src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/chxrli3.png" alt="charlie"></div></div>
-      <div class="img"><div class="img-main"><img loading="lazy" src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/cmplxcnt.png" alt="cmplxcnt"></div></div>
-      <div class="img"><div class="img-main"><img loading="lazy" src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/zeek.png" alt="zeek"></div></div>
-      <div class="img"><div class="img-main"><img loading="lazy" src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/swillow.png" alt="swillow"></div></div>
-      <div class="img"><div class="img-main"><img loading="lazy" src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/boid.png" alt="who tf is betty boid"></div></div>
-      <div class="img"><div class="img-main"><img loading="lazy" src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/beat%20tape%201.jpg" alt="tape"></div></div>
-      <div class="img"><div class="img-main"><img loading="lazy" src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/10.png" alt="temp"></div></div>
-      <div class="img"><div class="img-main"><img loading="lazy" src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/6.png" alt="temp"></div></div>
-      <div class="img"><div class="img-main"><img loading="lazy" src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/9.png" alt="temp"></div></div>
-      <div class="img"><div class="img-main"><img loading="lazy" src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/Sigil_Vol.1_-_EndEver_Art-Tape.png" alt="temp"></div></div>
-      <div class="img"><div class="img-main"><img loading="lazy" src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/wdsss.png" alt="temp"></div></div>
-    </section>
-  </main>
-
-  <!-- Three.js Scene -->
-  <script type="module" src="scene.js"></script>
-  <!-- Burn overlay shader -->
-  <script src="ripple.js"></script>
+  <!-- Sidebar logic -->
+  <script src="/scripts/staticsidebar.js" defer></script>
 </body>
-<script>
-  const toggleBtn = document.getElementById('menu-toggle');
-  const dropdown = document.getElementById('dropdown');
-
-  toggleBtn.addEventListener('click', () => {
-    dropdown.classList.toggle('hidden');
-  });
-
-  window.addEventListener('click', (e) => {
-    if (!toggleBtn.contains(e.target) && !dropdown.contains(e.target)) {
-      dropdown.classList.add('hidden');
-    }
-  });
-
 </html>
