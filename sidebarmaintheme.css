@@ -193,3 +193,6 @@ input:nth-of-type(4):checked ~ .glider-container .glider { transform: translateY
 .radio-nav-container input:checked + label a {
   color: var(--glider-color);  /* sync with glider theme */
 }
+.radio-nav-container label a:visited {
+  color: inherit;
+}
