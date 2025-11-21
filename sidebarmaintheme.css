@@ -1,0 +1,195 @@
+/* Base layout */
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Inter, sans-serif;
+  background: #000;
+  color: #fff;
+  display: flex;
+  height: 100vh;
+}
+
+/* Toggle button */
+.toggle-btn {
+  position: fixed;
+  top: 18px;
+  left: 6px;
+  z-index: 1001;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+.burger-menu {
+  width: 40px;
+  height: 40px;
+  position: relative;
+}
+.burger-bun {
+  position: absolute;
+  left: 50%;
+  width: 25px;
+  height: 2px;
+  background: #ccc;
+  transform: translateX(-50%);
+  transition: all 0.3s ease;
+  border-radius: 2px;
+}
+.burger-bun--top { top: 12px; }
+.burger-bun--mid { top: 18px; }
+.burger-bun--bottom { top: 24px; }
+.burger-menu.open .burger-bun--top {
+  top: 18px;
+  transform: translateX(-50%) rotate(45deg);
+}
+.burger-menu.open .burger-bun--mid { opacity: 0; }
+.burger-menu.open .burger-bun--bottom {
+  top: 18px;
+  transform: translateX(-50%) rotate(-45deg);
+}
+
+/* Sidebar */
+.sidebar-wrapper {
+  width: 260px;
+  background: #0a0a0e;
+  border-right: 1px solid rgba(255,255,255,0.08);
+  transition: transform 0.3s ease;
+  overflow-y: auto;
+  position: relative;
+  z-index: 100;
+}
+.sidebar-wrapper.collapsed {
+  transform: translateX(-100%);
+}
+
+/* Main content */
+.main-content {
+  flex: 1;
+  padding: 40px;
+}
+
+/* Radio nav */
+.radio-nav-container {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding: 16px;
+}
+.radio-nav-container input {
+  appearance: none;
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.radio-nav-container label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  border-radius: 0.75rem;
+  border: 1px solid transparent;
+  color: #a3a3a3;
+  transition: all 0.3s ease-in-out;
+  position: relative;
+  z-index: 1;
+}
+.radio-nav-container label i {
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+}
+.radio-nav-container input:checked + label {
+  color: var(--main-color);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Glider */
+.glider-container {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(0deg, transparent 0%, #1b1b1b 50%, transparent 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+.glider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: calc(100% / var(--total-radio));
+  width: 100%;
+  transform: translateY(0);
+  background: linear-gradient(0deg, transparent 0%, var(--main-color) 50%, transparent 100%);
+  transition: transform 0.5s cubic-bezier(0.37, 1.95, 0.66, 0.56);
+}
+.glider::before {
+  content: "";
+  position: absolute;
+  height: 60%;
+  width: 300%;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--main-color);
+  filter: blur(10px);
+}
+.glider::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  height: 100%;
+  width: 150px;
+z-index: o;
+  background: linear-gradient(90deg, var(--main-color-opacity) 0%, transparent 100%);
+}
+
+/* Glider positions */
+input:nth-of-type(1):checked ~ .glider-container .glider { transform: translateY(0); }
+input:nth-of-type(2):checked ~ .glider-container .glider { transform: translateY(100%); }
+input:nth-of-type(3):checked ~ .glider-container .glider { transform: translateY(200%); }
+input:nth-of-type(4):checked ~ .glider-container .glider { transform: translateY(300%); }
+
+//* Dark theme thin scrollbars for sidebar and main content */
+.sidebar-wrapper,
+.main-content {
+  /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: #444 #0a0a0e;
+}
+
+/* Chrome, Edge, Safari */
+.sidebar-wrapper::-webkit-scrollbar,
+.main-content::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.sidebar-wrapper::-webkit-scrollbar-track,
+.main-content::-webkit-scrollbar-track {
+  background: #0a0a0e; /* dark track */
+}
+
+.sidebar-wrapper::-webkit-scrollbar-thumb,
+.main-content::-webkit-scrollbar-thumb {
+  background-color: #444; /* dark gray thumb */
+  border-radius: 3px;
+}
+
+.sidebar-wrapper::-webkit-scrollbar-thumb:hover,
+.main-content::-webkit-scrollbar-thumb:hover {
+  background-color: #666; /* lighter on hover */
+}
+/* Sidebar links */
+.radio-nav-container label a {
+  color: inherit;              /* inherit from label */
+  text-decoration: none;       /* remove underline */
+  flex: 1;                     /* fill label area */
+}
+
+/* Active state */
+.radio-nav-container input:checked + label a {
+  color: var(--glider-color);  /* sync with glider theme */
+}
