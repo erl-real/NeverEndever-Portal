@@ -1,0 +1,419 @@
+<!-- ================================================================= -->
+<!-- ENDEVER CHAT WIDGET (AUDEOBOX STYLE)                              -->
+<!-- Paste this block at the bottom of your HTML files (before </body>) -->
+<!-- ================================================================= -->
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+    /* SCOPED CSS FOR WIDGET */
+    #ec-root {
+        position: fixed; bottom: 20px; right: 20px; z-index: 10000;
+        font-family: 'Inter', sans-serif; color: white;
+        display: flex; flex-direction: column; align-items: flex-end;
+    }
+
+    /* 1. TOGGLE BUTTON */
+    #ec-toggle {
+        width: 60px; height: 60px; border-radius: 50%;
+        background: linear-gradient(135deg, #9d4edd, #00f5d4);
+        box-shadow: 0 4px 20px rgba(157, 77, 221, 0.5);
+        display: flex; align-items: center; justify-content: center;
+        cursor: pointer; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+    }
+    #ec-toggle:hover { transform: scale(1.1); }
+    #ec-toggle i { font-size: 24px; color: white; }
+    
+    .ec-badge-main {
+        position: absolute; top: 0; right: 0;
+        background: #ff4757; color: white; font-size: 10px; font-weight: 800;
+        width: 20px; height: 20px; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        border: 2px solid #000;
+    }
+
+    /* 2. MAIN PANEL */
+    #ec-panel {
+        width: 360px; height: 550px;
+        background: #0a0a0e;
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 16px;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+        display: none; flex-direction: column;
+        overflow: hidden; margin-bottom: 15px;
+        animation: ec-slide-up 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+    }
+    #ec-root.open #ec-panel { display: flex; }
+    #ec-root.open #ec-toggle { display: none; }
+
+    @keyframes ec-slide-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* HEADER */
+    .ec-header {
+        height: 60px; padding: 0 20px;
+        background: #111116;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+        display: flex; align-items: center; justify-content: space-between;
+    }
+    .ec-header-title { font-weight: 800; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
+    .ec-online-pill {
+        background: rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 20px;
+        font-size: 0.7rem; color: #ccc; display: flex; align-items: center; gap: 6px;
+    }
+    .ec-online-dot { width: 6px; height: 6px; background: #00f5d4; border-radius: 50%; box-shadow: 0 0 5px #00f5d4; }
+    
+    .ec-close-btn { 
+        cursor: pointer; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;
+        border-radius: 50%; background: rgba(255,255,255,0.05); color: #888; transition: 0.2s;
+    }
+    .ec-close-btn:hover { background: rgba(255,255,255,0.1); color: white; }
+
+    /* VIEWS (CHANNEL LIST vs CHAT) */
+    .ec-view { flex: 1; display: none; flex-direction: column; overflow: hidden; }
+    .ec-view.active { display: flex; }
+
+    /* CHANNEL LIST STYLES (Matching your image) */
+    .ec-chan-list { padding: 10px; overflow-y: auto; }
+    
+    .ec-chan-card {
+        display: flex; align-items: center; gap: 15px;
+        padding: 15px; margin-bottom: 8px;
+        background: rgba(255,255,255,0.02);
+        border: 1px solid rgba(255,255,255,0.05);
+        border-radius: 12px; cursor: pointer; transition: 0.2s;
+    }
+    .ec-chan-card:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.1); transform: translateY(-1px); }
+    
+    .ec-chan-icon {
+        width: 40px; height: 40px; border-radius: 10px;
+        background: linear-gradient(135deg, #222, #333);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.2rem; color: #888; flex-shrink: 0;
+    }
+    .ec-chan-card:hover .ec-chan-icon { color: white; background: linear-gradient(135deg, #9d4edd, #00f5d4); }
+
+    .ec-chan-info { flex: 1; }
+    .ec-chan-name { font-weight: 700; font-size: 0.9rem; color: white; margin-bottom: 2px; }
+    .ec-chan-desc { font-size: 0.75rem; color: #777; }
+    
+    .ec-chan-badge {
+        background: #ff4757; color: white; font-size: 0.7rem; font-weight: 700;
+        padding: 2px 8px; border-radius: 10px; box-shadow: 0 2px 5px rgba(255, 71, 87, 0.4);
+    }
+
+    /* CHAT VIEW STYLES */
+    .ec-chat-header {
+        padding: 10px 20px; background: rgba(0,0,0,0.2);
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        display: flex; align-items: center; gap: 10px; font-size: 0.8rem; color: #aaa;
+        cursor: pointer;
+    }
+    .ec-chat-header:hover { color: white; }
+
+    .ec-messages { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 12px; }
+    
+    /* Scrollbar */
+    .ec-scroll::-webkit-scrollbar { width: 4px; }
+    .ec-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+
+    .ec-msg { display: flex; gap: 10px; font-size: 0.85rem; }
+    .ec-msg-avatar { width: 32px; height: 32px; border-radius: 50%; background: #333; flex-shrink: 0; background-size: cover; }
+    .ec-msg-content { flex: 1; min-width: 0; }
+    .ec-msg-top { display: flex; align-items: baseline; gap: 8px; margin-bottom: 2px; }
+    .ec-msg-name { font-weight: 700; color: #00f5d4; cursor: pointer; }
+    .ec-msg-time { font-size: 0.65rem; color: #555; }
+    .ec-msg-text { color: #ddd; line-height: 1.4; word-wrap: break-word; }
+    
+    .ec-admin-tag { background: #9d4edd; color: white; font-size: 0.6rem; padding: 1px 4px; border-radius: 2px; vertical-align: text-top; }
+
+    /* INPUT AREA */
+    .ec-input-area { padding: 15px; background: #15151a; border-top: 1px solid rgba(255,255,255,0.08); }
+    .ec-input-wrap {
+        background: #0a0a0e; border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 8px; padding: 8px; display: flex; gap: 10px; align-items: center;
+    }
+    .ec-input {
+        flex: 1; background: transparent; border: none; color: white;
+        font-family: 'Inter'; font-size: 0.9rem; resize: none; height: 24px; max-height: 80px;
+    }
+    .ec-send { color: #00f5d4; cursor: pointer; background: none; border: none; font-size: 1rem; }
+
+    /* LOGIN OVERLAY */
+    #ec-auth {
+        position: absolute; inset: 0; background: rgba(10,10,14,0.98); z-index: 20;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        text-align: center; padding: 30px;
+    }
+    .ec-login-field {
+        background: #222; border: 1px solid #444; color: white; padding: 12px;
+        border-radius: 8px; width: 100%; margin: 15px 0; text-align: center;
+    }
+    .ec-login-btn {
+        background: #00f5d4; color: black; font-weight: 800; border: none;
+        padding: 12px; border-radius: 8px; width: 100%; cursor: pointer;
+    }
+</style>
+
+<div id="ec-root">
+    
+    <!-- TOGGLE BUTTON -->
+    <div id="ec-toggle" onclick="EC.toggle()">
+        <div class="ec-badge-main">3</div>
+        <i class="fas fa-comments"></i>
+    </div>
+
+    <!-- MAIN PANEL -->
+    <div id="ec-panel">
+        
+        <!-- HEADER -->
+        <div class="ec-header">
+            <div class="ec-header-title">
+                <i class="fas fa-satellite-dish" style="color:#9d4edd;"></i> 
+                <span id="ec-header-text">Messages & Chat</span>
+            </div>
+            <div class="ec-online-pill">
+                <div class="ec-online-dot"></div> <span id="ec-online-count">12</span> Online
+            </div>
+            <div class="ec-close-btn" onclick="EC.toggle()">
+                <i class="fas fa-times"></i>
+            </div>
+        </div>
+
+        <!-- LOGIN SCREEN -->
+        <div id="ec-auth">
+            <i class="fas fa-fingerprint" style="font-size:40px; color:#00f5d4; margin-bottom:20px;"></i>
+            <h3 style="margin:0; font-weight:800;">IDENTIFY</h3>
+            <p style="font-size:0.8rem; color:#888;">Enter your artist name to connect.</p>
+            
+            <input type="text" id="ec-user-in" class="ec-login-field" placeholder="Username or 'Admin'">
+            <button class="ec-login-btn" onclick="EC.login()">CONNECT RELAY</button>
+            <div id="ec-err" style="color:#ff4757; font-size:0.7rem; margin-top:10px; min-height:15px;"></div>
+        </div>
+
+        <!-- VIEW 1: CHANNEL LIST (Matches your Image) -->
+        <div id="view-list" class="ec-view active ec-scroll">
+            <div class="ec-chan-list">
+                
+                <!-- Channel: Lounge -->
+                <div class="ec-chan-card" onclick="EC.join('Lounge')">
+                    <div class="ec-chan-icon"><i class="fas fa-couch"></i></div>
+                    <div class="ec-chan-info">
+                        <div class="ec-chan-name">Audeobox Lounge</div>
+                        <div class="ec-chan-desc">General chat for all members</div>
+                    </div>
+                    <div class="ec-chan-badge">104</div>
+                </div>
+
+                <!-- Channel: Battle -->
+                <div class="ec-chan-card" onclick="EC.join('Battle Links')">
+                    <div class="ec-chan-icon"><i class="fas fa-bolt"></i></div>
+                    <div class="ec-chan-info">
+                        <div class="ec-chan-name">Battle Links</div>
+                        <div class="ec-chan-desc">Share and discuss beat battles</div>
+                    </div>
+                    <div class="ec-chan-badge" style="background:#9d4edd;">32</div>
+                </div>
+
+                <!-- Channel: Arena -->
+                <div class="ec-chan-card" onclick="EC.join('Live Arena')">
+                    <div class="ec-chan-icon"><i class="fas fa-ring"></i></div>
+                    <div class="ec-chan-info">
+                        <div class="ec-chan-name">Live Arena</div>
+                        <div class="ec-chan-desc">Live battle arena discussion</div>
+                    </div>
+                    <div class="ec-chan-badge" style="background:#00f5d4; color:black;">678</div>
+                </div>
+
+                <!-- PM Example -->
+                <div class="ec-chan-card" onclick="EC.join('Maxx')">
+                    <div class="ec-chan-icon" style="background-image:url('https://i.pravatar.cc/150?u=Maxx'); background-size:cover;"></div>
+                    <div class="ec-chan-info">
+                        <div class="ec-chan-name">Maxx</div>
+                        <div class="ec-chan-desc">Hi, I'm Maxx and welcome to Audeobox!</div>
+                    </div>
+                    <span style="font-size:0.7rem; color:#555;">3d</span>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- VIEW 2: CHAT ROOM -->
+        <div id="view-chat" class="ec-view">
+            <div class="ec-chat-header" onclick="EC.goBack()">
+                <i class="fas fa-arrow-left"></i> Back to Channels
+            </div>
+            
+            <div class="ec-messages ec-scroll" id="ec-feed">
+                <!-- Messages Injected Here -->
+            </div>
+
+            <div class="ec-input-area">
+                <div class="ec-input-wrap">
+                    <textarea id="ec-input" class="ec-input" rows="1" placeholder="Message..."></textarea>
+                    <button class="ec-send" onclick="EC.send()"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+(function(){
+    // CONFIG: Add Supabase URL/Key here. If empty, runs in Simulation Mode.
+    const URL = 'YOUR_SUPABASE_URL';
+    const KEY = 'YOUR_SUPABASE_ANON_KEY';
+
+    window.EC = {
+        sb: null,
+        mode: 'sim',
+        user: null,
+        room: null,
+
+        init: function() {
+            // 1. Auto-fill from Dashboard
+            const local = localStorage.getItem('nee_artist_data');
+            if(local) {
+                try {
+                    const d = JSON.parse(local);
+                    const n = d.settings?.displayname || d.username;
+                    if(n) document.getElementById('ec-user-in').value = n;
+                }catch(e){}
+            }
+
+            // 2. Init DB
+            if(URL.startsWith('http')) {
+                try {
+                    EC.sb = window.supabase.createClient(URL, KEY);
+                    EC.mode = 'live';
+                } catch(e){}
+            }
+
+            // 3. Listeners
+            document.getElementById('ec-input').addEventListener('keydown', e => {
+                if(e.key==='Enter' && !e.shiftKey) { e.preventDefault(); EC.send(); }
+            });
+        },
+
+        toggle: function() {
+            document.getElementById('ec-root').classList.toggle('open');
+        },
+
+        login: async function() {
+            const val = document.getElementById('ec-user-in').value.trim();
+            if(!val) return;
+
+            document.getElementById('ec-err').innerText = "CONNECTING...";
+
+            // ADMIN BYPASS
+            if(val.toLowerCase() === 'admin') {
+                setTimeout(()=> EC.startSession({id:'dev', name:'System Admin', role:'Admin', color:'#9d4edd'}), 500);
+                return;
+            }
+
+            // LIVE or SIM
+            if(EC.mode === 'live') {
+                const { data, error } = await EC.sb.auth.signInAnonymously();
+                if(error) { document.getElementById('ec-err').innerText = "Connection Error"; return; }
+                EC.startSession({id:data.user.id, name:val, role:'Artist', color:EC.color(val)});
+            } else {
+                setTimeout(()=> EC.startSession({id:'sim'+Date.now(), name:val, role:'Artist', color:EC.color(val)}), 500);
+            }
+        },
+
+        startSession: function(u) {
+            EC.user = u;
+            document.getElementById('ec-auth').style.display = 'none';
+        },
+
+        join: async function(roomName) {
+            EC.room = roomName;
+            
+            // Switch View
+            document.getElementById('view-list').classList.remove('active');
+            document.getElementById('view-chat').classList.add('active');
+            document.getElementById('ec-header-text').innerText = roomName;
+
+            const feed = document.getElementById('ec-feed');
+            feed.innerHTML = '';
+
+            if(EC.mode === 'live') {
+                const { data } = await EC.sb.from('messages').select('*').eq('room', roomName).order('created_at', {ascending:true}).limit(50);
+                if(data) data.forEach(EC.render);
+                
+                EC.sb.channel('public:chat').on('postgres_changes', { event:'INSERT', schema:'public', table:'messages' }, p => {
+                    if(p.new.room === EC.room) EC.render(p.new);
+                }).subscribe();
+            } else {
+                // Sim Data
+                EC.render({username:'System', role:'Admin', color:'#fff', content:`Connected to ${roomName}.`});
+                EC.render({username:'Maxx', role:'Mod', color:'#00f5d4', content:`Welcome to the ${roomName} channel!`});
+            }
+        },
+
+        goBack: function() {
+            document.getElementById('view-chat').classList.remove('active');
+            document.getElementById('view-list').classList.add('active');
+            document.getElementById('ec-header-text').innerText = "Messages & Chat";
+            EC.room = null;
+        },
+
+        send: async function() {
+            const input = document.getElementById('ec-input');
+            const txt = input.value.trim();
+            if(!txt || !EC.user) return;
+
+            const msg = {
+                room: EC.room,
+                user_id: EC.user.id,
+                username: EC.user.name,
+                role: EC.user.role,
+                color: EC.user.color,
+                content: txt,
+                created_at: new Date().toISOString()
+            };
+
+            if(EC.mode === 'sim') EC.render(msg);
+            input.value = '';
+
+            if(EC.mode === 'live') {
+                await EC.sb.from('messages').insert(msg);
+            }
+        },
+
+        render: function(msg) {
+            const feed = document.getElementById('ec-feed');
+            const div = document.createElement('div');
+            div.className = 'ec-msg';
+            
+            const role = msg.role === 'Admin' ? '<span class="ec-admin-tag">ADMIN</span>' : '';
+            const avStyle = `background: linear-gradient(135deg, #222, ${msg.color})`;
+            
+            div.innerHTML = `
+                <div class="ec-msg-avatar" style="${avStyle}"></div>
+                <div class="ec-msg-content">
+                    <div class="ec-msg-top">
+                        <span class="ec-msg-name" style="color:${msg.color}">${msg.username}</span>
+                        ${role}
+                        <span class="ec-msg-time">Just now</span>
+                    </div>
+                    <div class="ec-msg-text">${EC.link(msg.content)}</div>
+                </div>
+            `;
+            feed.appendChild(div);
+            feed.scrollTop = feed.scrollHeight;
+        },
+
+        color: function(s) {
+            let h=0; for(let i=0;i<s.length;i++) h=s.charCodeAt(i)+((h<<5)-h);
+            return '#'+'00000'.substring(0,6-(h&0x00FFFFFF).toString(16).toUpperCase().length)+(h&0x00FFFFFF).toString(16).toUpperCase();
+        },
+        link: function(t) { return t.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" style="color:#00f5d4">$1</a>'); }
+    };
+
+    window.addEventListener('DOMContentLoaded', EC.init);
+})();
+</script>
+<script src="messageapp.js" defer></script>
