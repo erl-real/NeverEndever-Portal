@@ -1,0 +1,238 @@
+:root {
+  /* CONFIGURATION */
+  --sticker-rotate: 20deg;
+  
+  /** If the image is clipped after rotation,
+  /*  increase this value! **/
+  --sticker-p: 10px;
+  --sticker-peelback-hover: 30%;
+  --sticker-peelback-active: 60%;
+  --sticker-peel-easing: 2s
+    linear(
+      0,
+      0.002 0.4%,
+      0.008 0.9%,
+      0.02 1.4%,
+      0.035 1.9%,
+      0.055 2.4%,
+      0.083 3%,
+      0.11 3.5%,
+      0.146 4.1%,
+      0.214 5.1%,
+      0.297 6.2%,
+      0.624 10.2%,
+      0.756 11.9%,
+      0.821 12.8%,
+      0.874 13.6%,
+      0.93 14.5%,
+      0.975 15.3%,
+      1.016 16.1%,
+      1.053 16.9%,
+      1.085 17.7%,
+      1.116 18.6%,
+      1.139 19.4%,
+      1.16 20.3%,
+      1.176 21.2%,
+      1.187 22.1%,
+      1.195 23.2%,
+      1.197 24.4%,
+      1.193 25.6%,
+      1.183 26.9%,
+      1.17 28.1%,
+      1.153 29.4%,
+      1.055 35.6%,
+      1.031 37.3%,
+      1.012 38.8%,
+      0.994 40.6%,
+      0.98 42.3%,
+      0.97 44.1%,
+      0.964 45.9%,
+      0.961 48.3%,
+      0.964 51.1%,
+      0.97 53.7%,
+      0.997 62.7%,
+      1.003 66%,
+      1.007 69.3%,
+      1.007 74.4%,
+      1 89.2%,
+      1
+    );
+  --sticker-peel-hover-easing: 1s
+    linear(
+      0,
+      0.008 1.1%,
+      0.031 2.2%,
+      0.129 4.8%,
+      0.257 7.2%,
+      0.671 14.2%,
+      0.789 16.5%,
+      0.881 18.6%,
+      0.957 20.7%,
+      1.019 22.9%,
+      1.063 25.1%,
+      1.094 27.4%,
+      1.114 30.7%,
+      1.112 34.5%,
+      1.018 49.9%,
+      0.99 59.1%,
+      1
+    );
+
+  /* HELPERS */
+  --sticker-start: calc(-1 * var(--sticker-p));
+  --sticker-end: calc(100% + var(--sticker-p));
+}
+html, body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden; /* prevents scrolling beyond bounds */
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-image: linear-gradient(to bottom, #302f31, #1a1a1a);
+}
+main {
+  width: 180px;
+  height: 180px;
+  position: relative;
+}
+
+.sticker-container {
+  position: relative;
+}
+
+.sticker-container * {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.sticker-main {
+  clip-path: polygon(
+    var(--sticker-start) var(--sticker-start),
+    var(--sticker-end) var(--sticker-start),
+    var(--sticker-end) var(--sticker-end),
+    var(--sticker-start) var(--sticker-end)
+  );
+  transition: clip-path var(--sticker-peel-hover-easing);
+  filter: url(#dropShadow);
+}
+
+.sticker-lighting {
+  filter: url(#pointLight);
+}
+
+.sticker-container:hover .sticker-main {
+  clip-path: polygon(
+    var(--sticker-start) var(--sticker-peelback-hover),
+    var(--sticker-end) var(--sticker-peelback-hover),
+    var(--sticker-end) var(--sticker-end),
+    var(--sticker-start) var(--sticker-end)
+  );
+  transition: clip-path var(--sticker-peel-hover-easing);
+}
+
+.sticker-container:active .sticker-main {
+  clip-path: polygon(
+    var(--sticker-start) var(--sticker-peelback-active),
+    var(--sticker-end) var(--sticker-peelback-active),
+    var(--sticker-end) var(--sticker-end),
+    var(--sticker-start) var(--sticker-end)
+  );
+  transition: clip-path var(--sticker-peel-easing);
+}
+
+.sticker-image {
+  transform: rotate(var(--sticker-rotate));
+  filter: url(#outerStroke);
+}
+
+.flap {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+
+  left: 0;
+  top: calc(-100% - var(--sticker-p) - var(--sticker-p));
+
+  clip-path: polygon(
+    var(--sticker-start) var(--sticker-start),
+    var(--sticker-end) var(--sticker-start),
+    var(--sticker-end) var(--sticker-start),
+    var(--sticker-start) var(--sticker-start)
+  );
+  transform: scaleY(-1);
+
+  transition: all var(--sticker-peel-hover-easing);
+}
+
+.sticker-container:hover .flap {
+  clip-path: polygon(
+    var(--sticker-start) var(--sticker-start),
+    var(--sticker-end) var(--sticker-start),
+    var(--sticker-end) var(--sticker-peelback-hover),
+    var(--sticker-start) var(--sticker-peelback-hover)
+  );
+  top: calc(-100% + 2 * var(--sticker-peelback-hover) - 1px);
+  transition: all var(--sticker-peel-hover-easing);
+}
+
+.sticker-container:active .flap {
+  clip-path: polygon(
+    var(--sticker-start) var(--sticker-start),
+    var(--sticker-end) var(--sticker-start),
+    var(--sticker-end) var(--sticker-peelback-active),
+    var(--sticker-start) var(--sticker-peelback-active)
+  );
+  top: calc(-100% + 2 * var(--sticker-peelback-active) - 1px);
+  transition: all var(--sticker-peel-easing);
+}
+
+.flap-lighting {
+  filter: url(#pointLightFlipped);
+}
+
+.flap-image,
+.shadow-image {
+  transform: rotate(var(--sticker-rotate));
+  filter: url(#expandAndFill);
+}
+
+.shadow {
+  position: absolute;
+  top: 1rem;
+  left: 0.5rem;
+  width: 100%;
+  height: 100%;
+  filter: brightness(0) blur(8px);
+  opacity: 0.4;
+}
+
+.sticker-main,
+.flap {
+  will-change: clip-path, transform;
+}
+
+.draggable {
+  position: absolute;
+ top: -3px;   /* move higher */
+  left: -10px;  /* move farther left */
+  width: 190px; /* or whatever size you want */
+  height: auto;
+  cursor: grab;
+}
+
+.draggable:active {
+  cursor: grabbing;
+}
+
+.sticker-image,
+.shadow-image,
+.flap-image {
+  width: 200px;
+}

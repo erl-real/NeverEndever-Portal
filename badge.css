@@ -1,0 +1,103 @@
+:root {
+    --badge-size: 96px;        /* scalable */
+    --badge-color: #b47aff;    /* rim color */
+    --glow-color: #cda6ff;     /* soft neon */
+}
+
+/* ========================
+   BASE BADGE CONTAINER
+   ======================== */
+.badge {
+    position: relative;
+    width: var(--badge-size);
+    height: var(--badge-size);
+    border-radius: 50%;
+    overflow: hidden;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    filter: drop-shadow(0 0 6px rgba(0,0,0,0.4));
+}
+
+/* ========================
+   BACKGROUND (Dome + Bevel)
+   ======================== */
+.badge-bg {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%,
+        #ffffff20 0%,
+        #00000010 40%,
+        #00000040 100%
+    ),
+    radial-gradient(circle,
+        var(--badge-color) 0%,
+        #000000 120%
+    );
+    z-index: 1;
+}
+
+/* ========================
+   ICON (masked inside circle)
+   ======================== */
+.badge-icon {
+    position: absolute;
+    width: 60%;
+    height: 60%;
+    object-fit: contain;
+    z-index: 3;
+    opacity: 0.95;
+}
+
+/* ========================
+   PATINA OVERLAY (Dusty + Arcane)
+   ======================== */
+.badge-patina {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    z-index: 4;
+    pointer-events: none;
+    background: 
+        url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHgAAAB4CAYAAABV7bNHAAA... (placeholder)') 
+        center/cover;
+    opacity: 0.18; /* tweak for stronger or lighter */
+    mix-blend-mode: overlay;
+}
+
+/* ========================
+   GLOSS HIGHLIGHT
+   ======================== */
+.badge-gloss {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    z-index: 5;
+    pointer-events: none;
+    background:
+        linear-gradient(135deg,
+            rgba(255,255,255,0.45) 0%,
+            rgba(255,255,255,0.15) 15%,
+            rgba(255,255,255,0.05) 30%,
+            transparent 50%
+        );
+    mix-blend-mode: screen;
+    opacity: 0.55;
+}
+
+/* ========================
+   AMBIENT GLOW (Soft)
+   ======================== */
+.badge-glow {
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    z-index: 0;
+    background: radial-gradient(circle,
+        var(--glow-color) 0%,
+        transparent 70%
+    );
+    opacity: 0.35; /* whisper soft glow */
+    filter: blur(12px);
+}
