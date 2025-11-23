@@ -1,0 +1,416 @@
+@import "compass/css3"
+@import url(https://fonts.googleapis.com/css?family=Roboto:400,300,500,700)
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400;500&display=swap')
+
+\:root 
+  --color-v: #7f71fe
+  --color-b: #1d015a
+
+body.auth-page.login {
+  margin: 40px
+  background-color: var(--color-b)
+  height: 100%
+  display: flex
+  align-items: center
+  justify-content: center
+  color: rgba(255, 255, 255, 0.6)
+  font-family: 'Raleway', sans-serif
+a
+  color: var(--color-v)
+  text-decoration: none
+  cursor: pointer
+  
+@keyframes chart 
+  from 
+    stroke-dashoffset: 245
+  to 
+    stroke-dashoffset: 58
+    
+@keyframes rotation 
+  from 
+    -webkit-transform: rotate(359deg) 
+  to 
+    -webkit-transform: rotate(0deg)
+    
+@keyframes aopacity
+  0%, 100%
+    opacity: 0
+  50%
+    opacity: 1
+  
+@keyframes logo
+  0%, 100%
+    @include transform(translateY(0))
+  10%, 90%
+    @include transform(translateY(-70px))
+.m-restart
+  color: var(--color-v)
+  position: absolute
+  top: 60px
+  right: 3px
+  font-size: 50px
+  cursor: pointer
+  display: none
+  &:hover
+    color: #94cd77
+.m-layout
+  position: relative
+  width: 375px
+  height: 667px
+  border-radius: 16px
+  overflow: hidden
+  box-sizing: border-box
+  border: 4px solid rgba(255, 255, 255, 0.1)
+  background: linear-gradient(0deg, rgba(4, 158, 116, 0.3), rgba(255, 255, 215, 0.02))
+  box-shadow: 0px 32px 47px rgba(32, 23, 23, 0.09)
+.m-links-bottom
+  position: absolute
+  bottom: 15px
+  left: 0
+  right: 0
+  font-size: 14px
+  text-align: center
+  @include transition(all 0.6s)
+  @include transform(translateY(0))
+  a
+    opacity: 0.5
+    &:hover
+      opacity: 1
+  
+.m-container
+  display: flex
+  align-items: center
+  justify-content: center
+  flex-direction: column
+  position: absolute
+  top: 0
+  left: 0
+  right: 0
+  bottom: 0
+  z-index: 2
+  overflow: hidden
+  @include transition(all 1.2s)
+  &--login
+    @include transform(translateX(0))
+  &--register
+    @include transform(translateX(100%))
+  &--start
+    @include transform(translateY(-100%))
+.m-logo
+  font-size: 28px
+  font-weight: 700
+  position: absolute
+  top: 19px
+  left: 28px
+.m-login
+  line-height: 48px
+  position: absolute
+  top: 3px
+  right: 3px
+  z-index: 4
+  &:hover
+    .a-login-img
+      border: 2px solid var(--color-v)
+.m-login-img
+  height: 40px
+  width: 40px
+  border-radius: 50%
+  border: 2px solid rgba(255, 255, 235, 0.02)
+  position: relative
+  top: 10px
+  left: -5px
+  box-sizing: border-box
+  @include transition(all 0.3s)    
+.m-menu
+  display: flex
+  position: absolute
+  bottom: 5px
+  left: 5px
+  right: 5px
+  font-size: 30px
+  @include transition(all 0.6s)
+  transition-delay: 1.5s
+  @include transform(translateY(60px))
+.m-menu_link
+  width: 25%
+  height: 44px
+  display: flex
+  align-items: center
+  justify-content: center
+  &--active
+    color: rgba(148, 205, 119, 1)
+.m-form, .m-content
+  width: 100%
+  padding: 0 30px
+  box-sizing: border-box
+.m-form_title, .m-title
+  width: 100%
+  font-size: 26px
+  margin: 0 0 20px
+.m-form_group
+  display: flex
+  flex-wrap: wrap
+  -webkit-box-pack: justify
+  justify-content: space-between
+  padding-bottom: 18px
+.m-form_link
+  text-align: center
+.m-form_input
+  width: 100%
+  appearance: none
+  outline: 0
+  line-height: 44px
+  border: 1px solid rgba(255, 255, 255, 0.09)
+  background-color: rgba(255, 255, 255, 0.04)
+  border-radius: 3px
+  padding: 0 15px
+  display: block
+  font-size: 18px
+  box-sizing: border-box
+  color: #fff
+  font-weight: 300
+.m-form_label
+  display: block
+  margin-bottom: 10px
+.m-form_checkbox  
+  input
+    display: none
+    &:checked
+      + label:after
+        background-color: var(--color-v)
+  label
+    position: relative
+    padding-left: 25px
+    &:after
+      content: ""
+      position: absolute
+      top: 5px
+      left: 5px
+      width: 8px
+      height: 8px
+      border-radius: 50%
+      
+    &:before
+      content: ""
+      position: absolute
+      top: 0
+      left: 0
+      width: 18px
+      height: 18px
+      border-radius: 50%
+      box-sizing: border-box
+      border: solid 3px rgba(255, 255, 255, 0.09)
+      
+.m-form_btn
+  appearance: none
+  outline: 0
+  background-color: var(--color-v)
+  border: 0
+  margin-top: 15px
+  line-height: 44px
+  padding: 0 15px
+  color: #fff
+  font-weight: 500
+  border-radius: 3px
+  width: 100%
+  cursor: pointer
+  font-size: 18px
+  text-align: center
+.m-title
+  margin: 0 0 10px
+  &--2
+    font-size: 20px
+    margin: 25px 0 15px
+.m-text
+  margin: 0 0 25px
+.m-flex
+  display: flex
+  margin: 0 -25px
+.m-box
+  padding: 20px
+  width: 100%
+  height: 100px
+  margin: 5px
+  border-radius: 3px
+  background-color: rgba(255, 255, 255, 0.04)
+  box-sizing: border-box
+  display: flex
+  align-items: center
+  justify-content: center
+  &--1
+    background: linear-gradient(135deg, #9a0dfe, #637dfb)
+    box-shadow: 0 2px 12px -3px #9a0dfe
+  &--2
+    background: linear-gradient(135deg, #ff66cc, #f88162)
+    box-shadow: 0 2px 12px -3px #f1626f
+  &--3
+    background: linear-gradient(135deg, #3bbca5, #1fa3ca)
+    box-shadow: 0 2px 12px -3px #3bbca5
+  p
+    font-size: 14px
+    margin: 0
+    white-space: nowrap
+.m-box_content
+  display: flex
+  align-items: center
+  width: 100%
+.m-box_text
+  width: 100%
+.m-box_title
+  font-size: 20px
+  margin: 0 0 7px
+  
+.m-box--group
+  width: 100%
+  height: 75px
+  .m-box_content
+    flex-direction: column
+  .m-box_title
+    font-size: 15px
+    font-weight: 500
+  p
+    font-size: 12px
+.m-progress
+  position: relative
+.m-progress_text
+  position: absolute
+  top: 0
+  left: 0
+  right: 0
+  bottom: 0
+  display: flex
+  align-items: center
+  justify-content: center
+  font-size: 18px
+  font-weight: 500
+  color: #94cd77
+.m-progress_svg
+  display: block
+  overflow: initial
+  width: 80px
+  height: 80px
+  @include transform(rotate(-85deg))
+.m-slider
+  margin: 0 -30px
+.swiper-container
+  width: 100%
+  height: 114px
+.swiper-slide
+  width: 160px
+.m-slide
+  position: relative
+  box-sizing: border-box
+  padding: 10px
+  background: #2d1862
+  border: 1px solid var(--color-v)
+  height: 90px
+  border-radius: 3px
+  box-shadow: 0px 3px 20px 13px rgba(0, 0, 0, 0.1)
+  @include transform(scale(0.8))
+  @include transition(all 0.6s)
+.m-slide_title
+  position: absolute
+  bottom: 10px
+  left: 10px
+  opacity: 0
+  @include transition(all 0.6s)
+.m-slide_time
+  color: var(--color-v)
+  position: absolute
+  top: 10px
+  right: 10px
+  opacity: 0
+  @include transition(all 0.6s)
+.swiper-slide-active
+  .m-slide_title, .m-slide_time
+    opacity: 1
+  .m-slide
+    @include transform(scale(1))
+    background-color: var(--color-b)
+    box-shadow: 0 2px 12px -3px rgba(00, 00, 00, 16)
+
+.swiper-container-3d
+  .swiper-slide-shadow-right, .swiper-slide-shadow-left
+    display: none
+
+.swiper-container-horizontal>.swiper-pagination-bullets, .swiper-pagination-custom, .swiper-pagination-fraction 
+  bottom: 0
+.swiper-pagination-bullet
+  background: var(--color-v)
+  opacity: .5
+.swiper-pagination-bullet-active
+  background: var(--color-v)
+  
+.m-svg
+  position: absolute
+  top: -700px
+  left: -700px
+  z-index: 1
+  -webkit-animation: rotation 120s infinite linear
+  svg
+    height: 2000px
+    g
+      circle
+        -webkit-animation: aopacity 3s 3s infinite linear
+      &:nth-child(2n)
+        circle
+          -webkit-animation: aopacity 7s infinite linear
+.m-form_print
+  text-align: center
+  margin-top: 20px
+  cursor: pointer
+  svg
+    stroke-width: 4
+    width: 60px
+    .path-1 path
+      stroke: rgba(255, 255, 255, 0.15)
+    .path-2 path
+      stroke: var(--color-v)
+      stroke-dashoffset: 120
+      stroke-dasharray: 120
+      @include transition(all 3s)
+    &:hover .path-2 path
+      stroke-dashoffset: 0
+.m-layout
+  &.openRegister
+    .m-container--login
+      @include transform(translateX(-100%))
+    .m-container--register
+      @include transform(translateX(0))
+  &.openLogin
+    .m-container--login
+      @include transform(translateX(0))
+    .m-container--register
+      @include transform(translateX(100%))
+  &.openStart
+    + .m-restart
+      display: block
+    .m-logo
+      animation: logo 1.5s linear forwards
+    .m-menu
+      @include transform(translateY(0))
+    .m-links-bottom
+      @include transform(translateY(50px))
+    #fillcircle
+      animation: chart 500ms 0.8s linear forwards
+    .m-container--login
+      @include transform(translateY(100%))
+    .m-container--register
+      @include transform(translateY(100%) translateX(100%))
+    .m-container--start
+      @include transform(translateY(0))
+    &.openRegister
+      .m-container--login
+        @include transform(translateX(-100%) translateY(100%))
+      .m-container--register
+        @include transform(translateY(100%))
+          
+@media (max-width: 480px)
+  body
+    margin: 0
+  .m-layout
+    border: none
+    width: 100%
+  
+  
+  
