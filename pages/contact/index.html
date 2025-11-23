@@ -1,0 +1,2036 @@
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Endever Live!</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+      <!-- Sidebar styles -->
+  <link rel="stylesheet" href="styles/sidebarmaintheme.css">
+<link rel="stylesheet" href="styles/sidebartheme.css">
+
+  <!-- Ionicons for icons -->
+  <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+
+  <!-- Bootstrap for accordion dropdowns -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+    <style>
+        /* --- THEME CONFIG --- */
+        :root {
+            --bg-app: #050505;
+            --bg-panel: #0f1016;
+            --border: rgba(255, 255, 255, 0.1);
+            --accent-primary: #00f5d4; /* Cyan */
+            --accent-secondary: #9d4edd; /* Purple */
+            --text-main: #f0f0f0; 
+            --text-muted: #9ca3af;
+            
+            /* Tier Colors (Restored) */
+            --color-champ: #8b5cf6; /* Champ */
+            --color-dia: #06b6d4; /* Diamond */
+            --color-plat: #10b981; /* Platinum */
+            --color-gold: #eab308; /* Gold */
+            --color-silv: #94a3b8; /* Silver */
+            --color-brnz: #d97706; /* Bronze */
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: linear-gradient(135deg, #020203 0%, #0a0a0e 100%);
+            color: var(--text-main); 
+            height: 100vh; width: 100vw;
+            overflow: hidden; display: flex; flex-direction: column;
+        }
+
+        /* --- HEADER --- */
+        header { 
+            height: 70px; padding: 0 30px; border-bottom: 1px solid var(--border); 
+            display: flex; align-items: center; justify-content: space-between;
+            background: rgba(5, 5, 8, 0.95); backdrop-filter: blur(10px); z-index: 50; flex-shrink: 0;
+        }
+        .brand { 
+            font-family: 'Poppins', sans-serif; font-size: 1.8rem; font-weight: 800; 
+padding: 30px;
+            background: linear-gradient(to right, var(--accent-secondary), var(--accent-primary)); 
+            -webkit-background-clip: text; background-clip: text; color: transparent; cursor: pointer;
+            display: inline-flex; /* Fix for icon/text alignment */
+            align-items: center;
+        }
+        /* Icon size fix: match font size */
+        .brand i {
+            font-size: 1em; 
+            margin-right: 0.25em; 
+        }
+
+        /* Fix button spacing in header */
+        .header-actions-group {
+            display: flex;
+            align-items: center;
+            gap: 15px; /* Added spacing between buttons/schedule */
+        }
+
+        .header-right { display: flex; gap: 15px; align-items: center; }
+        
+        /* UI FIX: Reduced width to prevent overlap */
+        .search-box { position: relative; width: 240px; }
+        .search-input { 
+            width: 100%; padding: 9px 15px 9px 38px; border-radius: 8px; 
+            border: 1px solid var(--border); background: rgba(255,255,255,0.03); 
+            color: white; transition: 0.2s; font-size: 0.9rem;
+        }
+        .search-input:focus { border-color: var(--accent-primary); background: rgba(255,255,255,0.08); }
+        .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+
+        /* Auth Buttons */
+        .btn-login {
+            background: var(--accent-primary); color: black; font-weight: 700;
+            padding: 8px 20px; border-radius: 6px; cursor: pointer; transition: 0.2s;
+            box-shadow: 0 4px 10px rgba(0, 245, 212, 0.3);
+        }
+        .btn-login:hover { filter: brightness(1.15); box-shadow: 0 6px 15px rgba(0, 245, 212, 0.5); }
+        
+        .user-menu-trigger {
+            display: flex; align-items: center; gap: 10px; cursor: pointer;
+            padding: 5px 10px 5px 5px; border-radius: 30px; border: 1px solid transparent;
+            transition: 0.2s;
+        }
+        .user-menu-trigger:hover { border-color: var(--accent-secondary); background: rgba(157, 77, 221, 0.1); }
+        .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%); }
+        .user-name { font-weight: 600; font-size: 0.9rem; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+        .btn-icon {
+            padding: 8px 12px; border-radius: 6px; background: rgba(255,255,255,0.05);
+            color: var(--text-muted); border: 1px solid var(--border); transition: 0.2s;
+            font-size: 0.85rem;
+        }
+        .btn-icon:hover { color: var(--text-main); border-color: var(--accent-primary); }
+        .btn-icon.active { background: var(--accent-primary); color: black; font-weight: 600; border-color: var(--accent-primary); }
+
+
+        /* --- MAIN TABLE --- */
+        .app-content { flex: 1; overflow: hidden; position: relative; display: flex; flex-direction: column; }
+        .table-scroll { flex: 1; overflow-y: auto; }
+        
+        table.rank-table { width: 100%; border-collapse: collapse; }
+        table.rank-table th {
+            position: sticky; top: 0; background: #0a0b10; 
+            padding: 18px 30px; text-align: left; 
+            font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;
+            color: var(--text-muted); font-weight: 600; 
+            border-bottom: 1px solid var(--border); z-index: 10;
+        }
+        table.rank-table td {
+            padding: 16px 30px; border-bottom: 1px solid rgba(255,255,255,0.03);
+            font-size: 0.95rem; color: var(--text-muted); transition: 0.2s;
+        }
+        table.rank-table tr { transition: background 0.1s; }
+        table.rank-table tr:hover { background: rgba(255,255,255,0.02); }
+
+        /* Rank Colors - Use Poppins for main artist name */
+        tr.champ td, tr.dia td, tr.plat td, tr.gold td, tr.silv td, tr.brnz td { font-weight: 500; }
+        tr.champ td:nth-child(3) a { color: var(--color-champ); text-shadow: 0 0 12px rgba(139, 92, 246, 0.4); font-weight: 700; }
+        tr.dia td:nth-child(3) a { color: var(--color-dia); text-shadow: 0 0 10px rgba(6, 182, 212, 0.4); font-weight: 700; }
+        tr.plat td:nth-child(3) a { color: var(--color-plat); font-weight: 700; }
+        tr.gold td:nth-child(3) a { color: var(--color-gold); font-weight: 700; }
+        tr.silv td:nth-child(3) a { color: var(--color-silv); font-weight: 700; }
+        tr.brnz td:nth-child(3) a { color: var(--color-brnz); font-weight: 700; }
+        
+        /* Premium Effects (From Shop) */
+        tr.premium-border td:first-child { border-left: 3px solid var(--accent-primary); }
+        tr.premium-glow td { text-shadow: 0 0 8px currentColor; }
+
+        table.rank-table td a { text-decoration: none; font-weight: 600; color: inherit; }
+        table.rank-table td a:hover { text-decoration: underline; opacity: 0.8; }
+        .like-icon { cursor: pointer; opacity: 0.4; transition: 0.2s; }
+        .like-icon:hover, .like-icon.active { opacity: 1; color: #ff4757 !important; transform: scale(1.1); }
+        .like-icon.active { text-shadow: 0 0 5px #ff4757; }
+
+        /* --- MODALS --- */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 100;
+            display: none; align-items: center; justify-content: center;
+            backdrop-filter: blur(6px); opacity: 0; transition: opacity 0.3s;
+        }
+        .modal-overlay.open { display: flex; opacity: 1; }
+        
+        /* Artist Profile Modal */
+        .profile-card {
+            width: 96vw; max-width: 1200px; height: 94vh; max-height: 800px;
+            background: var(--bg-panel); border: 1px solid var(--border); border-radius: 16px;
+            display: flex; flex-direction: column; overflow: hidden;
+            box-shadow: 0 50px 100px rgba(0,0,0,0.9);
+            transform: scale(0.98); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .modal-overlay.open .profile-card { transform: scale(1); }
+
+        /* Profile Header */
+        .prof-header {
+            height: 80px; padding: 0 40px; border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: #15151a; transition: background 0.5s;
+        }
+        .prof-title-group { display: flex; align-items: center; gap: 15px; }
+        .prof-name { font-size: 2.2rem; font-weight: 800; color: white; letter-spacing: -1px; }
+        .prof-rank-badge { 
+            padding: 4px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: 700; 
+            text-transform: uppercase; letter-spacing: 1px; color: black;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+        }
+        .prof-close { font-size: 1.5rem; color: rgba(255,255,255,0.5); cursor: pointer; transition: 0.2s; }
+        .prof-close:hover { color: white; transform: rotate(90deg); }
+        
+        /* Header Right (Actions) */
+        .header-actions { display: flex; align-items: center; gap: 20px; }
+        
+        .prof-body { flex: 1; display: flex; overflow: hidden; }
+        
+        /* Left Column - Fixed Height (no scroll) */
+        .prof-main { 
+            flex: 2; padding: 30px; 
+            overflow-y: auto; /* Re-added for safety, but height adjustment minimizes need */
+            display: flex; flex-direction: column; gap: 20px; 
+        }
+        
+        /* Right Column (Song List) */
+        .prof-side { 
+            flex: 1; min-width: 350px; background: rgba(0,0,0,0.2); 
+            border-left: 1px solid var(--border); display: flex; flex-direction: column; 
+            overflow: hidden;
+        }
+        .prof-section-title { 
+            font-family: 'Poppins'; font-size: 1.2rem; font-weight: 700; 
+            color: var(--text-main); border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: 8px; margin-bottom: 15px;
+        }
+
+        /* Stats Grid */
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .stat-box { 
+            background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 8px; 
+            padding: 12px; position: relative; overflow: hidden; 
+        }
+        .stat-accent { position: absolute; top:0; left:0; width: 100%; height: 3px; background: white; opacity: 0.8; }
+        .stat-val { 
+            font-family: 'JetBrains Mono'; font-size: 1.4rem; font-weight: 700; 
+            color: white; /* Base color, overwritten by JS gradient */
+            transition: color 0.5s; 
+        }
+        .stat-lbl { font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1px; margin-top: 5px; }
+
+        /* Charts */
+        /* ADJUSTED HEIGHT TO PREVENT CLIPPING (320px -> 300px) */
+        .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; height: 300px; }
+        .chart-box { background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 8px; padding: 12px; display: flex; flex-direction: column; }
+        .chart-title { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); margin-bottom: 5px; text-transform: uppercase; }
+        .chart-area { flex: 1; position: relative; min-height: 0; }
+        .chart-canvas { height: 100% !important; max-height: 100% !important; }
+
+        /* Bio/Claim Area */
+        .bio-area { display: flex; flex-direction: column; gap: 10px; background: rgba(255,255,255,0.02); padding: 15px; border-radius: 8px; border: 1px solid var(--border); }
+        .bio-content-wrapper { display: flex; justify-content: space-between; align-items: flex-start; }
+        .bio-text { color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; max-width: 70%; }
+        .claim-box { text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+        .claim-btn { 
+            background: transparent; border: 1px solid var(--text-muted); color: var(--text-muted); 
+            padding: 6px 14px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; transition: 0.2s; 
+        }
+        .claim-btn:hover { border-color: var(--accent-primary); color: var(--accent-primary); }
+        .badge-claimed { color: white; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 5px; }
+
+        /* Social Links */
+        .social-link { 
+            font-size: 1.2rem; color: var(--text-muted); transition: 0.2s; 
+            width: 30px; height: 30px; display: inline-flex; justify-content: center; align-items: center;
+            border: 1px solid var(--border); border-radius: 50%;
+        }
+        .social-link:hover { color: var(--accent-primary); border-color: var(--accent-primary); }
+
+        /* Song List */
+        .song-list-head { padding: 15px 25px; border-bottom: 1px solid var(--border); font-weight: 700; color: var(--accent-primary); display: flex; justify-content: space-between; font-size: 0.9rem; }
+        .song-list-body { flex: 1; overflow-y: auto; }
+        .song-item { display: flex; align-items: center; padding: 10px 20px; border-bottom: 1px solid rgba(255,255,255,0.03); transition: 0.1s; }
+        .song-item:hover { background: rgba(255,255,255,0.05); }
+        
+        .song-actions { display: flex; gap: 8px; margin-right: 15px; }
+        .act-btn { 
+            width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; 
+            cursor: pointer; color: var(--text-muted); border: 1px solid rgba(255,255,255,0.1); transition: 0.2s; font-size: 0.7rem;
+        }
+        .act-btn:hover { border-color: white; color: white; }
+        .act-btn.play { color: var(--accent-primary); border-color: var(--accent-primary); }
+        .act-btn.play:hover { background: var(--accent-primary); color: black; }
+        .act-btn.active { color: #ff4757; border-color: #ff4757; } /* Like Active */
+        .act-btn.active-pl { color: var(--accent-primary); border-color: var(--accent-primary); } /* Playlist Active */
+
+        .song-score { font-family: 'JetBrains Mono'; font-weight: 700; width: 45px; text-align: center; font-size: 1rem; color: white; margin-right: 10px; }
+        .song-meta { flex: 1; overflow: hidden; }
+        .song-title { font-weight: 600; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.9rem; display: flex; align-items: center; } /* Added flex for inline icon */
+        .song-date { font-size: 0.7rem; color: var(--text-muted); }
+
+        /* Song List Platform Icon */
+        .song-platform-icon {
+            font-size: 0.8rem;
+            margin-left: 8px;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+        .song-item:hover .song-platform-icon {
+            opacity: 1;
+        }
+
+        /* Mini Player */
+        #mini-player { height: 0; overflow: hidden; background: black; transition: 0.3s; position: relative; }
+        #mini-player.active { height: 80px; border-bottom: 1px solid var(--border); }
+        .player-close { position: absolute; top: 5px; right: 10px; font-size: 0.7rem; color: white; cursor: pointer; background: rgba(0,0,0,0.5); padding: 2px 5px; border-radius: 4px; z-index: 10; }
+
+        /* --- DASHBOARD --- */
+        .dash-modal { width: 90vw; max-width: 1000px; height: 80vh; max-height: 600px; background: #121218; border: 1px solid var(--border); border-radius: 16px; display: flex; flex-direction: column; overflow: hidden; }
+        .dash-body { display: grid; grid-template-columns: 250px 1fr; height: 100%; }
+        .dash-sidebar { background: #0a0b10; border-right: 1px solid var(--border); padding: 20px; }
+        .dash-main { padding: 30px; overflow-y: auto; }
+        
+        .dash-menu-item { padding: 12px; color: var(--text-muted); border-radius: 8px; cursor: pointer; margin-bottom: 5px; transition: 0.2s; font-weight: 500; display: flex; align-items: center; }
+        .dash-menu-item:hover, .dash-menu-item.active { 
+            background: var(--accent-primary); color: black; font-weight: 700;
+            box-shadow: 0 2px 8px rgba(0, 245, 212, 0.3);
+        }
+        
+        /* Auth Modal Styling (Enhanced) */
+        @keyframes neon-pulse {
+            0%, 100% {
+                box-shadow: 0 0 10px rgba(157, 77, 221, 0.4), 0 0 20px rgba(0, 245, 212, 0.2);
+            }
+            50% {
+                box-shadow: 0 0 15px rgba(157, 77, 221, 0.6), 0 0 30px rgba(0, 245, 212, 0.3);
+            }
+        }
+        
+        .auth-box { 
+            width: 380px; /* Slightly narrower for focus */
+            padding: 30px; 
+            background: linear-gradient(145deg, #18181c, #101014); /* Subtle gradient for depth */
+            border: 2px solid var(--accent-secondary); /* Stronger border */
+            border-radius: 12px; 
+            text-align: center;
+            position: relative; 
+            z-index: 300;
+            /* Neon Glow & Pulse Effect */
+            box-shadow: 0 0 15px rgba(157, 77, 221, 0.5), 0 0 30px rgba(0, 245, 212, 0.2);
+            animation: neon-pulse 4s infinite alternate ease-in-out; 
+        }
+
+        .auth-input { 
+            width: 100%; 
+            padding: 12px; 
+            background: rgba(0,0,0,0.4); 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            border-radius: 8px; 
+            color: white; 
+            margin-bottom: 15px;
+            transition: all 0.3s;
+            font-size: 0.95rem;
+        }
+        .auth-input:focus {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 8px var(--accent-primary);
+            background: rgba(0, 245, 212, 0.05);
+        }
+
+        .auth-tabs { display: flex; gap: 20px; margin-bottom: 25px; justify-content: center; }
+        .auth-tab { 
+            font-size: 1rem; 
+            font-weight: 600;
+            color: var(--text-muted); 
+            cursor: pointer; 
+            border-bottom: 3px solid transparent; 
+            padding-bottom: 8px;
+            transition: all 0.2s;
+            letter-spacing: 0.5px;
+        }
+        .auth-tab:hover { color: white; }
+        .auth-tab.active { color: var(--accent-primary); border-color: var(--accent-primary); }
+
+
+        /* Global Stats Bar Styling */
+        #global-stats-bar {
+            flex-shrink: 0; 
+            padding: 16px 30px 16px 30px; /* Adjusted padding to be consistent */
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr)) 1.5fr; /* 3 fixed stats + 1 wider graph area */
+            gap: 20px;
+            border-bottom: 1px solid var(--border); 
+            background: #0a0b10;
+        }
+
+        .global-stat-box {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-width: 150px;
+        }
+        .global-stat-label {
+            font-size: 0.7rem; 
+            text-transform: uppercase; 
+            font-weight: 600; 
+            letter-spacing: 1px; 
+            color: var(--text-muted);
+        }
+        .global-stat-value {
+            font-family: 'JetBrains Mono';
+            font-size: 1.8rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-top: 2px;
+        }
+        .global-chart-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .mini-chart {
+            width: 100%;
+            max-width: 180px; /* Small fixed width for mini charts */
+            height: 60px;
+        }
+
+        /* --- INFO BAR (NEW TOP SECTION) --- */
+        #app-info-bar {
+            padding: 10px 30px;
+            background: #111116; 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            flex-shrink: 0;
+            position: relative; /* Needed for the score tooltip positioning */
+        }
+        /* Adjusted width of these two columns */
+        #app-info-bar > span:first-child { max-width: 45%; }
+        #app-info-bar > span:last-child { 
+            max-width: 45%; 
+            position: relative; 
+            /* Added margin-left to ensure space from center */
+            margin-left: 20px;
+        }
+
+        .info-button {
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-weight: 600;
+            transition: 0.2s;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+        .info-button:hover { filter: brightness(1.1); }
+
+        /* Queue Modal Styling (Based on Widget 3) */
+        .queue-modal-content {
+            width: 90vw; max-width: 500px; height: 90vh; max-height: 650px; 
+            background: #0a0b10; border: 1px solid var(--accent-secondary); 
+            border-radius: 12px; padding: 20px;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.8);
+            display: flex; flex-direction: column;
+        }
+        .queue-title {
+            font-family: 'Poppins', sans-serif; font-size: 1.8rem; font-weight: 700;
+            color: var(--accent-primary); border-bottom: 1px solid var(--border); 
+            padding-bottom: 10px; margin-bottom: 15px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .queue-list-container {
+            flex: 1; overflow-y: auto;
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+        }
+        /* Overrides for Queue Widget 3 CSS */
+        #queue-list .entry { margin-bottom: 8px; opacity: 0; animation: none; /* remove fadeIn for modal to control flow */ }
+        #queue-list .highlight { color: var(--color-gold); font-weight: bold; }
+        #queue-list .position { color: var(--color-plat); font-weight: bold; margin-right: 8px; font-family: 'JetBrains Mono'; }
+        #queue-list .section-title { 
+            font-size: 1.2rem; font-weight: 700; margin: 15px 0 8px 0; 
+            color: var(--color-dia); 
+        }
+        #queue-list .footer { 
+            margin-top: 15px; font-size: 0.7rem; opacity: 0.7; color: var(--accent-primary); 
+            text-align: center;
+        }
+
+        /* NEW Schedule Box Styling */
+        .schedule-box {
+            background: var(--color-plat); /* Green accent */
+            color: black;
+            font-weight: 700;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.5); /* Shadow from plat color */
+            flex-shrink: 0;
+        }
+
+    </style>
+</head>
+<body>
+
+
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Glider Sidebar</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Ionicons + Font Awesome -->
+  <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="/styles/sidebarmaintheme.css" />
+  <link rel="stylesheet" href="/styles/sidebartheme.css" />
+</head>
+<body>
+  <!-- Toggle Button -->
+  <button id="toggleSidebar" class="toggle-btn" aria-label="Toggle sidebar">
+    <div class="burger-menu">
+      <span class="burger-bun burger-bun--top"></span>
+      <span class="burger-bun burger-bun--mid"></span>
+      <span class="burger-bun burger-bun--bottom"></span>
+    </div>
+  </button>
+
+  <!-- Sidebar -->
+  <div class="sidebar-wrapper" id="sidebar">
+    <div class="sidebar-inner">
+      <aside class="radio-nav" style="--total-radio:24">
+        <div class="radio-nav-container">
+          <!-- Core Nav Items -->
+          <!-- Core Navigation static pages only and shorten later-->
+<input type="radio" id="nav-home" name="nav-menu" checked />
+<label for="nav-home"><i class="ion-home"></i><a href="/index">Home</a></label>
+
+<input type="radio" id="nav-notifications" name="nav-menu" />
+<label for="nav-notifications"><i class="ion-ios-bell"></i><a href="pages/notifications">Notifications</a></label>
+
+<input type="radio" id="nav-features" name="nav-menu" />
+<label for="nav-features"><i class="ion-flash"></i><a href="/pages/features">New Features</a></label>
+
+<input type="radio" id="nav-elo" name="nav-menu" />
+<label for="nav-elo"><i class="ion-ios-people"></i><a href="/pages/elo">ELO</a></label>
+
+<input type="radio" id="nav-submit" name="nav-menu" />
+<label for="nav-submit"><i class="ion-compose"></i><a href="/pages/submit">Submit to Twitch</a></label>
+
+<input type="radio" id="nav-live" name="nav-menu" />
+<label for="nav-live"><i class="ion-grid"></i><a href="/pages/live">Who's Live?</a></label>
+
+<input type="radio" id="nav-downloads" name="nav-menu" />
+<label for="nav-downloads"><i class="ion-folder"></i><a href="/pages/downloads">Downloads</a></label>
+
+<input type="radio" id="nav-services" name="nav-menu" />
+<label for="nav-services"><i class="ion-paintbrush"></i><a href="/pages/services">Services</a></label>
+
+<input type="radio" id="nav-profile" name="nav-menu" />
+<label for="nav-profile"><i class="ion-person"></i><a href="/pages/profile">Profile</a></label>
+
+<input type="radio" id="nav-messageboard" name="nav-menu" />
+<label for="nav-messageboard"><i class="ion-chatboxes"></i><a href="/pages/messageboard">Message Board</a></label>
+
+<input type="radio" id="nav-feed" name="nav-menu" />
+<label for="nav-feed"><i class="ion-ios-paper"></i><a href="/pages/feed">Feed</a></label>
+
+<input type="radio" id="nav-analytics" name="nav-menu" />
+<label for="nav-analytics"><i class="ion-stats-bars"></i><a href="/pages/analytics">Analytics</a></label>
+
+<input type="radio" id="nav-staffdashboard" name="nav-menu" />
+<label for="nav-staffdashboard"><i class="ion-wrench"></i><a href="/pages/staffdashboard">Staff Tools</a></label>
+
+<input type="radio" id="nav-dashboard" name="nav-menu" />
+<label for="nav-dashboard"><i class="ion-speedometer"></i><a href="/pages/dashboard">Dashboard</a></label>
+
+<input type="radio" id="nav-admin" name="nav-menu" />
+<label for="nav-admin"><i class="ion-locked"></i><a href="/pages/admin">Admin</a></label>
+
+<!-- Informational Pages -->
+<input type="radio" id="nav-about" name="nav-menu" />
+<label for="nav-about"><i class="ion-information-circled"></i><a href="/pages/about">About Us</a></label>
+
+<input type="radio" id="nav-pricing" name="nav-menu" />
+<label for="nav-pricing"><i class="ion-cash"></i><a href="/pages/pricing">Pricing</a></label>
+
+<input type="radio" id="nav-contact" name="nav-menu" />
+<label for="nav-contact"><i class="ion-email"></i><a href="/pages/contact">Contact</a></label>
+
+<input type="radio" id="nav-faq" name="nav-menu" />
+<label for="nav-faq"><i class="ion-help-buoy"></i><a href="/pages/faq">FAQ</a></label>
+
+<!-- Content / Community -->
+<input type="radio" id="nav-showcase" name="nav-menu" />
+<label for="nav-showcase"><i class="fa-solid fa-images"></i><a href="/pages/showcase">Showcase</a></label>
+
+<input type="radio" id="nav-playlist" name="nav-menu" />
+<label for="nav-playlist"><i class="fa-solid fa-list"></i><a href="/pages/playlist">Playlist</a></label>
+
+<input type="radio" id="nav-guidelines" name="nav-menu" />
+<label for="nav-guidelines"><i class="fa-solid fa-scale-balanced"></i><a href="/pages/guidelines">Community Guidelines</a></label>
+
+<input type="radio" id="nav-privacy" name="nav-menu" />
+<label for="nav-privacy"><i class="fa-solid fa-user-shield"></i><a href="/pages/privacy">Privacy Policy</a></label>
+
+<input type="radio" id="nav-reviews" name="nav-menu" />
+<label for="nav-reviews"><i class="fa-solid fa-star"></i><a href="/pages/reviews">Reviews</a></label>
+
+<input type="radio" id="nav-partners" name="nav-menu" />
+<label for="nav-partners"><i class="fa-solid fa-handshake"></i><a href="/pages/partners">Partners</a></label>
+
+<input type="radio" id="nav-terms" name="nav-menu" />
+<label for="nav-terms"><i class="fa-solid fa-file-contract"></i><a href="/pages/terms">Terms of Service</a></label>
+
+<input type="radio" id="nav-news" name="nav-menu" />
+<label for="nav-news"><i class="fa-solid fa-newspaper"></i><a href="/pages/news">News</a></label>
+
+<input type="radio" id="nav-games" name="nav-menu" />
+<label for="nav-games"><i class="fa-solid fa-gamepad"></i><a href="/pages/games">Games</a></label>
+
+<input type="radio" id="nav-artist" name="nav-menu" />
+<label for="nav-artist"><i class="fa-solid fa-paintbrush"></i><a href="/pages/artist">Affiliated Artist</a></label>
+
+<input type="radio" id="nav-products" name="nav-menu" />
+<label for="nav-products"><i class="fa-solid fa-box-open"></i><a href="/pages/products">Products</a></label>
+
+<input type="radio" id="nav-merch" name="nav-menu" />
+<label for="nav-merch"><i class="fa-solid fa-shirt"></i><a href="/pages/merch">Merch</a></label>
+
+<input type="radio" id="nav-amv" name="nav-menu" />
+<label for="nav-amv"><i class="fa-solid fa-film"></i><a href="/pages/amv">AMV</a></label>
+
+<input type="radio" id="nav-members" name="nav-menu" />
+<label for="nav-members"><i class="fa-solid fa-lock"></i><a href="/pages/members">Members Only</a></label>
+
+<!-- External / Social -->
+<input type="radio" id="nav-twitch" name="nav-menu" />
+<label for="nav-twitch"><i class="fa-brands fa-twitch"></i><a href="https://twitch.tv/neverendever" target="_blank">Twitch</a></label>
+
+<input type="radio" id="nav-discord" name="nav-menu" />
+<label for="nav-discord"><i class="fa-brands fa-discord"></i><a href="https://discord.gg/7KHEXXTaVG" target="_blank">Discord</a></label>
+
+<input type="radio" id="nav-youtube" name="nav-menu" />
+<label for="nav-youtube"><i class="fa-brands fa-youtube"></i><a href="https://www.youtube.com/@NEVRAMV" target="_blank">YouTube</a></label>
+
+<input type="radio" id="nav-instagram" name="nav-menu" />
+<label for="nav-instagram"><i class="fa-brands fa-instagram"></i><a href="https://www.instagram.com/endeverrecords/" target="_blank">Instagram</a></label>
+
+          <!-- Glider -->
+          <div class="glider-container">
+            <div class="glider"></div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+  <!-- Sidebar logic -->
+  <script src="/scripts/staticsidebar.js" defer></script>
+</body>
+</html>
+
+
+
+    <!-- AUTH OVERLAY -->
+    <div id="auth-overlay" class="modal-overlay" style="z-index: 300 !important;">
+        <div class="auth-box">
+            <h2 class="text-3xl font-extrabold text-white mb-6 font-poppins">Join Us!</h2>
+            <div class="auth-tabs">
+                <span id="tab-login" class="auth-tab active" onclick="Auth.switch('login')">Login</span>
+                <span id="tab-signup" class="auth-tab" onclick="Auth.switch('signup')">Sign Up</span>
+            </div>
+            
+            <!-- Login Form -->
+            <div id="form-login">
+                <input type="email" id="login-email" class="auth-input" placeholder="E-Mail">
+                <input type="password" id="login-password" class="auth-input" placeholder="Password">
+                <!-- Enhanced button styling with class updates -->
+                <button class="w-full bg-teal-400 text-black font-bold py-3 rounded-lg mt-4 hover:bg-white transition shadow-lg hover:shadow-teal-500/50" onclick="Auth.handleLogin()">Log In</button>
+  <div id="auth-status-login" class="text-sm text-red-400 mt-2"></div>
+            </div>
+
+            <!-- Signup Form -->
+            <div id="form-signup" class="hidden">
+                <input type="text" id="signup-email" class="auth-input" placeholder="E-Mail">
+                <input type="password" id="sign-password" class="auth-input" placeholder="Password">
+                <!-- Enhanced button styling with class updates -->
+                <button class="w-full bg-purple-500 text-white font-bold py-3 rounded-lg mt-4 hover:bg-purple-400 transition shadow-lg hover:shadow-purple-500/50" onclick="Auth.handleSignup()">Create Account</button>
+<div id="auth-status" class="text-sm text-red-400 mt-2"></div>
+</div>
+            <div class="mt-4 text-xs text-gray-500 cursor-pointer hover:text-white transition" onclick="Auth.close()">Cancel</div>
+        </div>
+    </div>
+
+    <!-- QUEUE MODAL -->
+    <div id="queue-overlay" class="modal-overlay">
+        <div class="queue-modal-content">
+            <div class="queue-title">
+                <span><i class="fas fa-list-ul text-purple-400"></i> Current Review Queue</span>
+                <button class="text-gray-400 hover:text-white transition" onclick="Queue.close()"><i class="fas fa-times fa-lg"></i></button>
+            </div>
+            <div class="queue-list-container no-scrollbar" id="queue-list">
+                <!-- Queue entries will be loaded here by Queue.loadQueue() -->
+                <div style="text-align: center; padding: 50px;"><i class="fas fa-spinner fa-spin text-teal-400"></i> Loading Queue Data...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DASHBOARD OVERLAY -->
+    <div id="dash-overlay" class="modal-overlay">
+        <div class="dash-modal">
+            <div class="flex justify-between items-center p-4 border-b border-white/10 bg-black">
+                <div class="font-extrabold text-white text-xl ml-4 font-poppins">Artist Dashboard</div>
+                <div class="flex items-center gap-4">
+                    <div class="text-right">
+                        <div class="text-xs text-gray-500 uppercase tracking-wider">BALANCE</div>
+                        <div class="font-mono text-teal-400 font-bold text-lg" id="dash-balance">0 CR</div>
+                    </div>
+                    <button class="text-gray-400 hover:text-white mr-4 transition" onclick="Dash.close()"><i class="fas fa-times fa-lg"></i></button>
+                </div>
+            </div>
+            <div class="dash-body">
+                <div class="dash-sidebar">
+                    <div class="text-xs text-gray-500 uppercase tracking-wider mb-2">Menu</div>
+                    <div class="dash-menu-item active" onclick="Dash.tab('home')"><i class="fas fa-chart-line w-5 mr-2"></i> Overview</div>
+                    <div class="dash-menu-item" onclick="Dash.tab('profile')"><i class="fas fa-user-edit w-5 mr-2"></i> Edit Profile</div>
+                    <div class="dash-menu-item" onclick="Dash.tab('shop')"><i class="fas fa-store w-5 mr-2"></i> Shop</div>
+                    <div class="dash-menu-item bg-red-800/20 text-red-400 mt-8 hover:bg-red-400 hover:text-white" onclick="Auth.logout()"><i class="fas fa-sign-out-alt w-5 mr-2"></i> Logout</div>
+                </div>
+                <div class="dash-main">
+                    <!-- HOME TAB -->
+                    <div id="tab-home" class="dash-section active">
+                        <h2 class="text-2xl font-bold text-white mb-6">Performance Snapshot</h2>
+                        <div class="grid grid-cols-3 gap-6 mb-8">
+                            <div class="bg-white/5 p-5 rounded-xl border border-white/10 shadow-lg">
+                                <div class="text-gray-400 text-xs uppercase tracking-wider">Global Rank</div>
+                                <div class="text-4xl font-extrabold text-white mt-2 font-poppins" id="d-rank" title="Your current position on the Endever Live leaderboard.">-</div>
+                            </div>
+                            <div class="bg-white/5 p-5 rounded-xl border border-white/10 shadow-lg">
+                                <div class="text-gray-400 text-xs uppercase tracking-wider">Average Score</div>
+                                <div class="text-4xl font-extrabold text-teal-400 mt-2 font-poppins" id="d-score" title="Your average score across all tracks reviewed.">-</div>
+                            </div>
+                            <div class="bg-white/5 p-5 rounded-xl border border-white/10 shadow-lg">
+                                <div class="text-gray-400 text-xs uppercase tracking-wider">Profile Views</div>
+                                <div class="text-4xl font-extrabold text-purple-400 mt-2 font-poppins" title="The number of times your profile has been viewed.">1.4k</div>
+                            </div>
+                        </div>
+                        <div class="text-gray-500 text-sm italic mt-8">Note: Detailed analytics coming soon.</div>
+                    </div>
+
+                    <!-- PROFILE TAB -->
+                    <div id="tab-profile" class="dash-section">
+                        <h2 class="text-2xl font-bold text-white mb-6">Manage Public Profile</h2>
+                        <div class="bg-white/5 p-6 rounded-xl border border-white/10">
+                            <label class="block text-gray-400 text-sm mb-2 font-bold">Artist Bio</label>
+                            <textarea id="in-bio" class="w-full bg-black/30 border border-white/10 rounded-lg p-3 text-white h-32 resize-none mb-4 focus:border-purple-500 transition"></textarea>
+                            <label class="block text-gray-400 text-sm mb-2 font-bold">Twitter Link</label>
+                            <input id="in-tw" class="w-full bg-black/30 border border-white/10 rounded-lg p-3 text-white mb-4 focus:border-purple-500 transition">
+                            <label class="block text-gray-400 text-sm mb-2 font-bold">Instagram Link</label>
+                            <input id="in-ig" class="w-full bg-black/30 border border-white/10 rounded-lg p-3 text-white mb-6 focus:border-purple-500 transition">
+                            <button class="bg-purple-600 hover:bg-purple-500 text-white px-6 py-2 rounded-lg font-bold transition shadow-md" onclick="Dash.save()">Save Changes</button>
+                        </div>
+                    </div>
+
+                    <!-- SHOP TAB -->
+                    <div id="tab-shop" class="dash-section">
+                        <h2 class="text-2xl font-bold text-white mb-6">Upgrade Store</h2>
+                        <div class="grid grid-cols-2 gap-6">
+                            <div class="bg-white/5 p-5 rounded-xl border border-white/10 flex justify-between items-center shadow-lg">
+                                <div>
+                                    <div class="font-bold text-white">Neon Border</div>
+                                    <div class="text-xs text-gray-400">Highlights your rank row</div>
+                                </div>
+                                <button class="border border-teal-400 text-teal-400 hover:bg-teal-400 hover:text-black px-4 py-2 rounded-lg font-mono text-sm transition" onclick="Dash.buy('border')">500 CR</button>
+                            </div>
+                            <div class="bg-white/5 p-5 rounded-xl border border-white/10 flex justify-between items-center shadow-lg">
+                                <div>
+                                    <div class="font-bold text-white">Text Glow</div>
+                                    <div class="text-xs text-gray-400">Intense rank text effect</div>
+                                </div>
+                                <button class="border border-purple-500 text-purple-500 hover:bg-purple-500 hover:text-white px-4 py-2 rounded-lg font-mono text-sm transition" onclick="Dash.buy('glow')">1000 CR</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ARTIST PROFILE OVERLAY -->
+    <div id="profile-overlay" class="modal-overlay">
+        <div class="profile-card">
+            <div class="prof-header" id="prof-head">
+                <div class="prof-title-group">
+                    <div class="prof-name" id="prof-name">Artist Name</div>
+                    <div class="prof-rank-badge" id="prof-rank-badge">RANK</div>
+                </div>
+                <div class="header-actions">
+                    <div id="claim-area" class="flex items-center gap-4">
+                        <button id="btn-claim" class="claim-btn" onclick="Profile.claim()">Claim Profile</button>
+                        <span id="badge-claimed" class="badge-claimed hidden" title="This profile has been verified and claimed by the artist."><i class="fas fa-check-circle text-teal-400"></i> VERIFIED</span>
+                    </div>
+                    <div class="prof-close" onclick="Profile.close()"><i class="fas fa-times"></i></div>
+                </div>
+            </div>
+            
+            <div id="mini-player">
+                <div class="player-close" onclick="Player.stop()">CLOSE</div>
+                <div id="player-target" class="w-full h-full"></div>
+            </div>
+
+            <div class="prof-body">
+                <div class="prof-main">
+                    <!-- About Section -->
+                    <div class="flex-shrink-0">
+                        <h3 class="prof-section-title">About the Artist</h3>
+                        <div class="bio-content-wrapper">
+                            <div class="bio-text" id="prof-bio">No bio available.</div>
+                            <div class="flex flex-col gap-3 justify-end" id="prof-socials"></div>
+                        </div>
+                    </div>
+
+                    <!-- Stats Section -->
+                    <div class="flex-shrink-0">
+                        <h3 class="prof-section-title">Performance Metrics</h3>
+                        <div class="stats-grid">
+                            <div class="stat-box" title="The sum of all individual host scores for this artist's submitted tracks."><div class="stat-accent"></div><div class="stat-val" id="s-tot">-</div><div class="stat-lbl">Total Score</div></div>
+                            <div class="stat-box" title="The average score across all rated tracks. This is the primary metric for rank placement."><div class="stat-accent"></div><div class="stat-val" id="s-avg">-</div><div class="stat-lbl">Average Score</div></div>
+                            <div class="stat-box" title="A secondary metric, potentially factoring in host engagement or submission velocity."><div class="stat-accent"></div><div class="stat-val" id="s-wgt">-</div><div class="stat-lbl">Weighted Score</div></div>
+                            <div class="stat-box" title="The total count of tracks submitted and rated by the hosts."><div class="stat-accent"></div><div class="stat-val" id="s-cnt">-</div><div class="stat-lbl">Songs Count</div></div>
+                            <div class="stat-box" title="The highest score achieved by any single track from this artist."><div class="stat-accent"></div><div class="stat-val" id="s-bst">-</div><div class="stat-lbl">Best Score</div></div>
+                            <div class="stat-box" title="The number of times this artist has been 'liked' by logged-in users."><div class="stat-accent"></div><div class="stat-val" id="s-lks">0</div><div class="stat-lbl">Community Likes</div></div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Section - Adjusted Height -->
+                    <div class="flex-grow min-h-0">
+                        <h3 class="prof-section-title">Analytics Visualizations</h3>
+                        <div class="charts-grid">
+                            <div class="chart-box" title="Shows how scores have changed over the duration of your reviews."><div class="chart-title">Trend Over Time</div><div class="chart-area"><canvas id="c-trend" class="chart-canvas"></canvas></div></div>
+                            <div class="chart-box" title="Displays the difference between each song's score and your overall average score."><div class="chart-title">Score Deviation</div><div class="chart-area"><canvas id="c-dev" class="chart-canvas"></canvas></div></div>
+                            <div class="chart-box" title="Shows the distribution of your scores across different score ranges."><div class="chart-title">Distribution</div><div class="chart-area"><canvas id="c-dist" class="chart-canvas"></canvas></div></div>
+                            <div class="chart-box" title="The average score of the last three tracks reviewed, smoothing out volatility."><div class="chart-title">Rolling Avg (3)</div><div class="chart-area"><canvas id="c-roll" class="chart-canvas"></canvas></div></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="prof-side">
+                    <div class="song-list-head">
+                        <span>Discography</span>
+                        <span class="text-xs font-normal opacity-50 self-center">SCROLLABLE (<span id="song-count">0</span> Tracks)</span>
+                    </div>
+                    <div class="song-list-body no-scrollbar" id="prof-songs">
+                        <!-- Songs will be rendered here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN UI -->
+    <header>
+        <div class="brand" onclick="location.reload()">
+            <i class="" title="Endever Live!"></i>Endever Live</div>
+<a href="https://www.twitch.tv/neverendever" </a>
+        
+        <div class="header-actions-group">
+            <a href="https://www.twitch.tv/neverendever" target="_blank" class="info-button bg-purple-600 text-white" title="Visit the official Twitch channel!"><i class="fab fa-twitch"></i>Twitch</a>
+            <button class="info-button bg-gray-700 text-white hover:bg-gray-600" onclick="Queue.open()" title="View the list of tracks currently waiting for review on the stream."><i class="fas fa-list-ol"></i> Queue</button>
+           <!-- <div class="schedule-box" id="schedule-box" title="Check the Twitch schedule for upcoming review streams." style="margin-right: 15px;"> 
+                <i class="fas fa-calendar-alt"></i> Loading Schedule...
+            </div>
+        </div>
+        <div class="header-right">  -->
+           
+            <div class="search-box">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-input" placeholder="Search Artists..." oninput="App.search(this)" title="Search the leaderboard by artist name.">
+            </div>
+            <div id="nav-auth-container"></div>
+        </div>
+    </header>
+
+    <!-- NEW APP INFO BAR -->
+    <div id="app-info-bar">
+        <span class="text-gray-400" title="The core purpose of this platform.">
+            <span class="font-bold text-white">WHAT WE DO:</span> We host music reviews live on Twitch and rank artists based on host consensus. <span class="text-purple-400 font-bold">(Currently working towards building a record label!)</span>
+        </span>
+        <span class="text-gray-400 hover:text-white transition cursor-help" title="Click for a detailed breakdown of the scoring process.">
+            <span class="font-bold text-white">HOW SCORES WORK:</span> Average Score determines Rank Tier (Bronze, Silver, Gold, Platinum, Diamond, Champion). <i class="fas fa-info-circle"></i>
+            <div id="score-breakdown-tooltip" class="absolute right-3 top-full mt-2 p-3 bg-gray-800 text-xs text-white rounded-lg shadow-xl w-80 hidden z-20 border border-gray-700">
+                <span class="font-bold text-teal-400 block mb-1">Scoring Breakdown:</span>
+                <ul class="list-disc list-inside space-y-1 ml-2 text-gray-300">
+                    <li>Each Host rates 1-10 on three criteria: **Lyrics/Vocals & Production**, **Mixing & Mastering**, and **Replayability**.</li>
+                    <li>These three scores are averaged to give the Host a final score out of 10.</li>
+                    <li>The score from all participating hosts is then averaged to determine the **Final Score**.</li>
+                    <li>This Final Score dictates the artist's ranking and Tier placement.</li>
+                </ul>
+            </div>
+        </span>
+    </div>
+    <!-- END NEW APP INFO BAR -->
+
+    <div class="app-content">
+        <!-- NEW GLOBAL STATS BAR -->
+        <div id="global-stats-bar" class="flex-shrink-0 px-8 pt-4 pb-2 flex justify-start gap-10 border-b border-white/10 bg-black/50">
+            <!-- Stats will be dynamically injected here -->
+        </div>
+        <!-- END NEW GLOBAL STATS BAR -->
+        <div class="table-scroll no-scrollbar" id="main-table-area">
+            <div class="p-10 text-center text-gray-500"><i class="fas fa-circle-notch fa-spin"></i> Loading System...</div>
+        </div>
+    </div>
+
+    <script>
+        /* --- SYSTEM CONFIG --- */
+        const DB = {
+            id: '12NclIyIJ-Qq4OWQt-_Md7Ksz1ImjHUQg5rrmr_8cDhg',
+            sid: '12B2a7mVFPJu87ZQ8w68BYk7JTsexihZol4r7RD76CLc',
+            gid: '1444770764'
+        };
+        const CONFIG = DB; // Alias
+
+        let State = {
+            user: JSON.parse(localStorage.getItem('endever_user') || 'null'), 
+            usersDB: JSON.parse(localStorage.getItem('endever_users_db') || '{}'),
+            meta: JSON.parse(localStorage.getItem('endever_meta') || '{}'), 
+            claims: JSON.parse(localStorage.getItem('endever_claims') || '{}'),
+            likes: JSON.parse(localStorage.getItem('endever_likes') || '[]'),
+            pl: JSON.parse(localStorage.getItem('endever_playlist') || '[]'),
+            rows: [], cols: [], songs: [], charts: {},
+            filterLiked: false, currentArtist: null,
+            globalCharts: {} // NEW: Global chart storage
+        };
+
+        // --- CORE HELPERS ---
+
+        // Helper to map tier name to its CSS color variable string
+        const getTierColor = (tier) => {
+            if(tier.includes('champ')) return 'var(--color-champ)';
+            if(tier.includes('dia')) return 'var(--color-dia)';
+            if(tier.includes('plat')) return 'var(--color-plat)';
+            if(tier.includes('gold')) return 'var(--color-gold)';
+            if(tier.includes('silv')) return 'var(--color-silv)';
+            if(tier.includes('brnz')) return 'var(--color-brnz)';
+            return 'var(--accent-primary)';
+        }
+        
+        // Helper to map tier name to a visually appealing background color for the badge (Hex)
+        const getTierBadgeColor = (tier) => {
+            if(tier.includes('champ')) return '#8b5cf6'; // Purple
+            if(tier.includes('dia')) return '#06b6d4'; // Cyan
+            if(tier.includes('plat')) return '#10b981'; // Green
+            if(tier.includes('gold')) return '#eab308'; // Yellow
+            if(tier.includes('silv')) return '#94a3b8'; // Blue-Gray
+            if(tier.includes('brnz')) return '#d97706'; // Orange
+            return '#00f5d4'; // Default Cyan
+        }
+
+        // --- PLATFORM HELPER (NEW) ---
+        const getPlatformDetails = (url) => {
+            if (!url) return { name: 'N/A', icon: 'fas fa-ban', color: 'var(--text-muted)' };
+            url = url.toLowerCase();
+            if (url.includes('youtube.com') || url.includes('youtu.be')) {
+                return { name: 'YouTube', icon: 'fab fa-youtube', color: '#FF0000' };
+            }
+            if (url.includes('spotify.com')) {
+                return { name: 'Spotify', icon: 'fab fa-spotify', color: '#1DB954' };
+            }
+            if (url.includes('soundcloud.com')) {
+                return { name: 'SoundCloud', icon: 'fab fa-soundcloud', color: '#FF5500' };
+            }
+            if (url.includes('apple.com/us/album') || url.includes('music.apple.com')) {
+                return { name: 'Apple Music', icon: 'fab fa-apple', color: '#FC3C44' };
+            }
+            return { name: 'External Link', icon: 'fas fa-external-link-alt', color: 'var(--text-muted)' };
+        };
+
+        // --- SCORE GRADIENT LOGIC ---
+        const hexToRgb = hex => {
+            const bigint = parseInt(hex.slice(1), 16);
+            return [(bigint >> 16) & 255, (bigint >> 8) & 255, bigint & 255];
+        };
+
+        const rgbToHex = (r, g, b) => '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+
+        // LERPs between two colors based on a score from 5 to 10
+        const scoreToColor = (score) => {
+            const minScore = 5.0;
+            const maxScore = 10.0;
+            // Normalize score to a 0-1 range
+            const normScore = Math.min(1, Math.max(0, (score - minScore) / (maxScore - minScore)));
+
+            // Low color (Orange/Bronze: #d97706)
+            const lowColor = hexToRgb('#d97706'); 
+            // High color (Teal/Cyan: #00f5d4)
+            const highColor = hexToRgb('#00f5d4'); 
+            
+            // Linear interpolation for R, G, B components
+            const r = Math.round(lowColor[0] + (highColor[0] - lowColor[0]) * normScore);
+            const g = Math.round(lowColor[1] + (highColor[1] - lowColor[1]) * normScore);
+            const b = Math.round(lowColor[2] + (highColor[2] - lowColor[2]) * normScore);
+            
+            return rgbToHex(r, g, b);
+        };
+        
+        // --- GLOBAL STATS HELPER (REFACTORED) ---
+        const renderStatItem = (label, value, icon, color, title) => {
+            // Using a full div structure to fit the grid layout
+            return `
+                <div class="global-stat-box" title="${title}">
+                    <div class="global-stat-label">${label}</div>
+                    <div class="global-stat-value" style="color: ${color};">
+                        <i class="${icon} text-lg mr-2" style="color: ${color};"></i>
+                        ${value}
+                    </div>
+                </div>
+            `;
+        };
+
+        /* --- AUTHENTICATION --- */
+        const Auth = {
+            open: () => {
+                document.getElementById('auth-overlay').classList.add('open');
+                Auth.switch('login');
+            },
+            close: () => document.getElementById('auth-overlay').classList.remove('open'),
+            switch: (mode) => {
+                document.getElementById('form-login').classList.toggle('hidden', mode !== 'login');
+                document.getElementById('form-signup').classList.toggle('hidden', mode !== 'signup');
+                document.getElementById('tab-login').classList.toggle('active', mode === 'login');
+                document.getElementById('tab-signup').classList.toggle('active', mode === 'signup');
+            },
+            handleLogin: () => {
+                const u = document.getElementById('login-user').value.trim();
+                const p = document.getElementById('login-pass').value.trim();
+                if(!u || !p) return console.warn('Enter credentials');
+                
+                // Mock Local DB Check
+                const account = State.usersDB[u];
+                if (account && account.pass === p) {
+                    State.user = { name: u, ...account };
+                    localStorage.setItem('endever_user', JSON.stringify(State.user));
+                    Auth.render();
+                    Auth.close();
+                } else {
+                    console.error('Invalid username or password. Try signing up.');
+                }
+            },
+            handleSignup: () => {
+                const u = document.getElementById('sign-user').value.trim();
+                const p = document.getElementById('sign-pass').value.trim();
+                if(!u || !p) return console.warn('Enter credentials');
+                if(State.usersDB[u]) return console.error('User exists');
+                
+                // Create Account
+                const newUser = { pass: p, credits: 1000, role: 'user' };
+                State.usersDB[u] = newUser;
+                localStorage.setItem('endever_users_db', JSON.stringify(State.usersDB));
+                
+                // Auto Login
+                State.user = { name: u, ...newUser };
+                localStorage.setItem('endever_user', JSON.stringify(State.user));
+                
+                console.log('Account created! You received 1000 Credits.');
+                Auth.render();
+                Auth.close();
+            },
+            logout: () => {
+                // Using console log instead of confirm()
+                console.log('User logged out.');
+                State.user = null;
+                localStorage.removeItem('endever_user');
+                Auth.render();
+                location.reload();
+            },
+            render: () => {
+                const el = document.getElementById('nav-auth-container');
+                if(State.user) {
+                    const isArtist = State.user.role === 'artist' || Object.values(State.claims).includes(State.user.name);
+                    el.innerHTML = `
+                        <div class="user-menu-trigger" onclick="${isArtist ? 'Dash.open()' : 'Auth.logout()'}">
+                            <div class="user-avatar"></div>
+                            <div class="user-name">${State.user.name}</div>
+                            <i class="fas fa-caret-down text-xs text-gray-500"></i>
+                        </div>
+                    `;
+                } else {
+                    el.innerHTML = `<button class="btn-login" onclick="Auth.open()" title="Login or Sign Up to access personalized features.">Login</button>`;
+                }
+            },
+            guard: () => {
+                if(!State.user) { Auth.open(); return false; }
+                return true;
+            }
+        };
+
+        /* --- DASHBOARD --- */
+        const Dash = {
+            open: () => {
+                // Find the artist name claimed by the current user
+                const artist = Object.keys(State.claims).find(k => State.claims[k] === State.user.name);
+                if(!artist) return console.error('User is not a claimed artist.');
+                
+                document.getElementById('dash-overlay').classList.add('open');
+                document.getElementById('dash-balance').textContent = State.user.credits + ' CR';
+                
+                const row = State.rows.find(r => r[State.cols.findIndex(c=>c.toLowerCase()==='name')] === artist);
+                if(row) {
+                    // Assuming 'Rank' is the first column
+                    const rankIndex = State.cols.findIndex(c => c.toLowerCase() === 'rank');
+                    const scoreIndex = State.cols.findIndex(c => c.toLowerCase().includes('total'));
+
+                    document.getElementById('d-rank').textContent = '#' + row[rankIndex];
+                    document.getElementById('d-score').textContent = row[scoreIndex];
+                }
+
+                // Load Form
+                const m = State.meta[artist] || {};
+                document.getElementById('in-bio').value = m.bio || '';
+                document.getElementById('in-tw').value = m.socials?.tw || '';
+                document.getElementById('in-ig').value = m.socials?.ig || '';
+                
+                Dash.tab('home');
+            },
+            close: () => document.getElementById('dash-overlay').classList.remove('open'),
+            tab: (id) => {
+                document.querySelectorAll('.dash-section').forEach(el => el.classList.remove('active'));
+                document.getElementById(`tab-${id}`).classList.add('active');
+                document.querySelectorAll('.dash-menu-item').forEach(el => el.classList.remove('active'));
+                document.querySelector(`.dash-menu-item[onclick*="'${id}'"]`).classList.add('active');
+            },
+            save: () => {
+                const artist = Object.keys(State.claims).find(k => State.claims[k] === State.user.name);
+                if(!State.meta[artist]) State.meta[artist] = {};
+                State.meta[artist].bio = document.getElementById('in-bio').value;
+                State.meta[artist].socials = { tw: document.getElementById('in-tw').value, ig: document.getElementById('in-ig').value };
+                localStorage.setItem('endever_meta', JSON.stringify(State.meta));
+                console.log('Profile changes saved!');
+            },
+            buy: (item) => {
+                const cost = item === 'border' ? 500 : 1000;
+                if(State.user.credits < cost) return console.error('Insufficient funds: ' + cost + ' CR required.');
+
+                const artist = Object.keys(State.claims).find(k => State.claims[k] === State.user.name);
+                if(!State.meta[artist]) State.meta[artist] = {};
+                if(!State.meta[artist].styles) State.meta[artist].styles = [];
+                
+                if (State.meta[artist].styles.includes(item)) {
+                    return console.log(`You already own the ${item} item.`);
+                }
+
+                State.meta[artist].styles.push(item);
+                State.user.credits -= cost;
+                State.usersDB[State.user.name].credits = State.user.credits; // Sync DB
+                
+                localStorage.setItem('endever_user', JSON.stringify(State.user));
+                localStorage.setItem('endever_users_db', JSON.stringify(State.usersDB));
+                localStorage.setItem('endever_meta', JSON.stringify(State.meta));
+                
+                document.getElementById('dash-balance').textContent = State.user.credits + ' CR';
+                App.render();
+                console.log(`Purchased ${item} for ${cost} CR! Updates applied.`);
+            }
+        };
+
+        /* --- PROFILE & CLAIM --- */
+        const Profile = {
+            // FIX: Added 'e' parameter and call to preventDefault()
+            open: (name, e) => {
+                if (e) e.preventDefault();
+                
+                State.currentArtist = name;
+                const modal = document.getElementById('profile-overlay');
+                const nIdx = State.cols.findIndex(c=>c.toLowerCase()==='name');
+                const tierIdx = State.cols.findIndex(c=>c.toLowerCase().includes('tier'));
+                const rankIdx = State.cols.findIndex(c=>c.toLowerCase()==='rank');
+                
+                const row = State.rows.find(r => r[nIdx] === name);
+                const songs = State.songs.filter(s => s.artist === name).sort((a,b)=>new Date(b.date)-new Date(a.date));
+                const scores = songs.map(s => s.score).filter(n => !isNaN(n));
+                const m = State.meta[name] || {};
+                
+                // Color Logic
+                const tier = row ? String(row[tierIdx]).toLowerCase() : 'default';
+                const rank = row ? String(row[rankIdx]) : '-';
+                const c = getTierColor(tier); // CSS variable string
+                const cBadge = getTierBadgeColor(tier); // Hex color string
+                
+                // Header Styling & Rank Badge
+                document.getElementById('prof-name').textContent = name;
+                document.getElementById('prof-rank-badge').textContent = rank + ' - ' + tier.toUpperCase();
+                document.getElementById('prof-rank-badge').style.backgroundColor = cBadge;
+                
+                const head = document.getElementById('prof-head');
+                // Use a subtle background gradient for the header based on the rank color
+                head.style.background = `linear-gradient(90deg, ${cBadge}1a, transparent 70%)`;
+                head.style.borderBottomColor = c;
+                document.querySelectorAll('.stat-accent').forEach(e => e.style.background = c);
+                
+                // Stats
+                const avg = scores.length ? (scores.reduce((a,b)=>a+b,0)/scores.length).toFixed(2) : '-';
+                const tot = scores.reduce((a,b)=>a+b,0).toFixed(2);
+                const best = scores.length ? Math.max(...scores).toFixed(2) : '-';
+                
+                document.getElementById('s-tot').textContent = tot;
+                document.getElementById('s-avg').textContent = avg;
+                document.getElementById('s-wgt').textContent = m.weighted || '-';
+                document.getElementById('s-cnt').textContent = songs.length;
+                document.getElementById('s-bst').textContent = best;
+                document.getElementById('s-lks').textContent = State.likes.includes(name) ? 1 : 0;
+                document.getElementById('song-count').textContent = songs.length;
+
+                // --- Apply gradient based on score in Profile Modal ---
+                if (parseFloat(avg) > 0) {
+                    const avgColor = scoreToColor(parseFloat(avg));
+                    const bestColor = scoreToColor(parseFloat(best));
+                    document.getElementById('s-avg').style.color = avgColor;
+                    document.getElementById('s-tot').style.color = avgColor;
+                    document.getElementById('s-bst').style.color = bestColor;
+                } else {
+                     document.getElementById('s-avg').style.color = 'white';
+                     document.getElementById('s-tot').style.color = 'white';
+                     document.getElementById('s-bst').style.color = 'white';
+                }
+                // --- End Profile Modal Gradient ---
+
+                // Bio & Socials
+                document.getElementById('prof-bio').textContent = m.bio || "No bio available. The artist has not provided a biography yet.";
+                const socBox = document.getElementById('prof-socials');
+                socBox.innerHTML = '';
+                if(m.socials?.tw) socBox.innerHTML += `<a href="${m.socials.tw}" target="_blank" class="social-link" title="Artist's Twitter"><i class="fab fa-twitter"></i></a>`;
+                if(m.socials?.ig) socBox.innerHTML += `<a href="${m.socials.ig}" target="_blank" class="social-link" title="Artist's Instagram"><i class="fab fa-instagram"></i></a>`;
+
+                // Claim Status
+                const isClaimed = Object.values(State.claims).includes(name);
+                // Check if the current user is the owner
+                const isOwner = State.claims[name] === State.user?.name;
+                
+                document.getElementById('claim-area').classList.toggle('hidden', isOwner);
+                document.getElementById('badge-claimed').classList.toggle('hidden', !isClaimed);
+                document.getElementById('btn-claim').classList.toggle('hidden', isClaimed); // Hide button if claimed by anyone
+                
+                // Songs
+                const list = document.getElementById('prof-songs');
+                list.innerHTML = songs.map(s => {
+                    // Score color in song list needs hex for inline style
+                    const songColor = scoreToColor(s.score);
+                    
+                    const platform = getPlatformDetails(s.link); // <--- New helper call
+                    
+                    const playBtn = s.link 
+                        ? `<div class="act-btn play" onclick="Player.play('${s.link.replace(/'/g, "\\'")}')" title="Play track on ${platform.name}"><i class="fas fa-play text-xs"></i></div>`
+                        : `<div class="act-btn" title="No playable link available"><i class="fas fa-ban text-xs"></i></div>`;
+                        
+                    const liked = State.likes.includes(s.artist) ? 'active' : ''; // Simplified logic for demo
+                    const inPl = State.pl.includes(s.id) ? 'active-pl' : ''; 
+
+                    return `
+                    <div class="song-item">
+                        <div class="song-actions">
+                            ${playBtn}
+                            <!-- Using re-implemented simple functions for song interaction -->
+                            <div class="act-btn ${liked}" onclick="App.likeSong(this)" title="Like this track"><i class="fas fa-heart text-xs"></i></div>
+                            <div class="act-btn ${inPl}" onclick="App.addPl(this)" title="Add to local playlist"><i class="fas fa-plus text-xs"></i></div>
+                        </div>
+                        <div class="song-score" style="color:${songColor};" title="Score: ${s.score.toFixed(2)}">${s.score.toFixed(2)}</div>
+                        <div class="song-meta">
+                            <div class="song-title" style="color:${s.link ? c : 'white'}">
+                                ${s.title}
+                                <i class="${platform.icon} song-platform-icon" style="color: ${platform.color};" title="Streaming Platform: ${platform.name}"></i> 
+                            </div>
+                            <div class="song-date">${s.date}</div>
+                        </div>
+                    </div>`;
+                }).join('');
+
+                App.renderCharts(name, songs, scores, cBadge); // Use hex color for chart colors
+                modal.classList.add('open');
+            },
+            close: () => { document.getElementById('profile-overlay').classList.remove('open'); Player.stop(); },
+            claim: () => {
+                if(!Auth.guard()) return;
+                const artist = State.currentArtist;
+                if(Object.values(State.claims).includes(artist)) return console.error('Profile already claimed.');
+
+                // Using console log instead of confirm()
+                console.log(`Attempting to claim ${artist}.`);
+                
+                // Mock claim logic
+                State.claims[artist] = State.user.name;
+                State.user.role = 'artist';
+                localStorage.setItem('endever_claims', JSON.stringify(State.claims));
+                localStorage.setItem('endever_user', JSON.stringify(State.user));
+                console.log('Profile claimed successfully!');
+                Profile.close();
+                Auth.render();
+            }
+        };
+
+        /* --- APP LOGIC (Updated with legacy functions) --- */
+        const App = {
+            search: (e) => {
+                const v = e.value.toLowerCase();
+                const nIdx = State.cols.findIndex(c => c.toLowerCase() === 'name');
+                if (nIdx === -1) return; // Cannot search without name column
+                
+                document.querySelectorAll('.rank-table tbody tr').forEach((r, i) => {
+                    // Check if the row should be hidden based on search or filter
+                    const name = State.rows[i][nIdx];
+                    const matchesSearch = String(name).toLowerCase().includes(v);
+                    const matchesFilter = !State.filterLiked || State.likes.includes(name);
+
+                    r.style.display = (matchesSearch && matchesFilter) ? '' : 'none';
+                });
+            },
+            toggleFilter: () => {
+                if(!Auth.guard()) return;
+                State.filterLiked = !State.filterLiked;
+                document.getElementById('btn-filter').classList.toggle('active', State.filterLiked);
+                App.render();
+            },
+            like: (name) => {
+                if(!Auth.guard()) return;
+                if(State.likes.includes(name)) State.likes = State.likes.filter(x=>x!==name);
+                else State.likes.push(name);
+                localStorage.setItem('endever_likes', JSON.stringify(State.likes));
+                App.render();
+                // Rerender profile if open
+                if (State.currentArtist === name && document.getElementById('profile-overlay').classList.contains('open')) {
+                     Profile.open(name);
+                }
+            },
+            
+            // Re-implemented simple functions for song item interaction (from older script)
+            likeSong: (el) => { 
+                if(Auth.guard()) {
+                    el.classList.toggle('active'); 
+                    console.log('Song liked/unliked (demo)');
+                }
+            },
+            addPl: (el) => { 
+                if(Auth.guard()) {
+                    el.classList.toggle('active-pl');
+                    console.log('Song added/removed from playlist (demo)');
+                }
+            },
+            
+            render: () => {
+                if(!document.getElementById('main-table-area')) return;
+                const nIdx = State.cols.findIndex(c => c.toLowerCase() === 'name');
+                const tIdx = State.cols.findIndex(c => c.toLowerCase().includes('tier'));
+                const lIdx = State.cols.findIndex(c => c.toLowerCase().includes('like'));
+                const rIdx = State.cols.findIndex(c => c.toLowerCase() === 'rank'); // Rank index
+                
+                // Helper to identify score/numerical columns for gradient
+                const isScoreColumn = (colName) => {
+                    const n = colName.toLowerCase();
+                    return n.includes('score') || n.includes('avg') || n.includes('total') || n.includes('elo') || n.includes('points') || n.includes('submissions');
+                };
+
+                let h = `<table class="rank-table"><thead><tr>`;
+                State.cols.forEach((c,i) => h += `<th onclick="sortRow(${i})" title="Click to sort by ${c}.">${c}</th>`);
+                h += `</tr></thead><tbody>`;
+                
+                State.rows.forEach(r => {
+                    const name = r[nIdx];
+                    if(State.filterLiked && !State.likes.includes(name)) return;
+                    
+                    const tier = String(r[tIdx]||'').toLowerCase();
+                    let cls = '';
+                    if(tier.includes('champ')) cls='champ'; else if(tier.includes('dia')) cls='dia';
+                    else if(tier.includes('plat')) cls='plat'; else if(tier.includes('gold')) cls='gold';
+                    else if(tier.includes('silv')) cls='silv'; else if(tier.includes('brnz')) cls='brnz';
+                    
+                    const m = State.meta[name];
+                    if(m?.styles?.includes('border')) cls += ' premium-border';
+                    if(m?.styles?.includes('glow')) cls += ' premium-glow';
+                    
+                    const liked = State.likes.includes(name) ? 'active' : '';
+
+                    h += `<tr class="${cls}">`;
+                    r.forEach((c, i) => {
+                        let tdContent = c;
+                        let tdStyle = '';
+                        const colName = State.cols[i];
+                        let tooltip = '';
+                        
+                        // Tooltip logic for headers
+                        if (i === rIdx) tooltip = "Current rank position on the leaderboard.";
+                        else if (i === tIdx) tooltip = "Artist's current rank tier based on average score.";
+                        else if (isScoreColumn(colName)) {
+                            tooltip = `Metric value for ${colName}. Higher scores are better.`;
+                        }
+                        
+                        // Check if it's a score column (excluding Rank and Tier itself)
+                        if (i !== rIdx && i !== tIdx && isScoreColumn(colName)) { 
+                            const numericValue = parseFloat(c);
+                            // Apply gradient only if the value is a valid number
+                            if (!isNaN(numericValue)) {
+                                const color = scoreToColor(numericValue);
+                                // Apply JetBrains Mono font and bold to emphasize the metric
+                                tdStyle = `style="color: ${color}; font-weight: 700; font-family: 'JetBrains Mono';"`; 
+                            }
+                        }
+
+                        if(i === lIdx) {
+                            h += `<td title="Click to quickly like/unlike this artist."><i class="fas fa-heart like-icon ${liked}" onclick="App.like('${name.replace(/'/g, "\\'")}')"></i></td>`;
+                        } else if(i === nIdx) {
+                            // FIX: Added 'event' argument to Profile.open call
+                            h += `<td title="Click to view full artist profile and analytics."><a href="javascript:void(0)" onclick="Profile.open('${String(c).replace(/'/g, "\\'")}', event)">${c}</a></td>`;
+                        } else {
+                            // Generic/Score column
+                            h += `<td ${tdStyle} title="${tooltip}">${tdContent}</td>`;
+                        }
+                    });
+                    h += `</tr>`;
+                });
+                document.getElementById('main-table-area').innerHTML = h + `</tbody></table>`;
+            },
+            renderGlobalCharts: (allScores) => {
+                // Destroy old charts to prevent memory leaks
+                Object.values(State.globalCharts).forEach(chart => chart.destroy());
+                State.globalCharts = {};
+
+                Chart.defaults.color = 'var(--text-muted)';
+                Chart.defaults.font.family = 'Inter';
+                Chart.defaults.font.size = 9;
+
+                const c = '#00f5d4'; // Cyan
+                const cA = c + '33';
+
+                // 1. Score Distribution (Histogram)
+                const distCtx = document.getElementById('g-c-dist').getContext('2d');
+                let b=[0,0,0,0,0]; 
+                allScores.forEach(s=>{ if(s<6)b[0]++; else if(s<7)b[1]++; else if(s<8)b[2]++; else if(s<9)b[3]++; else b[4]++; });
+                State.globalCharts.dist = new Chart(distCtx, {
+                    type:'bar',
+                    data:{ 
+                        labels:['< 6.0','6-7','7-8','8-9','9+'], 
+                        datasets:[{ 
+                            label: 'Tracks', // Tooltip will use this
+                            data:b, 
+                            backgroundColor: [
+                                '#d97706', '#eab308', '#10b981', '#06b6d4', '#8b5cf6'
+                            ], 
+                            borderRadius: 2 
+                        }] 
+                    },
+                    options:{
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: { 
+                            legend: { display: false }, 
+                            // ENABLE TOOLTIPS
+                            tooltip: { 
+                                enabled: true,
+                                mode: 'index',
+                                intersect: false,
+                                callbacks: {
+                                    title: function(context) {
+                                        return context[0].label + ' Score';
+                                    },
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        label += context.parsed.y + ' Tracks';
+                                        return label;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: { display: false, beginAtZero: true }, 
+                            x: { grid:{display:false}, ticks:{ color: 'var(--text-muted)'} }
+                        }
+                    }
+                });
+
+                // 2. Total Songs Over Time (Mock Trend)
+                const trendCtx = document.getElementById('g-c-trend').getContext('2d');
+                // Mock data since real time data fetch is not available
+                const mockLabels = ['Jan','Feb','Mar','Apr','May'];
+                const mockData = [500, 650, 800, 950, allScores.length]; 
+                State.globalCharts.trend = new Chart(trendCtx, {
+                    type:'line',
+                    data:{ 
+                        labels: mockLabels, 
+                        datasets:[{ 
+                            data: mockData, 
+                            borderColor: '#9d4edd', 
+                            backgroundColor: '#9d4edd33', 
+                            fill: true, 
+                            tension: 0.3,
+                            pointRadius: 0
+                        }] 
+                    },
+                    options:{
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: { legend: { display: false }, tooltip: { enabled: false } },
+                        scales: { y: { display: false }, x: { display: false } }
+                    }
+                });
+            },
+            renderCharts: (name, songs, scores, c) => {
+                // Chart.js global defaults for dark theme
+                Chart.defaults.color = 'var(--text-muted)';
+                Chart.defaults.font.family = 'Inter';
+                Chart.defaults.font.size = 10;
+                
+                const cA = c + '33'; // Add transparency to the fill color
+                
+                const commonOptions = {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { mode: 'index', intersect: false }
+                    },
+                    scales: {
+                        y: {
+                            grid: { color: 'rgba(255,255,255,0.05)', borderColor: 'var(--border)' },
+                            ticks: { color: 'var(--text-muted)', callback: function(value) { return value.toFixed(1); } }
+                        },
+                        x: {
+                            grid: { display: false, borderColor: 'var(--border)' },
+                            ticks: { color: 'var(--text-muted)' }
+                        }
+                    }
+                };
+                
+                ['trend','dist','roll','dev'].forEach(k => {
+                    if(State.charts[k]) State.charts[k].destroy();
+                    const ctx = document.getElementById(`c-${k}`).getContext('2d');
+                    let cfg = {};
+                    
+                    if(k === 'trend') {
+                        const s = [...songs].sort((a,b)=>new Date(a.date)-new Date(b.date));
+                        cfg = { 
+                            type:'line', 
+                            data:{ 
+                                labels:s.map(x=>x.date), 
+                                datasets:[{ 
+                                    label:'Score', 
+                                    data:s.map(x=>x.score), 
+                                    borderColor:c, 
+                                    backgroundColor:cA, 
+                                    fill:true, 
+                                    tension:0.4,
+                                    pointRadius: 3,
+                                    pointBackgroundColor: c
+                                }] 
+                            }, 
+                            options:{ 
+                                ...commonOptions,
+                                scales:{
+                                    ...commonOptions.scales, 
+                                    y:{ ...commonOptions.scales.y, min:5, max:10 }, 
+                                    x:{ ...commonOptions.scales.x, display:false }
+                                }
+                            } 
+                        };
+                    } else if(k === 'dev') {
+                        const avg = scores.length ? scores.reduce((a,b)=>a+b,0)/scores.length : 0;
+                        const dev = scores.map(s=>s-avg);
+                        cfg = { 
+                            type:'bar', 
+                            data:{ 
+                                labels:scores.map((_,i)=>i+1), 
+                                datasets:[{ 
+                                    label:'Deviation from Avg', 
+                                    data:dev, 
+                                    backgroundColor:dev.map(d=>d>=0?'#10b981':'#ff4757'),
+                                    borderRadius: 4
+                                }] 
+                            }, 
+                            options:{ 
+                                ...commonOptions,
+                                scales:{
+                                    ...commonOptions.scales, 
+                                    x:{ ...commonOptions.scales.x, display:false },
+                                    y:{ ...commonOptions.scales.y, min: -2.5, max: 2.5 }
+                                } 
+                            } 
+                        };
+                    } else if(k === 'dist') {
+                        let b=[0,0,0,0,0]; scores.forEach(s=>{ if(s<6)b[0]++; else if(s<7)b[1]++; else if(s<8)b[2]++; else if(s<9)b[3]++; else b[4]++; });
+                        cfg = { 
+                            type:'bar', 
+                            data:{ 
+                                labels:['< 6.0','6.0-7.0','7.0-8.0','8.0-9.0','9.0+'], 
+                            datasets:[{ 
+                                data:b, 
+                                backgroundColor:c, 
+                                borderRadius:4 
+                            }] 
+                        }, 
+                        options:{ 
+                            ...commonOptions,
+                            scales:{
+                                ...commonOptions.scales,
+                                y:{ ...commonOptions.scales.y, display:true, ticks: { precision: 0 } }, 
+                                x:{ ...commonOptions.scales.x, grid:{display:false} }
+                            }
+                        } 
+                    };
+                    } else if(k === 'roll') {
+                        const s = [...songs].sort((a,b)=>new Date(a.date)-new Date(b.date)).map(x=>x.score);
+                        const r = s.map((_,i,a)=> a.slice(Math.max(0,i-2),i+1).reduce((x,y)=>x+y,0)/a.slice(Math.max(0,i-2),i+1).length);
+                        cfg = { 
+                            type:'line', 
+                            data:{ 
+                                labels:s.map((_,i)=>i+1), 
+                                datasets:[{ 
+                                    label:'Rolling Avg (3 Songs)', 
+                                    data:r, 
+                                    borderColor:c, 
+                                    borderWidth: 2,
+                                    borderDash:[6,4], 
+                                    pointRadius:2,
+                                    pointBackgroundColor: c + '88'
+                                }] 
+                            }, 
+                            options:{ 
+                                ...commonOptions,
+                                scales:{
+                                    ...commonOptions.scales,
+                                    y:{ ...commonOptions.scales.y, min:5, max:10 }, 
+                                    x:{ ...commonOptions.scales.x, display:false }
+                                }
+                            } 
+                        };
+                    }
+
+                    // Ensure Chart is created with all compiled options
+                    State.charts[k] = new Chart(ctx, cfg);
+                });
+            }
+        };
+
+        /* --- PLAYER --- */
+        const Player = {
+            play: (u) => {
+                // Attempt to extract YouTube ID
+                const youtubeMatch = (u || '').match(/(?:v=|youtu\.be\/)([A-Za-z0-9_-]{6,})/i);
+                
+                if(youtubeMatch) {
+                    const id = youtubeMatch[1];
+                    document.getElementById('mini-player').classList.add('active');
+                    document.getElementById('player-target').innerHTML = `<iframe width="100%" height="100%" src="https://www.youtube.com/embed/${id}?autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
+                } else if (u.includes('spotify') || u.includes('soundcloud') || u.includes('apple')) {
+                    // Using console log for external link
+                    console.log('Opening external streaming link: ' + u);
+                    window.open(u, '_blank');
+                } else { 
+                    console.error('Invalid media link or format: ' + u);
+                    window.open(u, '_blank'); 
+                }
+            },
+            stop: () => {
+                document.getElementById('mini-player').classList.remove('active');
+                // Clear iframe content after transition for performance
+                setTimeout(() => document.getElementById('player-target').innerHTML='', 300);
+            }
+        };
+
+        /* --- QUEUE WIDGET (NEW MODULE) --- */
+        const Queue = {
+            // Helpers to survive header changes in Sheety (copied from source widget)
+            KEY_CANDIDATES : {
+                artist: ['artistName', 'artist', 'artistNameKeepFormatAndSameNameEverySubmission', 'artistNameKeepFormatAndSameNameEverySubmission_', 'artistNameKeepFormatAndSameNameEverySubmission__', 'artistNameKeepFormatAndSameNameEverySubmission___', 'artistNameKeepFormatAndSameNameEverySubmission____', 'artistNameKeepFormatAndSameNameEverySubmission1', 'artistNameKeepFormatAndSameNameEverySubmission2',],
+                song: ['nameOfSong', 'song', 'nameOfSongNoSpecialCharactersNumbersOrExplanationsJustTheTitle'],
+                link: ['linkToSong', 'songLink', 'link', 'linkToSongOnlyTheLinkNothingElse'],
+                priority: ['priority'],
+                timestamp: ['timestamp', 'timeStamp', 'Timestamp']
+            },
+            pick: (obj, keys) => {
+                for (const k of keys) {
+                    if (k in obj && obj[k] != null && String(obj[k]).trim() !== '') return obj[k];
+                }
+                return null;
+            },
+            normText: (v) => { return (v == null) ? '' : String(v).trim(); },
+            normPriority: (v) => { return Queue.normText(v).toLowerCase(); },
+            
+            open: () => {
+                document.getElementById('queue-overlay').classList.add('open');
+                Queue.loadQueue();
+                // Set a recurring load, clear old interval if it exists
+                if (Queue.interval) clearInterval(Queue.interval);
+                Queue.interval = setInterval(Queue.loadQueue, 30000);
+            },
+            close: () => {
+                document.getElementById('queue-overlay').classList.remove('open');
+                if (Queue.interval) clearInterval(Queue.interval);
+            },
+            loadQueue: async () => {
+                const queueDiv = document.getElementById('queue-list');
+                queueDiv.innerHTML = '<div style="text-align: center; padding: 50px;"><i class="fas fa-spinner fa-spin text-teal-400"></i> Loading Queue Data...</div>';
+                
+                try {
+                    // NOTE: This Sheety URL is hardcoded from the user's provided widget script.
+                    const response = await fetch('https://api.sheety.co/c2c25e155356d545732914c85426064b/endEverLiveSubmitFormTheOne/formResponses1', {
+                        cache: 'no-store'
+                    });
+                    if (!response.ok) throw new Error('HTTP ' + response.status);
+                    const json = await response.json();
+
+                    const entries = json?.formResponses1;
+                    if (!Array.isArray(entries)) throw new Error('Unexpected JSON structure from Sheety');
+
+                    const normalized = entries.map((e, i) => {
+                        const artist = Queue.normText(Queue.pick(e, Queue.KEY_CANDIDATES.artist));
+                        const song   = Queue.normText(Queue.pick(e, Queue.KEY_CANDIDATES.song));
+                        const link   = Queue.normText(Queue.pick(e, Queue.KEY_CANDIDATES.link));
+                        const pri    = Queue.normPriority(Queue.pick(e, Queue.KEY_CANDIDATES.priority));
+                        const tsRaw  = Queue.pick(e, Queue.KEY_CANDIDATES.timestamp);
+                        let ts = null;
+                        if (tsRaw) {
+                            const p = Date.parse(tsRaw);
+                            if (!isNaN(p)) ts = new Date(p);
+                        }
+                        return { i, artist, song, link, priority: pri, timestamp: ts };
+                    });
+
+                    // Only consider rows after 2409 (index 2408), per user's original script rule
+                    const afterStart = normalized.slice(2408);
+
+                    // Apply filters: has artist/song, and is not double/played
+                    const filtered = afterStart.filter(r => {
+                        if (!r.artist || !r.song) return false;
+                        if (r.priority === 'double' || r.priority === 'played') return false;
+                        return true;
+                    });
+
+                    // Build Paid Skip tallies by artist
+                    const paidMap = new Map();
+                    for (const r of filtered) {
+                        if (r.priority === 'paid skip') {
+                            paidMap.set(r.artist, (paidMap.get(r.artist) || 0) + 1);
+                        }
+                    }
+
+                    // Regular queue: not in paidMap and priority is 'soon' or empty
+                    const regular = filtered.filter(r => {
+                        const inPaid = paidMap.has(r.artist);
+                        return !inPaid && (r.priority === 'soon' || r.priority === '');
+                    });
+
+                    // Sort paid artists (Count DESC, then Name ASC)
+                    const paidArtists = Array.from(paidMap.entries())
+                        .sort((a, b) => (b[1] - a[1]) || a[0].localeCompare(b[0]));
+
+                    // Regular queue sorted (Oldest TS first, up to 30 entries)
+                    const regularSorted = regular
+                        .slice()
+                        .sort((a, b) => {
+                            if (a.timestamp && b.timestamp) return a.timestamp - b.timestamp; // oldest first
+                            if (a.timestamp && !b.timestamp) return -1;
+                            if (!a.timestamp && b.timestamp) return 1;
+                            return a.i - b.i;
+                        })
+                        .slice(0, 30);
+
+                    // --- Render ---
+                    let html = '';
+                    let totalEntries = 0;
+
+                    if (paidArtists.length > 0) {
+                        html += '<div class="section-title">🎟️ Paid Skips</div>';
+                        paidArtists.forEach(([artist, count], index) => {
+                            const isHighlighted = index < 3 ? 'highlight' : '';
+                            const countText = count > 1 ? ` (x${count})` : '';
+                            html += `
+                                <div class="entry ${isHighlighted}">
+                                    <span class="position">${index + 1}.</span> ${artist}${countText}
+                                </div>
+                            `;
+                            totalEntries++;
+                        });
+                    }
+
+                    if (regularSorted.length > 0) {
+                        html += '<div class="section-title">🎵 Regular Queue</div>';
+                        regularSorted.forEach((r, index) => {
+                            const isHighlighted = index < 3 ? 'highlight' : '';
+                            const safeTitle = r.song.replace(/"/g, '&quot;');
+                            html += `
+                                <div class="entry ${isHighlighted}">
+                                    <span class="position">${index + 1}.</span> 
+                                    <span class="font-bold text-white">${r.artist}</span><br/>
+                                    <span style="margin-left:1.5em; font-size:0.85em; color:var(--text-muted);">"${safeTitle}"</span>
+                                </div>
+                            `;
+                            totalEntries++;
+                        });
+                    }
+
+                    if (totalEntries === 0) {
+                        html = '<div style="text-align: center; padding: 50px; color: var(--color-plat);">Queue is empty! Time to submit!</div>';
+                    }
+                    
+                    queueDiv.innerHTML = html + `<div class="footer">Showing top ${paidArtists.length + regularSorted.length} entries across Paid Skips and Regular Queue.</div>`;
+                } catch (err) {
+                    console.error('❌ Fetch/Parse Error:', err);
+                    queueDiv.innerHTML = '<div style="text-align: center; padding: 50px; color: #ff4757;">Failed to load queue data. Check console.</div>';
+                }
+            }
+        };
+
+        /* --- SCHEDULE (NEW MODULE) --- */
+        const Schedule = {
+            TWITCH_SCHEDULE_URL: 'https://www.twitch.tv/neverendever/schedule',
+            
+            // Converts UTC date object to a localized string (e.g., 'Saturday @ 7:30 PM EST')
+            formatNextStreamTime: (nextStreamTime) => {
+                const options = { weekday: 'short', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', timeZoneName: 'short', timeZone: 'America/New_York' };
+                // Force EST/EDT display regardless of user's timezone
+                const formatted = nextStreamTime.toLocaleString('en-US', {
+                    ...options,
+                    hour12: true
+                });
+                
+                // Custom formatting to ensure 'EST' or 'EDT' is last and clear
+                // Example: Sat, 11/22, 7:30 PM EST
+                const parts = formatted.split(', ');
+                const dateParts = parts[1].split(' ');
+                const day = parts[0];
+                const date = dateParts[0].replace(',', ''); 
+                const time = dateParts[1];
+                const timeZonePart = parts.find(p => p.includes('EST') || p.includes('EDT')) || 'EST';
+                
+                return `${day.replace(',', '')} ${date} @ ${time} ${timeZonePart.trim()}`;
+            },
+
+            getSchedule: async () => {
+                const scheduleBox = document.getElementById('schedule-box');
+                scheduleBox.innerHTML = '<i class="fas fa-calendar-alt fa-spin"></i> Checking schedule...';
+                scheduleBox.style.backgroundColor = 'var(--color-plat)';
+                scheduleBox.style.color = 'black';
+                
+                // --- RELIABLE FALLBACK LOGIC: Saturday at 7:30 PM EST ---
+                const DAY_OF_WEEK = 6; // 6 = Saturday (0=Sunday)
+                const HOUR = 19; // 7 PM (24-hour format)
+                const MINUTE = 30; // 30 minutes
+
+                const now = new Date();
+                // Find the next Saturday, including today if the time hasn't passed
+                let nextStreamTime = new Date(now);
+                nextStreamTime.setHours(HOUR, MINUTE, 0, 0); // Set time to 7:30 PM today
+
+                const daysUntilNextSaturday = (DAY_OF_WEEK - nextStreamTime.getDay() + 7) % 7;
+                nextStreamTime.setDate(nextStreamTime.getDate() + daysUntilNextSaturday);
+
+                // Check if the current time is AFTER 7:30 PM on the current Saturday. 
+                // If the stream was supposed to be today (daysUntilNextSaturday === 0) 
+                // AND the time has passed (now > nextStreamTime), advance to next week.
+                if (daysUntilNextSaturday === 0 && now.getTime() > nextStreamTime.getTime()) {
+                    nextStreamTime.setDate(nextStreamTime.getDate() + 7);
+                }
+                
+                const formattedTime = Schedule.formatNextStreamTime(nextStreamTime);
+
+                scheduleBox.innerHTML = `<i class="fas fa-calendar-alt"></i> NEXT STREAM: ${formattedTime}`;
+                // Set the link to the schedule page
+                scheduleBox.setAttribute('onclick', `window.open('${Schedule.TWITCH_SCHEDULE_URL}', '_blank')`);
+            }
+        };
+
+
+        /* --- INIT & DATA FETCHING --- */
+        (async () => {
+            Auth.render();
+            Schedule.getSchedule(); // Load schedule on initialization
+
+            const get = async (id, q) => {
+                const url = `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?${q}`;
+                
+                // Exponential backoff retry function
+                const fetchWithRetry = async (url, retries = 3) => {
+                    for (let i = 0; i < retries; i++) {
+                        try {
+                            const response = await fetch(url);
+                            if (!response.ok) throw new Error('Network response was not ok.');
+                            const text = await response.text();
+                            return JSON.parse(text.substring(47).slice(0, -2));
+                        } catch (error) {
+                            if (i < retries - 1) {
+                                await new Promise(resolve => setTimeout(resolve, Math.pow(2, i) * 1000));
+                            } else {
+                                throw error;
+                            }
+                        }
+                    }
+                };
+
+                return fetchWithRetry(id === DB.id ? url + '&sheet=Master Ratings' : url);
+            }
+            
+            try {
+                // Fetch Master Ratings
+                const m = await get(DB.id, 'sheet=Master Ratings');
+                const h = m.table.cols.map(c => c.label||'');
+                const wI = h.findIndex(x=>x.toLowerCase().includes('weighted'));
+                const nI = h.findIndex(x=>x.toLowerCase()==='name');
+                
+                State.cols = ['Rank', 'Like', ...h.filter((_,i)=>i!==wI)];
+                State.rows = m.table.rows.map((r,i) => {
+                    const n = r.c[nI]?.v || '';
+                    if(!State.meta[n]) State.meta[n] = {};
+                    // Store weighted score in metadata for easier profile lookup
+                    State.meta[n].weighted = wI>-1 && r.c[wI] ? parseFloat(r.c[wI].v).toFixed(2) : '-';
+                    // Extract data columns, excluding weighted
+                    const cl = r.c.filter((_,x)=>x!==wI).map(c=>c?(c.f||c.v):'');
+                    // Prefix Rank and Like columns
+                    return [i+1, '', ...cl];
+                });
+
+                // Fetch Song Data
+                const s = await get(DB.sid, `gid=${DB.gid}`);
+                const sh = s.table.cols.map(c => (c.label||'').toLowerCase());
+                const si = {
+                    date: sh.findIndex(x=>x.includes('date')||x.includes('time')),
+                    artist: sh.findIndex(x=>x.includes('artist')||x.includes('name')),
+                    title: sh.findIndex(x=>x.includes('title')),
+                    score: sh.findIndex(x=>x.includes('score')&&!x.includes('weighted')),
+                    link: sh.findIndex(x=>x.includes('link')||x.includes('url'))
+                };
+                
+                State.songs = s.table.rows.map((r, i) => ({
+                    id: i, // Add a simple unique ID for playlist tracking
+                    date: r.c[si.date]?(r.c[si.date].f||r.c[si.date].v):'',
+                    artist: r.c[si.artist]?(r.c[si.artist].v||'').trim():'',
+                    title: r.c[si.title]?(r.c[si.title].v||''):'',
+                    score: r.c[si.score]?parseFloat(r.c[si.score].v):0,
+                    link: r.c[si.link]?r.c[si.link].v:null
+                })).filter(x=>x.artist);
+
+                localStorage.setItem('endever_meta', JSON.stringify(State.meta));
+                
+                // --- GLOBAL STATS CALCULATION & RENDERING ---
+                const allScores = State.songs.map(s => s.score).filter(n => !isNaN(n));
+                const totalSongs = State.songs.length;
+                const globalAvg = totalSongs ? (allScores.reduce((a, b) => a + b, 0) / totalSongs).toFixed(2) : 'N/A';
+                const totalArtists = State.rows.length;
+                
+                const globalAvgColor = scoreToColor(parseFloat(globalAvg) || 5);
+                const totalTracksColor = 'var(--accent-primary)';
+                const totalArtistsColor = 'var(--accent-secondary)';
+
+                const statsBar = document.getElementById('global-stats-bar');
+                if (statsBar) {
+                    statsBar.innerHTML = `
+                        ${renderStatItem('Total Artists', totalArtists, 'fas fa-users', totalArtistsColor, "The total number of unique artists who have submitted tracks for review.")}
+                        ${renderStatItem('Total Tracks', totalSongs, 'fas fa-music', totalTracksColor, "The total number of tracks that have been submitted and received a host score.")}
+                        ${renderStatItem('Global Avg Score', globalAvg, 'fas fa-star', globalAvgColor, "The average score across ALL tracks reviewed on the platform.")}
+                        
+                        <div class="global-chart-container">
+                            <div class="flex flex-col flex-grow min-w-0">
+                                <div class="global-stat-label mb-1">Global Score Distribution</div>
+                                <div class="mini-chart">
+                                    <canvas id="g-c-dist"></canvas>
+                                </div>
+                            </div>
+                            <div class="flex flex-col flex-grow min-w-0">
+                                <div class="global-stat-label mb-1">Total Tracks Trend (Mock)</div>
+                                <div class="mini-chart">
+                                    <canvas id="g-c-trend"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                App.renderGlobalCharts(allScores);
+                // --- END GLOBAL STATS ---
+
+                App.render();
+            } catch(e){
+                console.error('Failed to load data from Google Sheets:', e);
+                document.getElementById('main-table-area').innerHTML = '<div class="p-10 text-center text-red-400"><i class="fas fa-exclamation-triangle mr-2"></i> Failed to load live data. Check console for details.</div>';
+            }
+        })();
+        
+        let sortD = 1;
+        window.sortRow = (i) => { 
+            sortD*=-1; 
+            // Get the index of the first actual data column (after Rank and Like)
+            const dataIndex = i; 
+            
+            State.rows.sort((a,b)=> { 
+                const vA=a[dataIndex],vB=b[dataIndex]; 
+                const nA=parseFloat(vA), nB=parseFloat(vB); 
+                
+                // Numeric sort preference
+                if(!isNaN(nA) && !isNaN(nB)) return (nA-nB) * sortD; 
+                
+                // Fallback to string comparison
+                return String(vA).localeCompare(String(vB)) * sortD; 
+            }); 
+            App.render(); 
+        }
+
+        // Global key listeners for modal closing
+        document.addEventListener('keydown', e=>{if(e.key==='Escape'){Profile.close(); Dash.close(); Auth.close(); Queue.close();} });
+
+        // Score Breakdown Tooltip Logic (New)
+        const scoreInfo = document.querySelector('#app-info-bar > span:last-child');
+        const scoreTooltip = document.getElementById('score-breakdown-tooltip');
+        
+        let tooltipTimeout;
+
+        scoreInfo.addEventListener('mouseenter', () => {
+            clearTimeout(tooltipTimeout);
+            // Hide all tooltips before showing this one
+            document.querySelectorAll('[title]').forEach(el => {
+                // Store original title content if it exists
+                if (el !== scoreInfo && el.title) {
+                    el.setAttribute('data-original-title', el.title);
+                    el.removeAttribute('title');
+                }
+            });
+            scoreTooltip.classList.remove('hidden');
+        });
+
+        scoreInfo.addEventListener('mouseleave', () => {
+            tooltipTimeout = setTimeout(() => {
+                scoreTooltip.classList.add('hidden');
+                // Restore original title content
+                document.querySelectorAll('[data-original-title]').forEach(el => {
+                    el.setAttribute('title', el.getAttribute('data-original-title'));
+                    el.removeAttribute('data-original-title');
+                });
+            }, 300); // 300ms delay before hiding
+        });
+
+    </script>
+ <!-- Footer -->
+  <footer>
+    Placeholder footer — update as needed.
+  </footer>
+</body>
+</html>

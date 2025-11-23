@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PAGE TITLE</title>
+  <link rel="stylesheet" href="/styles/staticsidebar.css">
+  <script src="/scripts/staticsidebar.js" defer></script>
+</head>
+<body>
+  <!-- Sidebar injected first -->
+  <div id="sidebar-container"></div>
+
+  <main>
+    <h1>PAGE TITLE</h1>
+    <!-- Page-specific content goes here -->
+  </main>
+
+  <script>
+    // Load sidebar HTML into container
+    fetch("/staticsidebar")
+      .then(res => res.text())
+      .then(html => {
+        document.getElementById("sidebar-container").innerHTML = html;
+      });
+  </script>
+</body>
+</html>
