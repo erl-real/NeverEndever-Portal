@@ -1,0 +1,61 @@
+
+/* Overlay text centered */
+.video-overlay {
+  position: absolute;
+  width: 100%;
+ inset: 0;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 4rem;
+}
+/* Reset and base styles */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  font-family: "Montserrat", sans-serif;
+}
+
+/* Container locks video to screen size */
+.video-container {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  z-index: -1;
+}
+
+/* Video fills screen, maintains aspect ratio */
+.video-bg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  min-width: 100%;
+  min-height: 100%;
+  transform: translate(-50%, -50%);
+  object-fit: cover;
+  z-index: -1;
+}
+
+/* Overlay content centered */
+.video-overlay {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  z-index: 1;
+  color: white;
+  background: rgba(0, 0, 0, 0.4); /* optional tint */
+}
+
+.video-overlay h1 {
+  font-size: calc(2rem + 2vw);
+  font-weight: 700;
+  text-shadow: 0 0 10px rgba(0,0,0,0.6);
+}
+
