@@ -1,158 +1,933 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Glider Sidebar</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artist Dashboard | Endever Live</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- CORE THEME & DASHBOARD CSS --- */
+        :root {
+            --bg-app: #050505;
+            --bg-panel: #0a0a0e;
+            --card-bg: rgba(15, 16, 22, 0.6);
+            --border: rgba(255, 255, 255, 0.08);
+            --emerald: #00f5d4; /* Primary Accent */
+            --purple: #9d4edd;   /* Secondary Accent */
+            --gold: #ffd700;     /* Premium Accent */
+            --text-main: #f0f0f0; 
+            --text-muted: #9ca3af;
+            --sidebar-width: 260px;
+            --header-height: 70px;
+        }
 
-  <!-- Ionicons + Font Awesome -->
-  <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+        * { box-sizing: border-box; outline: none; }
 
-  <!-- Styles -->
-  <link rel="stylesheet" href="/styles/sidebarmaintheme.css" />
-  <link rel="stylesheet" href="/styles/sidebartheme.css" />
+        body { 
+            margin: 0; 
+            font-family: 'Inter', sans-serif; 
+            background: var(--bg-app); 
+            color: var(--text-main); 
+            height: 100vh; 
+            overflow: hidden; 
+            display: flex; 
+        }
+
+        /* --- SIDEBAR --- */
+        .dash-sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-panel);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            flex-shrink: 0;
+            z-index: 20;
+        }
+
+        .sidebar-header {
+            display: flex; align-items: center; gap: 12px; margin-bottom: 40px; padding-left: 10px;
+        }
+        
+        /* NEW BRANDING STYLES (Based on ELO) */
+        .sidebar-brand-link {
+            font-family: 'Inter', sans-serif; 
+            font-size: 1.2rem; 
+            font-weight: 800; 
+            display: flex;
+            align-items: center;
+            cursor: default;
+        }
+        .sidebar-brand-text {
+            background: linear-gradient(to right, var(--purple), var(--emerald)); 
+            -webkit-background-clip: text; 
+            background-clip: text; 
+            color: transparent;
+        }
+        .sidebar-brand-icon {
+            color: var(--emerald); 
+            margin-right: 8px;
+            font-size: 1em;
+        }
+        /* END NEW BRANDING */
+        
+        .sidebar-menu { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+
+        .nav-btn {
+            background: transparent; border: none; color: var(--text-muted);
+            text-align: left; padding: 12px 16px; border-radius: 8px; cursor: pointer;
+            font-size: 0.95rem; display: flex; align-items: center; gap: 12px;
+            transition: all 0.2s;
+        }
+        .nav-btn:hover { color: white; background: rgba(255, 255, 255, 0.05); }
+        .nav-btn.active { background: rgba(0, 245, 212, 0.1); color: var(--emerald); font-weight: 600; }
+        .nav-btn i { width: 20px; text-align: center; }
+        
+        .badge-pro {
+            margin-left: auto; font-size: 0.6rem; background: var(--purple);
+            color: white; padding: 2px 6px; border-radius: 4px; font-weight: 700;
+        }
+        .badge-store {
+            margin-left: auto; font-size: 0.6rem; background: var(--gold);
+            color: black; padding: 2px 6px; border-radius: 4px; font-weight: 700;
+        }
+
+        .sidebar-footer {
+            border-top: 1px solid var(--border); padding-top: 20px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .user-mini-profile { display: flex; align-items: center; gap: 10px; }
+        .mini-avatar {
+            width: 36px; height: 36px; background: #333; border-radius: 50%;
+            border: 2px solid var(--emerald); background-size: cover; background-position: center;
+        }
+        .mini-info { display: flex; flex-direction: column; }
+        .mini-name { font-size: 0.85rem; font-weight: 600; color: white; }
+        .mini-role { font-size: 0.7rem; color: var(--text-muted); }
+        .logout-btn { background: none; border: none; color: #6b7280; cursor: pointer; }
+        .logout-btn:hover { color: #ef4444; }
+
+        /* --- MAIN CONTENT --- */
+        .dash-content {
+            flex: 1; display: flex; flex-direction: column;
+            background: radial-gradient(circle at 90% 10%, #1a1b26 0%, #050505 40%);
+            overflow-y: auto; position: relative;
+        }
+
+        /* HEADER */
+        .dash-header {
+            height: var(--header-height); display: flex; align-items: center;
+            justify-content: space-between; padding: 0 40px;
+            border-bottom: 1px solid var(--border); background: rgba(5, 5, 8, 0.8);
+            backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 10;
+        }
+
+        .header-actions { display: flex; align-items: center; gap: 20px; }
+
+        .credit-balance {
+            background: rgba(0, 0, 0, 0.4); border: 1px solid var(--border);
+            padding: 6px 16px; border-radius: 20px; display: flex; align-items: center;
+            gap: 8px; cursor: pointer; transition: border-color 0.2s;
+        }
+        .credit-balance:hover { border-color: var(--emerald); }
+        .add-credit-icon { color: #6b7280; font-size: 0.8rem; }
+
+        /* SECTIONS & ANIMATIONS */
+        .dash-view {
+            display: none; padding: 40px; max-width: 1200px; width: 100%; margin: 0 auto;
+            animation: fadeIn 0.3s ease;
+        }
+        .dash-view.active { display: block; }
+        @keyframes fadeIn { from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+
+        /* WELCOME / OVERVIEW */
+        .welcome-banner h1 { font-size: 2.5rem; margin-bottom: 10px; margin-top: 0; }
+        .welcome-banner p { color: var(--text-muted); margin-bottom: 20px; }
+        .text-emerald { color: var(--emerald); }
+
+        .setup-progress {
+            background: rgba(255,255,255,0.05); border-radius: 8px; padding: 15px; max-width: 500px;
+        }
+        .progress-label { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 5px; color: var(--text-muted); }
+        .progress-track { height: 6px; background: #222; border-radius: 3px; overflow:hidden; }
+        .progress-fill { height: 100%; background: var(--emerald); transition: width 1s ease; }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 40px; }
+        .stat-card { background: var(--card-bg); border: 1px solid var(--border); padding: 25px; border-radius: 12px; }
+        .stat-icon { font-size: 1.5rem; color: var(--purple); margin-bottom: 10px; }
+        .stat-value { font-size: 2rem; font-weight: 800; font-family: 'JetBrains Mono'; }
+        .stat-label { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+
+        /* FORMS & GRIDS */
+        .settings-grid, .visuals-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .span-2 { grid-column: span 2; }
+        .span-full { grid-column: 1 / -1; }
+
+        .panel-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid var(--border);
+        }
+
+        .form-group { display: flex; flex-direction: column; gap: 8px; }
+        .form-group label { font-size: 0.85rem; color: #d1d5db; font-weight: 600; }
+        .form-group input, .form-group select, .form-group textarea {
+            background: rgba(0,0,0,0.3); border: 1px solid var(--border);
+            padding: 12px; border-radius: 6px; color: white; font-family: 'Inter';
+        }
+        .form-group input:focus { border-color: var(--emerald); }
+        .input-prefix { 
+            display: flex; align-items: center; background: rgba(0,0,0,0.3); 
+            border: 1px solid var(--border); border-radius: 6px; overflow: hidden;
+        }
+        .input-prefix span { padding: 0 12px; background: rgba(255,255,255,0.05); color: #888; font-size: 0.9rem; border-right: 1px solid var(--border); }
+        .input-prefix input { border: none; background: transparent; width: 100%; }
+        .input-prefix input:focus { border: none; box-shadow: none; }
+
+        .section-divider {
+            margin: 30px 0 15px 0; border-bottom: 1px solid var(--border);
+            color: var(--emerald); font-size: 0.8rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+
+        /* STORE & SERVICES */
+        .store-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; margin-bottom: 40px; }
+        
+        .store-item {
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 12px; padding: 20px; display: flex; flex-direction: column;
+            transition: 0.2s; position: relative; overflow: hidden;
+        }
+        .store-item:hover { border-color: var(--purple); transform: translateY(-5px); }
+        
+        .item-preview {
+            height: 100px; background: rgba(0,0,0,0.3); border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 15px; font-size: 2rem; color: var(--text-muted);
+        }
+        .item-name { font-weight: 700; font-size: 0.9rem; margin-bottom: 5px; }
+        .item-desc { font-size: 0.75rem; color: var(--text-muted); flex-grow: 1; margin-bottom: 15px; }
+        .item-price { font-family: 'JetBrains Mono'; font-weight: 700; color: var(--emerald); font-size: 0.9rem; }
+        
+        .btn-buy {
+            width: 100%; background: transparent; border: 1px solid var(--purple);
+            color: var(--purple); padding: 8px; border-radius: 6px; cursor: pointer;
+            font-weight: 600; transition: 0.2s; margin-top: 10px;
+        }
+        .btn-buy:hover { background: var(--purple); color: white; }
+        .btn-buy.unlocked { border-color: var(--emerald); color: var(--emerald); cursor: default; }
+        .btn-buy.unlocked:hover { background: transparent; }
+
+        /* SERVICE CARDS */
+        .services-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 40px; }
+        .service-card {
+            background: linear-gradient(145deg, rgba(157, 77, 221, 0.1), rgba(0,0,0,0));
+            border: 1px solid var(--purple); border-radius: 12px; padding: 25px;
+            position: relative; overflow: hidden;
+        }
+        .service-card h3 { margin-top: 0; margin-bottom: 10px; font-size: 1.2rem; }
+        .service-card p { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px; }
+        .service-icon { position: absolute; top: -10px; right: -10px; font-size: 5rem; opacity: 0.1; color: var(--purple); }
+
+        .btn-service {
+            background: var(--purple); color: white; border: none; padding: 10px 20px;
+            border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 0.85rem;
+        }
+        .btn-service:hover { filter: brightness(1.1); }
+
+        /* UPLOAD ZONE */
+        .upload-zone {
+            border: 2px dashed var(--border); border-radius: 8px; padding: 30px;
+            text-align: center; color: #6b7280; cursor: pointer; transition: 0.2s;
+            display: flex; flex-direction: column; align-items: center; gap: 10px;
+            position: relative; overflow: hidden;
+        }
+        .upload-zone:hover { border-color: var(--emerald); color: white; }
+        .upload-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+        .upload-preview {
+            width: 100px; height: 100px; border-radius: 50%; background-size: cover; background-position: center;
+            display: none; margin-bottom: 10px; border: 2px solid var(--emerald);
+        }
+
+        /* VERIFICATION */
+        .verification-container { max-width: 600px; margin: 0 auto; text-align: center; }
+        .verify-icon { font-size: 4rem; margin-bottom: 20px; }
+        .verify-steps { display: flex; justify-content: space-between; margin: 40px 0; position: relative; }
+        .verify-steps::before {
+            content: ''; position: absolute; top: 20px; left: 0; right: 0;
+            height: 2px; background: #333; z-index: 0;
+        }
+        .step-item { position: relative; z-index: 1; background: #050505; padding: 0 10px; }
+        .step-num {
+            width: 40px; height: 40px; background: #333; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; margin: 0 auto 10px;
+            font-weight: 700;
+        }
+        .step-item.completed .step-num { background: var(--emerald); color: black; }
+        .step-item.active .step-num { border: 2px solid var(--emerald); color: var(--emerald); }
+        .verify-form { background: var(--card-bg); padding: 30px; border-radius: 12px; border: 1px solid var(--border); text-align: left; display: flex; flex-direction: column; gap: 15px; }
+
+        /* WALLET / AURA */
+        .credit-packages { display: flex; gap: 20px; justify-content: center; margin-top: 20px; }
+        .credit-pack {
+            background: var(--card-bg); border: 1px solid var(--border);
+            padding: 30px; border-radius: 12px; text-align: center; width: 200px;
+            position: relative; transition: 0.2s;
+        }
+        .credit-pack:hover { transform: translateY(-5px); border-color: var(--emerald); }
+        .credit-pack.best-value { border-color: var(--purple); box-shadow: 0 0 20px rgba(157, 77, 221, 0.2); }
+        .pack-amount { font-size: 1.5rem; font-weight: 800; font-family: 'JetBrains Mono'; color: white; }
+        .pack-price { font-size: 1.2rem; color: var(--text-muted); margin: 10px 0 20px 0; }
+        .badge {
+            position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+            background: var(--purple); color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 700;
+        }
+
+        /* BUTTONS */
+        .btn-emerald { background: var(--emerald); color: black; border: none; padding: 12px 20px; border-radius: 6px; font-weight: 700; cursor: pointer; width: 100%; transition: 0.2s; }
+        .btn-emerald:hover { filter: brightness(1.1); transform: translateY(-1px); }
+        .btn-emerald-sm { background: var(--emerald); color: black; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; }
+        .btn-outline { background: transparent; border: 1px solid white; color: white; padding: 10px 20px; border-radius: 6px; cursor: pointer; width: 100%; }
+        .btn-outline:hover { background: white; color: black; }
+
+        /* MOBILE RESPONSIVE */
+        @media (max-width: 768px) {
+            body { flex-direction: column; overflow-y: auto; height: auto; }
+            .dash-sidebar { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
+            .dash-header { padding: 0 20px; }
+            .stats-grid, .settings-grid, .visuals-grid, .services-row, .store-grid { grid-template-columns: 1fr; }
+            .span-2 { grid-column: auto; }
+            .credit-packages { flex-direction: column; align-items: center; }
+            .credit-pack { width: 100%; max-width: 300px; }
+        }
+    </style>
 </head>
 <body>
-  <!-- Toggle Button -->
-  <button id="toggleSidebar" class="toggle-btn" aria-label="Toggle sidebar">
-    <div class="burger-menu">
-      <span class="burger-bun burger-bun--top"></span>
-      <span class="burger-bun burger-bun--mid"></span>
-      <span class="burger-bun burger-bun--bottom"></span>
-    </div>
-  </button>
 
-  <!-- Sidebar -->
-  <div class="sidebar-wrapper" id="sidebar">
-    <div class="sidebar-inner">
-      <aside class="radio-nav" style="--total-radio:24">
-        <div class="radio-nav-container">
-          <!-- Core Nav Items -->
-          <!-- Core Navigation static pages only and shorten later-->
-<input type="radio" id="nav-home" name="nav-menu" checked />
-<label for="nav-home"><i class="ion-home"></i><a href="/index">Home</a></label>
-
-<input type="radio" id="nav-notifications" name="nav-menu" />
-<label for="nav-notifications"><i class="ion-ios-bell"></i><a href="pages/notifications">Notifications</a></label>
-
-<input type="radio" id="nav-features" name="nav-menu" />
-<label for="nav-features"><i class="ion-flash"></i><a href="/pages/features">New Features</a></label>
-
-<input type="radio" id="nav-elo" name="nav-menu" />
-<label for="nav-elo"><i class="ion-ios-people"></i><a href="/pages/elo">ELO</a></label>
-
-<input type="radio" id="nav-submit" name="nav-menu" />
-<label for="nav-submit"><i class="ion-compose"></i><a href="/pages/submit">Submit to Twitch</a></label>
-
-<input type="radio" id="nav-live" name="nav-menu" />
-<label for="nav-live"><i class="ion-grid"></i><a href="/pages/live">Who's Live?</a></label>
-
-<input type="radio" id="nav-downloads" name="nav-menu" />
-<label for="nav-downloads"><i class="ion-folder"></i><a href="/pages/downloads">Downloads</a></label>
-
-<input type="radio" id="nav-services" name="nav-menu" />
-<label for="nav-services"><i class="ion-paintbrush"></i><a href="/pages/services">Services</a></label>
-
-<input type="radio" id="nav-profile" name="nav-menu" />
-<label for="nav-profile"><i class="ion-person"></i><a href="/pages/profile">Profile</a></label>
-
-<input type="radio" id="nav-messageboard" name="nav-menu" />
-<label for="nav-messageboard"><i class="ion-chatboxes"></i><a href="/pages/messageboard">Message Board</a></label>
-
-<input type="radio" id="nav-feed" name="nav-menu" />
-<label for="nav-feed"><i class="ion-ios-paper"></i><a href="/pages/feed">Feed</a></label>
-
-<input type="radio" id="nav-analytics" name="nav-menu" />
-<label for="nav-analytics"><i class="ion-stats-bars"></i><a href="/pages/analytics">Analytics</a></label>
-
-<input type="radio" id="nav-staffdashboard" name="nav-menu" />
-<label for="nav-staffdashboard"><i class="ion-wrench"></i><a href="/pages/staffdashboard">Staff Tools</a></label>
-
-<input type="radio" id="nav-dashboard" name="nav-menu" />
-<label for="nav-dashboard"><i class="ion-speedometer"></i><a href="/pages/dashboard">Dashboard</a></label>
-
-<input type="radio" id="nav-admin" name="nav-menu" />
-<label for="nav-admin"><i class="ion-locked"></i><a href="/pages/admin">Admin</a></label>
-
-<!-- Informational Pages -->
-<input type="radio" id="nav-about" name="nav-menu" />
-<label for="nav-about"><i class="ion-information-circled"></i><a href="/pages/about">About Us</a></label>
-
-<input type="radio" id="nav-pricing" name="nav-menu" />
-<label for="nav-pricing"><i class="ion-cash"></i><a href="/pages/pricing">Pricing</a></label>
-
-<input type="radio" id="nav-contact" name="nav-menu" />
-<label for="nav-contact"><i class="ion-email"></i><a href="/pages/contact">Contact</a></label>
-
-<input type="radio" id="nav-faq" name="nav-menu" />
-<label for="nav-faq"><i class="ion-help-buoy"></i><a href="/pages/faq">FAQ</a></label>
-
-<!-- Content / Community -->
-<input type="radio" id="nav-showcase" name="nav-menu" />
-<label for="nav-showcase"><i class="fa-solid fa-images"></i><a href="/pages/showcase">Showcase</a></label>
-
-<input type="radio" id="nav-playlist" name="nav-menu" />
-<label for="nav-playlist"><i class="fa-solid fa-list"></i><a href="/pages/playlist">Playlist</a></label>
-
-<input type="radio" id="nav-guidelines" name="nav-menu" />
-<label for="nav-guidelines"><i class="fa-solid fa-scale-balanced"></i><a href="/pages/guidelines">Community Guidelines</a></label>
-
-<input type="radio" id="nav-privacy" name="nav-menu" />
-<label for="nav-privacy"><i class="fa-solid fa-user-shield"></i><a href="/pages/privacy">Privacy Policy</a></label>
-
-<input type="radio" id="nav-reviews" name="nav-menu" />
-<label for="nav-reviews"><i class="fa-solid fa-star"></i><a href="/pages/reviews">Reviews</a></label>
-
-<input type="radio" id="nav-partners" name="nav-menu" />
-<label for="nav-partners"><i class="fa-solid fa-handshake"></i><a href="/pages/partners">Partners</a></label>
-
-<input type="radio" id="nav-terms" name="nav-menu" />
-<label for="nav-terms"><i class="fa-solid fa-file-contract"></i><a href="/pages/terms">Terms of Service</a></label>
-
-<input type="radio" id="nav-news" name="nav-menu" />
-<label for="nav-news"><i class="fa-solid fa-newspaper"></i><a href="/pages/news">News</a></label>
-
-<input type="radio" id="nav-games" name="nav-menu" />
-<label for="nav-games"><i class="fa-solid fa-gamepad"></i><a href="/pages/games">Games</a></label>
-
-<input type="radio" id="nav-artist" name="nav-menu" />
-<label for="nav-artist"><i class="fa-solid fa-paintbrush"></i><a href="/pages/artist">Affiliated Artist</a></label>
-
-<input type="radio" id="nav-products" name="nav-menu" />
-<label for="nav-products"><i class="fa-solid fa-box-open"></i><a href="/pages/products">Products</a></label>
-
-<input type="radio" id="nav-merch" name="nav-menu" />
-<label for="nav-merch"><i class="fa-solid fa-shirt"></i><a href="/pages/merch">Merch</a></label>
-
-<input type="radio" id="nav-amv" name="nav-menu" />
-<label for="nav-amv"><i class="fa-solid fa-film"></i><a href="/pages/amv">AMV</a></label>
-
-<input type="radio" id="nav-members" name="nav-menu" />
-<label for="nav-members"><i class="fa-solid fa-lock"></i><a href="/pages/members">Members Only</a></label>
-
-<!-- External / Social -->
-<input type="radio" id="nav-twitch" name="nav-menu" />
-<label for="nav-twitch"><i class="fa-brands fa-twitch"></i><a href="https://twitch.tv/neverendever" target="_blank">Twitch</a></label>
-
-<input type="radio" id="nav-discord" name="nav-menu" />
-<label for="nav-discord"><i class="fa-brands fa-discord"></i><a href="https://discord.gg/7KHEXXTaVG" target="_blank">Discord</a></label>
-
-<input type="radio" id="nav-youtube" name="nav-menu" />
-<label for="nav-youtube"><i class="fa-brands fa-youtube"></i><a href="https://www.youtube.com/@NEVRAMV" target="_blank">YouTube</a></label>
-
-<input type="radio" id="nav-instagram" name="nav-menu" />
-<label for="nav-instagram"><i class="fa-brands fa-instagram"></i><a href="https://www.instagram.com/endeverrecords/" target="_blank">Instagram</a></label>
-
-          <!-- Glider -->
-          <div class="glider-container">
-            <div class="glider"></div>
-          </div>
+    <!-- SIDEBAR NAVIGATION -->
+    <nav class="dash-sidebar">
+        <div class="sidebar-header">
+            <!-- BRAND LOGO (Restored ELO Style) -->
+            <div class="sidebar-brand-link">
+                <i class="fas fa-star sidebar-brand-icon" title="Endever Live Platform"></i>
+                <span class="sidebar-brand-text">Endever Live</span>
+            </div>
         </div>
-      </aside>
-    </div>
-  </div>
-  <!-- Sidebar logic -->
-  <script src="/scripts/staticsidebar.js" defer></script>
+
+        <div class="sidebar-menu">
+            <button class="nav-btn active" data-tab="overview">
+                <i class="fas fa-home"></i> <span>Overview</span>
+            </button>
+            <button class="nav-btn" data-tab="profile">
+                <i class="fas fa-sliders-h"></i> <span>Edit Profile</span>
+            </button>
+            <button class="nav-btn" data-tab="visuals">
+                <i class="fas fa-paint-brush"></i> <span>Visuals & Theme</span>
+            </button>
+            <button class="nav-btn" data-tab="verification">
+                <i class="fas fa-check-circle"></i> <span>Claim Artist ID</span>
+            </button>
+            <button class="nav-btn" data-tab="store">
+                <i class="fas fa-shopping-cart"></i> <span>Store</span>
+                <span class="badge-store">NEW</span>
+            </button>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="user-mini-profile">
+                <div class="mini-avatar" id="mini-avatar"></div>
+                <div class="mini-info">
+                    <span class="mini-name" id="sidebar-username">Loading...</span>
+                    <span class="mini-role">Producer</span>
+                </div>
+            </div>
+            <button class="logout-btn" onclick="window.location.href='login.html'"><i class="fas fa-sign-out-alt"></i></button>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="dash-content">
+        
+        <!-- TOP BAR -->
+        <header class="dash-header">
+            <h2 id="page-title">Dashboard</h2>
+            <div class="header-actions">
+                <div class="credit-balance" onclick="Dashboard.switchTab('store')">
+                    <i class="fas fa-bolt text-emerald"></i>
+                    <span id="credit-display" class="font-mono">0 Aura</span>
+                    <i class="fas fa-plus-circle add-credit-icon"></i>
+                </div>
+                <button class="logout-btn"><i class="fas fa-bell"></i></button>
+            </div>
+        </header>
+
+        <!-- TAB: OVERVIEW -->
+        <section id="tab-overview" class="dash-view active">
+            <div class="welcome-banner">
+                <h1>Welcome to the Collective, <span class="text-emerald" id="overview-name">Artist</span>.</h1>
+                <p>Complete your setup to rank on the ELO leaderboards.</p>
+                <div class="setup-progress">
+                    <div class="progress-label"><span>Profile Completion</span> <span id="prog-text">40%</span></div>
+                    <div class="progress-track"><div class="progress-fill" id="prog-bar" style="width: 40%"></div></div>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-trophy"></i></div>
+                    <div class="stat-value">Unranked</div>
+                    <div class="stat-label">Current ELO</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-heart"></i></div>
+                    <div class="stat-value">0</div>
+                    <div class="stat-label">Profile Likes</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-eye"></i></div>
+                    <div class="stat-value">0</div>
+                    <div class="stat-label">Total Views</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB: EDIT PROFILE (Core Settings) -->
+        <section id="tab-profile" class="dash-view">
+            <div class="panel-header">
+                <h3>Core Identity</h3>
+                <button class="btn-emerald-sm" onclick="Dashboard.saveSettings()">Save Changes</button>
+            </div>
+            
+            <div class="settings-grid">
+                <!-- Identity -->
+                <div class="form-group span-2">
+                    <label>1. Display Name <span style="color:var(--emerald)">*</span></label>
+                    <input type="text" id="set-displayname" placeholder="Stage Name">
+                </div>
+                <div class="form-group">
+                    <label>2. Tagline / Status</label>
+                    <input type="text" id="set-tagline" placeholder="Cooking up beats...">
+                </div>
+                <div class="form-group">
+                    <label>3. Location</label>
+                    <input type="text" id="set-location" placeholder="City, Country">
+                </div>
+                
+                <!-- Professional Info -->
+                <div class="form-group">
+                    <label>4. Primary Role</label>
+                    <select id="set-role">
+                        <option value="producer">Producer</option>
+                        <option value="vocalist">Vocalist</option>
+                        <option value="engineer">Audio Engineer</option>
+                        <option value="manager">Label / Manager</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>5. Primary Genre</label>
+                    <input type="text" id="set-genre" placeholder="e.g. Trap, House, RnB">
+                </div>
+                <div class="form-group">
+                    <label>6. DAW of Choice</label>
+                    <select id="set-daw">
+                        <option value="flstudio">FL Studio</option>
+                        <option value="ableton">Ableton Live</option>
+                        <option value="logic">Logic Pro</option>
+                        <option value="protools">Pro Tools</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>7. Collab Status</label>
+                    <select id="set-collab">
+                        <option value="open">Open to Collabs</option>
+                        <option value="paid">Paid Features Only</option>
+                        <option value="closed">Closed</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>8. Website / Portfolio URL</label>
+                    <input type="text" id="set-website" placeholder="www.yourname.com">
+                </div>
+                <div class="form-group">
+                    <label>9. Label Affiliation</label>
+                    <input type="text" id="set-label" placeholder="Independent or Label Name">
+                </div>
+
+                <!-- Bio -->
+                <div class="form-group span-full">
+                    <label>10. Artist Bio</label>
+                    <textarea id="set-bio" rows="4" placeholder="Tell your story..."></textarea>
+                </div>
+
+                <!-- Links -->
+                <div class="section-divider span-full"><span>Social Connections</span></div>
+                
+                <div class="form-group">
+                    <label>11. <i class="fab fa-spotify"></i> Spotify Artist URL</label>
+                    <input type="text" id="set-spotify" placeholder="https://open.spotify.com/...">
+                </div>
+                <div class="form-group">
+                    <label>12. <i class="fab fa-soundcloud"></i> SoundCloud URL</label>
+                    <input type="text" id="set-soundcloud">
+                </div>
+                <div class="form-group">
+                    <label>13. <i class="fab fa-instagram"></i> Instagram Handle</label>
+                    <div class="input-prefix"><span>@</span><input type="text" id="set-instagram"></div>
+                </div>
+                <div class="form-group">
+                    <label>14. <i class="fab fa-twitter"></i> X / Twitter</label>
+                    <div class="input-prefix"><span>@</span><input type="text" id="set-twitter"></div>
+                </div>
+                <div class="form-group">
+                    <label>15. <i class="fab fa-discord"></i> Discord Username</label>
+                    <input type="text" id="set-discord">
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB: VISUALS (Free Settings Only) -->
+        <section id="tab-visuals" class="dash-view">
+            <div class="panel-header">
+                <h3>Visual Customization (Free)</h3>
+                <span style="font-size: 0.8rem; color: var(--text-muted);">Premium items moved to Store</span>
+            </div>
+
+            <div class="visuals-grid">
+                <!-- Basic Uploads -->
+                <div class="visual-card">
+                    <h4>16. Profile Avatar</h4>
+                    <div class="upload-zone" id="upload-avatar-zone">
+                        <div class="upload-preview" id="avatar-preview"></div>
+                        <div id="avatar-placeholder">
+                            <i class="fas fa-cloud-upload-alt fa-2x"></i>
+                            <span>Click to Upload</span>
+                        </div>
+                        <input type="file" id="upload-avatar-input" accept="image/*">
+                    </div>
+                </div>
+                <div class="visual-card span-2">
+                    <h4>17. Banner Image</h4>
+                    <div class="upload-zone" id="upload-banner-zone">
+                        <i class="fas fa-image fa-2x"></i>
+                        <span>1920x400px Recommended</span>
+                        <input type="file" id="upload-banner-input" accept="image/*">
+                    </div>
+                </div>
+
+                <!-- Additional Theme Options -->
+                <div class="visual-card">
+                    <h4>18. Basic Profile Theme</h4>
+                    <select id="set-theme" style="width: 100%; background: #111; border: 1px solid #333; color: white; padding: 8px; border-radius: 4px; margin-top: 5px;">
+                        <option value="default">Endever Dark (Default)</option>
+                        <option value="midnight">Midnight Blue</option>
+                        <option value="mono">Monochrome</option>
+                    </select>
+                </div>
+                 <div class="visual-card">
+                    <h4>19. Display Font</h4>
+                    <select id="set-font" style="width: 100%; background: #111; border: 1px solid #333; color: white; padding: 8px; border-radius: 4px; margin-top: 5px;">
+                        <option value="inter">Inter (Default)</option>
+                        <option value="jetbrains">JetBrains Mono (Code)</option>
+                        <option value="poppins">Poppins (Bold)</option>
+                        <option value="serif">Playfair (Elegant)</option>
+                    </select>
+                </div>
+
+                <!-- Spotlight -->
+                <div class="form-group span-full">
+                    <label>20. Spotlight Track (Embed)</label>
+                    <input type="text" id="set-spotlight" placeholder="Paste SoundCloud or Spotify Embed Code">
+                    <p style="font-size: 0.75rem; color: #6b7280; margin-top: 5px;">This track will auto-play when users visit your profile.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB: VERIFICATION (Settings 23-25) -->
+        <section id="tab-verification" class="dash-view">
+            <div class="verification-container">
+                <div class="verify-header">
+                    <i class="fas fa-shield-alt text-emerald verify-icon"></i>
+                    <h2>Claim Your Artist Profile</h2>
+                    <p style="color: #9ca3af;">To link your account to the ELO Leaderboard, you must verify your identity.</p>
+                </div>
+
+                <div class="verify-steps">
+                    <div class="step-item completed">
+                        <div class="step-num"><i class="fas fa-check"></i></div>
+                        <div class="step-text" style="font-size: 0.8rem; margin-top: 5px;">Account</div>
+                    </div>
+                    <div class="step-item active">
+                        <div class="step-num">2</div>
+                        <div class="step-text" style="font-size: 0.8rem; margin-top: 5px;">Proof</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-num">3</div>
+                        <div class="step-text" style="font-size: 0.8rem; margin-top: 5px;">Review</div>
+                    </div>
+                </div>
+
+                <div class="verify-form">
+                    <label>21. Verification Method</label>
+                    <select id="verify-method" style="width: 100%; padding: 10px; margin-bottom: 15px; background: #111; color: white; border: 1px solid #333; border-radius: 6px;">
+                        <option>Instagram DM Confirmation</option>
+                        <option>Twitter Post Verification</option>
+                        <option>Spotify for Artists Screenshot</option>
+                    </select>
+                    
+                    <label>22. Proof Link / Upload</label>
+                    <input type="text" placeholder="Paste link to post or upload screenshot" style="width: 100%; padding: 10px; background: #111; color: white; border: 1px solid #333; border-radius: 6px;">
+                    
+                    <div style="margin-top: 15px; border-top: 1px solid #333; padding-top: 15px;">
+                        <label>23. Contact Email (Private)</label>
+                        <input type="email" style="width: 100%; padding: 10px; background: #111; color: white; border: 1px solid #333; border-radius: 6px; margin-bottom: 10px;">
+                        
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <input type="checkbox" id="verify-tos">
+                            <label for="verify-tos" style="font-size: 0.8rem; font-weight: 400;">24. I agree to the Terms of Service</label>
+                        </div>
+                         <div style="display: flex; gap: 10px; align-items: center; margin-top: 5px;">
+                            <input type="checkbox" id="verify-auth">
+                            <label for="verify-auth" style="font-size: 0.8rem; font-weight: 400;">25. I certify I am the artist listed above</label>
+                        </div>
+                    </div>
+
+                    <button class="btn-emerald full-width mt-4" onclick="Dashboard.submitClaim()">Submit for Review</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB: STORE (NEW) -->
+        <section id="tab-store" class="dash-view">
+            <div class="welcome-banner">
+                <h1>Aura Store</h1>
+                <p>Spend Aura on premium profile effects, exclusive services, and themes.</p>
+            </div>
+
+            <!-- SECTION 1: BUY AURA -->
+            <div class="credit-packages">
+                <div class="credit-pack">
+                    <div class="pack-amount">500 Aura</div>
+                    <div class="pack-price">$4.99</div>
+                    <button class="btn-outline" onclick="Dashboard.addCredits(500)">Purchase</button>
+                </div>
+                <div class="credit-pack best-value">
+                    <div class="badge">Best Value</div>
+                    <div class="pack-amount">1200 Aura</div>
+                    <div class="pack-price">$9.99</div>
+                    <button class="btn-emerald" onclick="Dashboard.addCredits(1200)">Purchase</button>
+                </div>
+                <div class="credit-pack">
+                    <div class="pack-amount">2500 Aura</div>
+                    <div class="pack-price">$19.99</div>
+                    <button class="btn-outline" onclick="Dashboard.addCredits(2500)">Purchase</button>
+                </div>
+            </div>
+
+            <!-- SECTION 2: PREMIUM SERVICES -->
+            <div class="section-divider">Premium Services</div>
+            <div class="services-row">
+                <div class="service-card">
+                    <i class="fas fa-video service-icon"></i>
+                    <h3>Purchase AMV</h3>
+                    <p>Professional Anime Music Video edited for your track.</p>
+                    <button class="btn-service" onclick="alert('Redirecting to AMV Request Form...')">Order Now (Starts at $50)</button>
+                </div>
+                <div class="service-card">
+                    <i class="fas fa-star service-icon"></i>
+                    <h3>Priority Review</h3>
+                    <p>Skip the queue. Get your track reviewed live next stream.</p>
+                    <button class="btn-service" onclick="alert('Redirecting to Priority Queue...')">Get Priority (2500 Aura)</button>
+                </div>
+                <div class="service-card">
+                    <i class="fas fa-handshake service-icon"></i>
+                    <h3>Other Services</h3>
+                    <p>Mixing, Mastering, Beat Leases, and Collabs.</p>
+                    <button class="btn-service" onclick="alert('Redirecting to Services Portal...')">View All Services</button>
+                </div>
+            </div>
+
+            <!-- SECTION 3: PROFILE COSMETICS -->
+            <div class="section-divider">Profile Effects & Glows</div>
+            <div class="store-grid">
+                <div class="store-item">
+                    <div class="item-preview"><i class="fas fa-sun" style="color:#00f5d4"></i></div>
+                    <div class="item-name">Neon Glow</div>
+                    <div class="item-desc">Cyan glow effect for your ranking row.</div>
+                    <div class="item-price">500 Aura</div>
+                    <button class="btn-buy" onclick="Dashboard.purchase('glow_neon')">Unlock</button>
+                </div>
+                <div class="store-item">
+                    <div class="item-preview"><i class="fas fa-sun" style="color:#ffd700"></i></div>
+                    <div class="item-name">Golden Glow</div>
+                    <div class="item-desc">Prestigious gold glow effect.</div>
+                    <div class="item-price">800 Aura</div>
+                    <button class="btn-buy" onclick="Dashboard.purchase('glow_gold')">Unlock</button>
+                </div>
+                <div class="store-item">
+                    <div class="item-preview"><i class="fas fa-fire" style="color:#ff4757"></i></div>
+                    <div class="item-name">Inferno Border</div>
+                    <div class="item-desc">Animated fire border for your avatar.</div>
+                    <div class="item-price">1200 Aura</div>
+                    <button class="btn-buy" onclick="Dashboard.purchase('border_fire')">Unlock</button>
+                </div>
+                <div class="store-item">
+                    <div class="item-preview"><i class="fas fa-snowflake" style="color:#a5b1c2"></i></div>
+                    <div class="item-name">Frost Effect</div>
+                    <div class="item-desc">Icy particle effects on your profile.</div>
+                    <div class="item-price">1200 Aura</div>
+                    <button class="btn-buy" onclick="Dashboard.purchase('effect_frost')">Unlock</button>
+                </div>
+                <div class="store-item">
+                    <div class="item-preview"><i class="fas fa-bolt" style="color:#9d4edd"></i></div>
+                    <div class="item-name">Storm Badge</div>
+                    <div class="item-desc">Exclusive lightning badge.</div>
+                    <div class="item-price">300 Aura</div>
+                    <button class="btn-buy" onclick="Dashboard.purchase('badge_storm')">Unlock</button>
+                </div>
+            </div>
+
+            <!-- SECTION 4: THEMES -->
+            <div class="section-divider">Premium Themes</div>
+            <div class="store-grid">
+                <div class="store-item">
+                    <div class="item-preview" style="background: linear-gradient(45deg, #ff00cc, #333399);"><i class="fas fa-palette"></i></div>
+                    <div class="item-name">Cyberpunk 2077</div>
+                    <div class="item-desc">Neon pinks, blues, and glitches.</div>
+                    <div class="item-price">1500 Aura</div>
+                    <button class="btn-buy" onclick="Dashboard.purchase('theme_cyber')">Unlock</button>
+                </div>
+                <div class="store-item">
+                    <div class="item-preview" style="background: linear-gradient(to right, #0f2027, #203a43, #2c5364);"><i class="fas fa-moon"></i></div>
+                    <div class="item-name">Midnight Glass</div>
+                    <div class="item-desc">Deep dark blues with glassmorphism.</div>
+                    <div class="item-price">1000 Aura</div>
+                    <button class="btn-buy" onclick="Dashboard.purchase('theme_midnight')">Unlock</button>
+                </div>
+                <div class="store-item">
+                    <div class="item-preview" style="background: linear-gradient(to right, #f12711, #f5af19);"><i class="fas fa-sun"></i></div>
+                    <div class="item-name">Sunset Blvd</div>
+                    <div class="item-desc">Warm orange and red gradients.</div>
+                    <div class="item-price">1000 Aura</div>
+                    <button class="btn-buy" onclick="Dashboard.purchase('theme_sunset')">Unlock</button>
+                </div>
+                 <div class="store-item">
+                    <div class="item-preview" style="background: #000; border: 1px solid #fff;"><i class="fas fa-ghost"></i></div>
+                    <div class="item-name">Phantom Black</div>
+                    <div class="item-desc">Ultra-minimalist OLED black theme.</div>
+                    <div class="item-price">2000 Aura</div>
+                    <button class="btn-buy" onclick="Dashboard.purchase('theme_phantom')">Unlock</button>
+                </div>
+            </div>
+
+            <!-- SECTION 5: AVATAR FRAMES -->
+            <div class="section-divider">Avatar Frames</div>
+             <div class="store-grid">
+                <div class="store-item">
+                    <div class="item-preview"><i class="fas fa-circle-notch fa-spin"></i></div>
+                    <div class="item-name">Spinning Tech</div>
+                    <div class="item-desc">Animated tech ring around avatar.</div>
+                    <div class="item-price">800 Aura</div>
+                    <button class="btn-buy" onclick="Dashboard.purchase('frame_tech')">Unlock</button>
+                </div>
+                <div class="store-item">
+                    <div class="item-preview"><i class="fas fa-crown" style="color:#ffd700"></i></div>
+                    <div class="item-name">King's Crown</div>
+                    <div class="item-desc">Gold crown overlay for your avatar.</div>
+                    <div class="item-price">5000 Aura</div>
+                    <button class="btn-buy" onclick="Dashboard.purchase('frame_king')">Unlock</button>
+                </div>
+                 <div class="store-item">
+                    <div class="item-preview"><i class="fas fa-headphones-alt"></i></div>
+                    <div class="item-name">Producer Headset</div>
+                    <div class="item-desc">Adds studio headphones to avatar.</div>
+                    <div class="item-price">600 Aura</div>
+                    <button class="btn-buy" onclick="Dashboard.purchase('frame_phones')">Unlock</button>
+                </div>
+                 <div class="store-item">
+                    <div class="item-preview"><i class="fas fa-record-vinyl fa-spin"></i></div>
+                    <div class="item-name">Vinyl Spinner</div>
+                    <div class="item-desc">Turns avatar into a spinning record.</div>
+                    <div class="item-price">900 Aura</div>
+                    <button class="btn-buy" onclick="Dashboard.purchase('frame_vinyl')">Unlock</button>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- DASHBOARD SCRIPT -->
+    <script>
+        const Dashboard = {
+            // Mock User Data
+            user: {
+                username: "ProducerX",
+                credits: 0,
+                role: "Producer",
+                settings: {
+                    avatar: null,
+                    unlockedItems: [] // Array to store purchased item IDs
+                }
+            },
+
+            init: function() {
+                this.loadMockData();
+                this.setupEventListeners();
+                this.updateUI();
+                this.checkPurchases();
+            },
+
+            loadMockData: function() {
+                const savedUser = localStorage.getItem('nee_artist_data');
+                if (savedUser) {
+                    this.user = JSON.parse(savedUser);
+                    if(!this.user.settings.unlockedItems) this.user.settings.unlockedItems = [];
+                } else {
+                    // Default User State for First Login
+                    this.user.credits = 100; 
+                }
+            },
+
+            setupEventListeners: function() {
+                // Tab Logic
+                document.querySelectorAll('.nav-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                        e.currentTarget.classList.add('active');
+                        
+                        document.querySelectorAll('.dash-view').forEach(view => view.classList.remove('active'));
+                        const tabId = e.currentTarget.getAttribute('data-tab');
+                        document.getElementById(`tab-${tabId}`).classList.add('active');
+                        
+                        const titles = {
+                            'overview': 'Dashboard',
+                            'profile': 'Edit Profile',
+                            'visuals': 'Visual Customization',
+                            'verification': 'Claim Artist ID',
+                            'store': 'Aura Store'
+                        };
+                        document.getElementById('page-title').textContent = titles[tabId];
+                    });
+                });
+
+                // Avatar Upload
+                document.getElementById('upload-avatar-input').addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            this.user.settings.avatar = e.target.result;
+                            this.saveData();
+                            this.updateUI();
+                            alert('Avatar Updated!');
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            },
+
+            updateUI: function() {
+                document.getElementById('sidebar-username').textContent = this.user.username;
+                document.getElementById('overview-name').textContent = this.user.username;
+                document.getElementById('credit-display').textContent = `${this.user.credits} Aura`;
+                
+                if (this.user.settings.displayname) {
+                    document.getElementById('set-displayname').value = this.user.settings.displayname;
+                }
+
+                if (this.user.settings.avatar) {
+                    const miniAvatar = document.getElementById('mini-avatar');
+                    miniAvatar.style.backgroundImage = `url('${this.user.settings.avatar}')`;
+                    
+                    const preview = document.getElementById('avatar-preview');
+                    const placeholder = document.getElementById('avatar-placeholder');
+                    preview.style.backgroundImage = `url('${this.user.settings.avatar}')`;
+                    preview.style.display = 'block';
+                    placeholder.style.display = 'none';
+                }
+                
+                this.checkPurchases();
+            },
+
+            switchTab: function(tabName) {
+                document.querySelector(`.nav-btn[data-tab="${tabName}"]`).click();
+            },
+
+            addCredits: function(amount) {
+                const btn = event.currentTarget;
+                const originalText = btn.innerText;
+                btn.innerText = "Processing...";
+                setTimeout(() => {
+                    this.user.credits += amount;
+                    this.saveData();
+                    this.updateUI();
+                    btn.innerText = "Success!";
+                    setTimeout(() => btn.innerText = originalText, 1000);
+                    alert(`Added ${amount} Aura!`);
+                }, 1000);
+            },
+
+            purchase: function(itemId) {
+                // Define prices map
+                const prices = {
+                    'glow_neon': 500, 'glow_gold': 800, 'border_fire': 1200, 'effect_frost': 1200, 'badge_storm': 300,
+                    'theme_cyber': 1500, 'theme_midnight': 1000, 'theme_sunset': 1000, 'theme_phantom': 2000,
+                    'frame_tech': 800, 'frame_king': 5000, 'frame_phones': 600, 'frame_vinyl': 900
+                };
+
+                // Check if already owned
+                if(this.user.settings.unlockedItems.includes(itemId)) {
+                    return alert('You already own this item!');
+                }
+
+                const cost = prices[itemId];
+                if (this.user.credits >= cost) {
+                    if (confirm(`Purchase for ${cost} Aura?`)) {
+                        this.user.credits -= cost;
+                        this.user.settings.unlockedItems.push(itemId);
+                        this.saveData();
+                        this.updateUI();
+                        alert("Item Unlocked! Added to your inventory.");
+                    }
+                } else {
+                    alert("Insufficient Aura! Top up at the top of the page.");
+                }
+            },
+
+            checkPurchases: function() {
+                // Loop through unlocked items and update button states
+                if(this.user.settings.unlockedItems) {
+                    this.user.settings.unlockedItems.forEach(id => {
+                        const btn = document.querySelector(`button[onclick="Dashboard.purchase('${id}')"]`);
+                        if(btn) {
+                            btn.innerText = "Owned";
+                            btn.classList.add('unlocked');
+                        }
+                    });
+                }
+            },
+
+            saveSettings: function() {
+                this.user.settings.displayname = document.getElementById('set-displayname').value;
+                this.saveData();
+                alert("Profile Updated Successfully!");
+            },
+
+            submitClaim: function() {
+                alert("Claim submitted for review!");
+            },
+
+            saveData: function() {
+                localStorage.setItem('nee_artist_data', JSON.stringify(this.user));
+            }
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            Dashboard.init();
+        });
+    </script>
 </body>
 </html>
