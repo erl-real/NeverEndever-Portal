@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeverEndever Portal | Home</title>
+    
+    <!-- LIBRARIES -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- FONTS -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+    <!-- CONFIG & STYLES -->
+    <style>
+        :root {
+            /* Base Theme - Editable via Dev Tools */
+            --bg-app: #050505;
+            --bg-panel: #0a0a0e;
+            --border: rgba(255, 255, 255, 0.08);
+            --emerald: #00f5d4;
+            --purple: #9d4edd;
+            --text-main: #f0f0f0;
+            --text-muted: #9ca3af;
+            --sidebar-width: 260px;
+            --sidebar-width-collapsed: 80px;
+        }
+
+        * { box-sizing: border-box; outline: none; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: var(--bg-app); 
+            color: var(--text-main); 
+            height: 100vh; overflow: hidden; 
+            display: flex;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: var(--sidebar-width); background: var(--bg-panel);
+            border-right: 1px solid var(--border); display: flex; flex-direction: column;
+            padding: 20px; z-index: 50; transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative; white-space: nowrap;
+        }
+        
+        .sidebar.collapsed {
+            width: var(--sidebar-width-collapsed);
+        }
+
+        .sidebar-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 40px; height: 40px;
+        }
+
+        /* Logo Styles to match ELO.html */
+        .brand {
+            font-family: 'Poppins', sans-serif; font-size: 1.2rem; font-weight: 800;
+            background: linear-gradient(to right, var(--purple), var(--emerald));
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+            display: flex; align-items: center; gap: 10px; overflow: hidden;
+        }
+        .brand i {
+            font-size: 1.2rem; color: var(--emerald); flex-shrink: 0;
+            /* Ensure icon is visible */
+            -webkit-text-fill-color: var(--emerald); 
+        }
+        .brand span { transition: opacity 0.2s; opacity: 1; }
+        
+        /* Hide text when collapsed */
+        .sidebar.collapsed .brand span { opacity: 0; pointer-events: none; display: none; }
+        .sidebar.collapsed .brand { justify-content: center; }
+
+        /* Toggle Button */
+        .sidebar-toggle-btn {
+            color: var(--text-muted); cursor: pointer; font-size: 0.9rem;
+            padding: 5px; border-radius: 4px; transition: 0.2s;
+        }
+        .sidebar-toggle-btn:hover { color: white; background: rgba(255,255,255,0.1); }
+        .sidebar.collapsed .sidebar-toggle-btn { transform: rotate(180deg); position: absolute; top: 25px; left: 50%; margin-left: -10px; }
+
+        /* Nav Items */
+        .nav-item {
+            padding: 12px 16px; border-radius: 8px; color: var(--text-muted);
+            cursor: pointer; display: flex; align-items: center; gap: 12px;
+            font-weight: 500; transition: 0.2s; text-decoration: none; margin-bottom: 5px;
+            overflow: hidden;
+        }
+        .nav-item:hover { color: white; background: rgba(255,255,255,0.05); }
+        .nav-item.active { background: rgba(0, 245, 212, 0.1); color: var(--emerald); font-weight: 700; }
+        .nav-item i { width: 20px; text-align: center; flex-shrink: 0; font-size: 1.1rem; }
+        .nav-item span { white-space: nowrap; transition: opacity 0.2s; }
+        
+        .sidebar.collapsed .nav-item { justify-content: center; padding: 12px 0; }
+        .sidebar.collapsed .nav-item span { opacity: 0; display: none; }
+
+        /* --- MAIN CONTENT --- */
+        .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; position: relative; }
+        
+        /* HEADER */
+        header {
+            height: 70px; padding: 0 40px; border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(5, 5, 8, 0.9); backdrop-filter: blur(10px);
+            position: sticky; top: 0; z-index: 40;
+        }
+        .user-pill {
+            display: flex; align-items: center; gap: 10px; padding: 6px 12px;
+            background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+            border-radius: 30px; cursor: pointer; transition: 0.2s;
+        }
+        .user-pill:hover { border-color: var(--emerald); }
+        .avatar-circle { width: 30px; height: 30px; border-radius: 50%; background: #333; background-size: cover; background-position: center; }
+
+        /* HERO SECTION */
+        .hero {
+            padding: 60px 40px; background: radial-gradient(circle at 80% 20%, rgba(157, 77, 221, 0.15), transparent 50%);
+            display: grid; grid-template-columns: 2fr 1fr; gap: 40px; align-items: center;
+        }
+        .hero-text h1 { font-family: 'Poppins'; font-size: 3rem; font-weight: 800; line-height: 1.1; margin-bottom: 20px; }
+        .hero-text p { color: var(--text-muted); font-size: 1.1rem; max-width: 600px; margin-bottom: 30px; }
+        
+        /* SPOTLIGHT CARD */
+        .spotlight-card {
+            background: linear-gradient(145deg, rgba(10,10,14,0.9), rgba(0,0,0,0.8));
+            border: 1px solid var(--purple); border-radius: 16px; padding: 25px;
+            position: relative; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+        .spotlight-badge { 
+            position: absolute; top: 15px; right: 15px; background: var(--emerald); 
+            color: black; font-weight: 800; font-size: 0.7rem; padding: 4px 10px; border-radius: 4px; 
+        }
+
+        /* GRID WIDGETS */
+        .dashboard-grid {
+            padding: 0 40px 60px 40px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;
+        }
+        .widget {
+            background: var(--bg-panel); border: 1px solid var(--border);
+            border-radius: 12px; padding: 20px; display: flex; flex-direction: column;
+            transition: transform 0.2s; overflow: hidden;
+        }
+        .widget:hover { border-color: rgba(255,255,255,0.2); }
+        .widget-head { display: flex; justify-content: space-between; margin-bottom: 15px; font-weight: 700; color: white; }
+        .widget-icon { color: var(--text-muted); }
+
+        /* NAV CARDS (Quick Links) */
+        .nav-cards { 
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; 
+            margin: 0 40px 40px 40px; 
+        }
+        .nav-card {
+            height: 120px; background: var(--bg-panel); border: 1px solid var(--border);
+            border-radius: 12px; padding: 20px; cursor: pointer; position: relative; overflow: hidden;
+            display: flex; flex-direction: column; justify-content: space-between; transition: 0.3s;
+        }
+        .nav-card:hover { transform: translateY(-5px); border-color: var(--emerald); }
+        .nav-card h3 { font-family: 'Poppins'; font-size: 1.2rem; font-weight: 700; z-index: 1; }
+        .nav-card i { position: absolute; bottom: -10px; right: -10px; font-size: 5rem; opacity: 0.05; transition: 0.3s; }
+        .nav-card:hover i { opacity: 0.2; transform: rotate(-10deg) scale(1.1); }
+
+        /* STATS TICKER */
+        .ticker-wrap {
+            width: 100%; overflow: hidden; background: black; border-top: 1px solid var(--border);
+            padding: 10px 0; white-space: nowrap; margin-top: auto;
+        }
+        .ticker { display: inline-block; animation: ticker 30s linear infinite; }
+        .ticker-item { display: inline-block; padding: 0 30px; color: var(--text-muted); font-family: 'JetBrains Mono'; font-size: 0.8rem; }
+        .ticker-item span { color: var(--emerald); font-weight: 700; }
+        @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
+
+        /* --- DEV/ADMIN TOOLS --- */
+        .dev-fab {
+            position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px;
+            background: var(--bg-panel); border: 1px solid var(--purple); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+            z-index: 100; box-shadow: 0 0 20px rgba(157, 77, 221, 0.4); transition: 0.3s;
+        }
+        .dev-fab:hover { transform: rotate(90deg) scale(1.1); background: var(--purple); color: black; }
+        
+        .dev-panel {
+            position: fixed; top: 0; right: -350px; width: 320px; height: 100vh;
+            background: rgba(10, 10, 15, 0.95); backdrop-filter: blur(10px);
+            border-left: 1px solid var(--border); padding: 30px; z-index: 101;
+            transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; gap: 20px;
+        }
+        .dev-panel.open { right: 0; }
+        .dev-header { font-family: 'Poppins'; font-weight: 700; font-size: 1.2rem; color: white; display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
+        
+        .control-group label { display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px; }
+        .control-group input[type="text"], .control-group input[type="color"] {
+            width: 100%; background: black; border: 1px solid var(--border); color: white; padding: 8px; border-radius: 6px;
+        }
+        .toggle-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .sidebar { position: fixed; left: -100%; height: 100%; width: 260px; }
+            .sidebar.active { left: 0; }
+            .sidebar-toggle-btn { display: none; } /* Hide collapse on mobile */
+            .hero { grid-template-columns: 1fr; text-align: center; }
+            .nav-cards { grid-template-columns: 1fr 1fr; }
+            .hero-text h1 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ADMIN DEV PANEL -->
+    <div class="dev-panel" id="dev-panel">
+        <div class="dev-header">
+            <span><i class="fas fa-code"></i> UI Builder</span>
+            <i class="fas fa-times" style="cursor:pointer" onclick="DevTool.toggle()"></i>
+        </div>
+        
+        <div class="control-group">
+            <label>Hero Headline</label>
+            <input type="text" id="edit-hero-title" oninput="DevTool.updateText('hero-title', this.value)">
+        </div>
+
+        <div class="control-group">
+            <label>Primary Accent Color</label>
+            <input type="color" id="edit-color-emerald" value="#00f5d4" oninput="DevTool.updateColor('--emerald', this.value)">
+        </div>
+
+        <div class="control-group">
+            <label>Secondary Accent Color</label>
+            <input type="color" id="edit-color-purple" value="#9d4edd" oninput="DevTool.updateColor('--purple', this.value)">
+        </div>
+
+        <div style="margin-top: 10px; font-weight: 700; color: white;">Widget Visibility</div>
+        <div class="toggle-row">
+            <span>Spotlight</span>
+            <input type="checkbox" checked onchange="DevTool.toggleVisibility('widget-spotlight', this.checked)">
+        </div>
+        <div class="toggle-row">
+            <span>Stream Status</span>
+            <input type="checkbox" checked onchange="DevTool.toggleVisibility('widget-stream', this.checked)">
+        </div>
+        <div class="toggle-row">
+            <span>Community Threads</span>
+            <input type="checkbox" checked onchange="DevTool.toggleVisibility('widget-threads', this.checked)">
+        </div>
+        <div class="toggle-row">
+            <span>Genre Trends</span>
+            <input type="checkbox" checked onchange="DevTool.toggleVisibility('widget-trends', this.checked)">
+        </div>
+
+        <button onclick="DevTool.saveConfig()" style="margin-top:auto; width:100%; padding:12px; background:var(--emerald); border:none; border-radius:6px; font-weight:700; cursor:pointer;">Save Configuration</button>
+        <button onclick="DevTool.resetConfig()" style="margin-top:10px; width:100%; padding:12px; background:transparent; border:1px solid var(--border); color:var(--text-muted); border-radius:6px; cursor:pointer;">Reset Default</button>
+    </div>
+
+    <div class="dev-fab" onclick="DevTool.toggle()" title="Open UI Builder">
+        <i class="fas fa-cog"></i>
+    </div>
+
+    <!-- SIDEBAR -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="brand">
+                <i class="fas fa-star"></i> <span>Endever Live</span>
+            </div>
+            <div class="sidebar-toggle-btn" onclick="App.toggleSidebar()">
+                <i class="fas fa-chevron-left"></i>
+            </div>
+        </div>
+
+        <a href="index.html" class="nav-item active">
+            <i class="fas fa-home"></i> <span>Home</span>
+        </a>
+        <a href="ELO.html" class="nav-item">
+            <i class="fas fa-trophy"></i> <span>ELO Rankings</span>
+        </a>
+        <a href="EndEver AI.html" class="nav-item">
+            <i class="fas fa-microchip"></i> <span>AI Protocol</span>
+        </a>
+        <a href="Threads.html" class="nav-item">
+            <i class="fas fa-comments"></i> <span>Community</span>
+        </a>
+        <a href="Artist_Dashboard.html" class="nav-item">
+            <i class="fas fa-chart-line"></i> <span>Dashboard</span>
+        </a>
+        
+        <div style="margin-top: auto; border-top: 1px solid var(--border); padding-top: 20px;">
+            <div class="nav-item" onclick="Auth.logout()">
+                <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN APP -->
+    <main class="main-content">
+        <header>
+            <div style="font-size: 0.9rem; color: var(--text-muted); display:flex; gap:15px; align-items:center;">
+                <i class="fas fa-bars" style="font-size:1.2rem; color:white; cursor:pointer; display:none;" id="mobile-menu-btn" onclick="document.getElementById('sidebar').classList.toggle('active')"></i>
+                <span id="date-display">...</span>
+            </div>
+            
+            <div style="display: flex; gap: 15px;">
+                <div class="user-pill" id="aura-pill">
+                    <i class="fas fa-bolt" style="color:var(--emerald)"></i> <span id="user-aura">0</span>
+                </div>
+                <div class="user-pill" id="auth-btn" onclick="window.location.href='ELO.html'">
+                    <div class="avatar-circle" id="user-avatar"></div>
+                    <span id="user-name">Login</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- HERO -->
+        <div class="hero">
+            <div class="hero-text">
+                <div style="display:inline-block; padding: 4px 12px; background: rgba(157, 77, 221, 0.1); border: 1px solid var(--purple); color: var(--purple); border-radius: 20px; font-size: 0.8rem; font-weight: 700; margin-bottom: 20px; letter-spacing: 1px;">NEXT GEN MUSIC PLATFORM</div>
+                <h1 id="hero-title">THE FUTURE OF<br><span style="color:var(--emerald)">MUSIC EVENTS</span> IS HERE.</h1>
+                <p>Submit for music events, meet and collaborate with other artists, see where you rank in ELO, and get help with your next project.</p>
+                <div style="display: flex; gap: 15px;">
+                    <button onclick="window.location.href='ELO.html'" style="padding: 15px 30px; background: var(--emerald); border: none; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 1rem;">View Rankings</button>
+                    <button onclick="window.location.href='EndEver AI.html'" style="padding: 15px 30px; background: transparent; border: 1px solid white; color: white; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 1rem;">AI Scan</button>
+                </div>
+            </div>
+            
+            <!-- SPOTLIGHT WIDGET -->
+            <div class="spotlight-card" id="widget-spotlight">
+                <div class="spotlight-badge">#1 RANKED</div>
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+                    <div style="width: 60px; height: 60px; background: url('https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/home%20v1/chxrli3.png'); background-size: cover; border-radius: 50%; border: 2px solid var(--emerald);"></div>
+                    <div>
+                        <div style="font-weight: 800; font-size: 1.2rem; color: white;">CHXRLI3</div>
+                        <div style="color: var(--text-muted); font-size: 0.9rem;">Producer / Cyberpunk</div>
+                    </div>
+                </div>
+                <div style="background: rgba(0,0,0,0.5); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 5px;">
+                        <span>Recent Track</span>
+                        <span>Score: <span style="color:var(--emerald); font-weight:700;">9.8</span></span>
+                    </div>
+                    <div style="font-weight: 600; color: white;">"System Override.wav"</div>
+                </div>
+                <button style="width: 100%; padding: 10px; background: rgba(255,255,255,0.1); border: none; color: white; border-radius: 6px; cursor: pointer; font-size: 0.8rem;"><i class="fas fa-play"></i> Listen Now</button>
+            </div>
+        </div>
+
+        <!-- QUICK NAV CARDS -->
+        <div class="nav-cards">
+            <div class="nav-card" onclick="window.location.href='ELO.html'">
+                <h3>ELO Ranking</h3>
+                <p style="font-size: 0.8rem; color: var(--text-muted);">Live leaderboards & judging.</p>
+                <i class="fas fa-trophy" style="color: var(--emerald);"></i>
+            </div>
+            <div class="nav-card" onclick="window.location.href='EndEver AI.html'">
+                <h3>AI Protocol</h3>
+                <p style="font-size: 0.8rem; color: var(--text-muted);">Verify track authenticity.</p>
+                <i class="fas fa-microchip" style="color: var(--purple);"></i>
+            </div>
+            <div class="nav-card" onclick="window.location.href='Threads.html'">
+                <h3>Community</h3>
+                <p style="font-size: 0.8rem; color: var(--text-muted);">Forums & Collaboration.</p>
+                <i class="fas fa-comments" style="color: #4cc9f0;"></i>
+            </div>
+            <div class="nav-card" onclick="window.location.href='Artist_Dashboard.html'">
+                <h3>Artist Hub</h3>
+                <p style="font-size: 0.8rem; color: var(--text-muted);">Manage your profile.</p>
+                <i class="fas fa-user-astronaut" style="color: var(--emerald);"></i>
+            </div>
+        </div>
+
+        <!-- WIDGET GRID -->
+        <div class="dashboard-grid">
+            
+            <!-- DAILY AURA CLAIM (NEW IDEA 1) -->
+            <div class="widget" id="widget-daily">
+                <div class="widget-head">
+                    <span><i class="fas fa-gift" style="color:var(--purple); margin-right:8px;"></i> DAILY REWARD</span>
+                </div>
+                <div style="text-align: center; padding: 10px 0;">
+                    <div style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px;">Log in daily to claim free Aura credits.</div>
+                    <button id="btn-claim-daily" onclick="App.claimDaily()" style="width: 100%; padding: 12px; background: var(--purple); border: none; border-radius: 6px; font-weight: 700; cursor: pointer; color: white; transition: 0.2s;">
+                        Claim +50 Aura
+                    </button>
+                    <div id="claim-msg" style="margin-top: 10px; font-size: 0.8rem; color: var(--emerald); display: none;">
+                        <i class="fas fa-check-circle"></i> Claimed! Come back tomorrow.
+                    </div>
+                </div>
+            </div>
+
+            <!-- GENRE TRENDS (NEW IDEA 2) -->
+            <div class="widget" id="widget-trends">
+                <div class="widget-head">
+                    <span><i class="fas fa-chart-pie" style="color:var(--emerald); margin-right:8px;"></i> TRENDING GENRES</span>
+                </div>
+                <div style="height: 180px; position: relative;">
+                    <canvas id="trendsChart"></canvas>
+                </div>
+            </div>
+
+            <!-- STREAM STATUS -->
+            <div class="widget" id="widget-stream">
+                <div class="widget-head">
+                    <span><i class="fab fa-twitch" style="color:#9146FF; margin-right:8px;"></i> LIVE STATUS</span>
+                    <div style="width: 10px; height: 10px; background: red; border-radius: 50%; box-shadow: 0 0 10px red;"></div>
+                </div>
+                <div style="background: black; height: 150px; display: flex; align-items: center; justify-content: center; border-radius: 8px; color: var(--text-muted); font-size: 0.9rem; position: relative; overflow: hidden;">
+                    <!-- Placeholder for Twitch Embed -->
+                    <img src="https://imqfnxtornlvglwvkspi.supabase.co/storage/v1/object/public/Never%20Endever%20Branding/endever%20logo%20home%20header.png" style="opacity: 0.3; width: 100px;">
+                    <div style="position: absolute; bottom: 10px; left: 10px; font-size: 0.8rem; font-weight: 700; color: white;">OFFLINE</div>
+                </div>
+                <div style="margin-top: 15px; font-size: 0.8rem; color: var(--text-muted);">
+                    Next Stream: <span style="color: white; font-weight: 700;">Saturday 7:00 PM EST</span>
+                </div>
+            </div>
+
+            <!-- COMMUNITY THREADS -->
+            <div class="widget" id="widget-threads">
+                <div class="widget-head">
+                    <span><i class="fas fa-fire" style="color:orange; margin-right:8px;"></i> HOT TOPICS</span>
+                    <a href="Threads.html" style="font-size: 0.7rem; color: var(--emerald); text-decoration: none;">View All</a>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <div style="padding: 10px; background: rgba(255,255,255,0.03); border-radius: 6px; cursor: pointer;">
+                        <div style="font-size: 0.85rem; font-weight: 600; color: white;">Best VSTs for 2025?</div>
+                        <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 4px;"><i class="fas fa-comment"></i> 42 Replies • by NeonGhost</div>
+                    </div>
+                    <div style="padding: 10px; background: rgba(255,255,255,0.03); border-radius: 6px; cursor: pointer;">
+                        <div style="font-size: 0.85rem; font-weight: 600; color: white;">Collab Request: Hyperpop Vocals</div>
+                        <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 4px;"><i class="fas fa-comment"></i> 12 Replies • by GlitchBoy</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- COUNTDOWN -->
+            <div class="widget">
+                <div class="widget-head">
+                    <span><i class="fas fa-hourglass-half" style="color:var(--emerald); margin-right:8px;"></i> EVENT START</span>
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: center; margin: 20px 0;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 2rem; font-weight: 800; font-family: 'JetBrains Mono'; color: white;">04</div>
+                        <div style="font-size: 0.7rem; color: var(--text-muted);">DAYS</div>
+                    </div>
+                    <div style="font-size: 2rem; color: var(--border);">:</div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 2rem; font-weight: 800; font-family: 'JetBrains Mono'; color: white;">12</div>
+                        <div style="font-size: 0.7rem; color: var(--text-muted);">HRS</div>
+                    </div>
+                    <div style="font-size: 2rem; color: var(--border);">:</div>
+                     <div style="text-align: center;">
+                        <div style="font-size: 2rem; font-weight: 800; font-family: 'JetBrains Mono'; color: white;">30</div>
+                        <div style="font-size: 0.7rem; color: var(--text-muted);">MIN</div>
+                    </div>
+                </div>
+                <button style="width: 100%; padding: 10px; border: 1px solid var(--emerald); color: var(--emerald); background: transparent; border-radius: 6px; font-weight: 700; font-size: 0.8rem; cursor: pointer; transition:0.2s;" onmouseover="this.style.background='var(--emerald)'; this.style.color='black'" onmouseout="this.style.background='transparent'; this.style.color='var(--emerald)'">Get Notified</button>
+            </div>
+
+        </div>
+
+        <!-- TICKER -->
+        <div class="ticker-wrap">
+            <div class="ticker">
+                <div class="ticker-item">LIVE SCANS: <span>4,392</span></div>
+                <div class="ticker-item">TOTAL AURA: <span>892,100</span></div>
+                <div class="ticker-item">ACTIVE ARTISTS: <span>1,204</span></div>
+                <div class="ticker-item">TOP GENRE: <span>PHONK / TRAP</span></div>
+                <div class="ticker-item">NEXT EVENT: <span>SATURDAY 7PM EST</span></div>
+                <!-- Duplicate for loop -->
+                <div class="ticker-item">LIVE SCANS: <span>4,392</span></div>
+                <div class="ticker-item">TOTAL AURA: <span>892,100</span></div>
+                <div class="ticker-item">ACTIVE ARTISTS: <span>1,204</span></div>
+                <div class="ticker-item">TOP GENRE: <span>PHONK / TRAP</span></div>
+                <div class="ticker-item">NEXT EVENT: <span>SATURDAY 7PM EST</span></div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // --- 1. CORE APP LOGIC ---
+        const App = {
+            user: null,
+
+            init() {
+                // Check localStorage for user data (Unified Auth)
+                const userStr = localStorage.getItem('endever_user');
+                if (userStr) {
+                    this.user = JSON.parse(userStr);
+                    this.renderAuthUI();
+                    this.checkDailyClaim(); // Check if already claimed
+                }
+                
+                // Set Date
+                const d = new Date();
+                document.getElementById('date-display').textContent = d.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+                
+                // Init Dev Tool Config
+                DevTool.init();
+                
+                // Init Trends Chart
+                this.initChart();
+            },
+
+            toggleSidebar() {
+                document.getElementById('sidebar').classList.toggle('collapsed');
+            },
+
+            renderAuthUI() {
+                if (this.user) {
+                    document.getElementById('user-name').textContent = this.user.name;
+                    document.getElementById('user-aura').textContent = this.user.credits || 0;
+                    
+                    // Load avatar if exists in user data
+                    if(this.user.avatar) {
+                        document.getElementById('user-avatar').style.backgroundImage = `url('${this.user.avatar}')`;
+                    }
+                    
+                    document.getElementById('auth-btn').onclick = () => window.location.href = 'Artist_Dashboard.html';
+                }
+            },
+
+            // New Feature: Daily Claim System
+            checkDailyClaim() {
+                const lastClaim = localStorage.getItem('endever_last_claim');
+                const today = new Date().toDateString();
+                
+                if (lastClaim === today) {
+                    document.getElementById('btn-claim-daily').style.display = 'none';
+                    document.getElementById('claim-msg').style.display = 'block';
+                }
+            },
+
+            claimDaily() {
+                if (!this.user) return alert("Please login to claim rewards.");
+                
+                // Update Credits
+                this.user.credits = (this.user.credits || 0) + 50;
+                localStorage.setItem('endever_user', JSON.stringify(this.user));
+                
+                // Set Claim Date
+                localStorage.setItem('endever_last_claim', new Date().toDateString());
+                
+                // Update UI
+                this.renderAuthUI();
+                this.checkDailyClaim();
+                alert("You claimed 50 Aura!");
+            },
+
+            logout() {
+                localStorage.removeItem('endever_user');
+                window.location.reload();
+            },
+
+            // New Feature: Trends Chart
+            initChart() {
+                const ctx = document.getElementById('trendsChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'radar',
+                    data: {
+                        labels: ['Trap', 'Phonk', 'Hyperpop', 'Boombap', 'DnB', 'House'],
+                        datasets: [{
+                            label: 'Submissions',
+                            data: [65, 59, 90, 81, 56, 55],
+                            backgroundColor: 'rgba(0, 245, 212, 0.2)',
+                            borderColor: '#00f5d4',
+                            borderWidth: 2,
+                            pointBackgroundColor: '#fff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            r: {
+                                angleLines: { color: 'rgba(255, 255, 255, 0.1)' },
+                                grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                                pointLabels: { color: '#9ca3af', font: { size: 10 } },
+                                ticks: { display: false }
+                            }
+                        },
+                        plugins: {
+                            legend: { display: false }
+                        }
+                    }
+                });
+            }
+        };
+
+        const Auth = {
+            logout: App.logout
+        };
+
+        // --- 2. DEV TOOL (ADMIN UI BUILDER) ---
+        const DevTool = {
+            config: {
+                heroTitle: "THE FUTURE OF<br><span style='color:var(--emerald)'>MUSIC EVENTS</span> IS HERE.",
+                colors: { emerald: '#00f5d4', purple: '#9d4edd' },
+                widgets: { spotlight: true, stream: true, threads: true, trends: true }
+            },
+
+            init() {
+                const saved = localStorage.getItem('endever_ui_config');
+                if (saved) {
+                    this.config = JSON.parse(saved);
+                    this.applyConfig();
+                    this.updateInputs();
+                }
+            },
+
+            toggle() {
+                document.getElementById('dev-panel').classList.toggle('open');
+            },
+
+            updateText(id, val) {
+                if (id === 'hero-title') {
+                    document.getElementById('hero-title').innerHTML = val;
+                    this.config.heroTitle = val;
+                }
+            },
+
+            updateColor(varName, val) {
+                document.documentElement.style.setProperty(varName, val);
+                if (varName === '--emerald') this.config.colors.emerald = val;
+                if (varName === '--purple') this.config.colors.purple = val;
+            },
+
+            toggleVisibility(id, checked) {
+                const el = document.getElementById(id);
+                // Some widgets use flex, others block
+                const displayType = (id === 'widget-threads' || id === 'widget-stream' || id === 'widget-daily') ? 'flex' : 'block';
+                
+                if (el) el.style.display = checked ? displayType : 'none';
+                
+                if (id === 'widget-spotlight') this.config.widgets.spotlight = checked;
+                if (id === 'widget-stream') this.config.widgets.stream = checked;
+                if (id === 'widget-threads') this.config.widgets.threads = checked;
+                if (id === 'widget-trends') this.config.widgets.trends = checked;
+            },
+
+            saveConfig() {
+                localStorage.setItem('endever_ui_config', JSON.stringify(this.config));
+                alert("UI Configuration Saved!");
+            },
+            
+            resetConfig() {
+                localStorage.removeItem('endever_ui_config');
+                window.location.reload();
+            },
+
+            applyConfig() {
+                // Apply Text
+                if(document.getElementById('hero-title')) document.getElementById('hero-title').innerHTML = this.config.heroTitle;
+                
+                // Apply Colors
+                document.documentElement.style.setProperty('--emerald', this.config.colors.emerald);
+                document.documentElement.style.setProperty('--purple', this.config.colors.purple);
+                
+                // Apply Widget Visibility
+                const widgets = {
+                    'widget-spotlight': this.config.widgets.spotlight,
+                    'widget-stream': this.config.widgets.stream,
+                    'widget-threads': this.config.widgets.threads,
+                    'widget-trends': this.config.widgets.trends
+                };
+                
+                for (const [id, visible] of Object.entries(widgets)) {
+                    const el = document.getElementById(id);
+                    const displayType = (id === 'widget-threads' || id === 'widget-stream' || id === 'widget-daily') ? 'flex' : 'block';
+                    if (el) el.style.display = visible ? displayType : 'none';
+                }
+            },
+
+            updateInputs() {
+                // Sync inputs with config state
+                if(document.getElementById('edit-hero-title')) document.getElementById('edit-hero-title').value = this.config.heroTitle;
+                if(document.getElementById('edit-color-emerald')) document.getElementById('edit-color-emerald').value = this.config.colors.emerald;
+                if(document.getElementById('edit-color-purple')) document.getElementById('edit-color-purple').value = this.config.colors.purple;
+            }
+        };
+
+        window.onload = () => App.init();
+
+    </script>
+</body>
+</html>
