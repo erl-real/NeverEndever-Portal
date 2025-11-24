@@ -143,6 +143,177 @@ To see the latest updates, check out the [releases](https://base-ui.com/react/ov
 - **Albert Yu** (Material UI) [@mj12albert](https://github.com/mj12albert)
 - **Lukas Tyla** (Material UI) [@LukasTy](https://github.com/LukasTy)
 
-## License
 
-This project is licensed under the terms of the [MIT license](/LICENSE).
+
+----------------------------------------
+todo list
+
+
+Foundation verification
+Repo directories: Verify and lock the presence of all core directories; add missing ones and remove unused stubs.
+
+Configs: Validate every config file loads and is referenced in build/test; remove deprecated config keys.
+
+Docs baseline: Ensure README, CONTRIBUTING, SECURITY, LICENSE, CHANGELOG exist and are linked from README.
+
+Security hardening
+Secret hygiene: Remove committed secrets, add .env.example, enforce .gitignore, and run a secret scan on history.
+
+Input defenses: Add validation, sanitization, and rate‑limiting for all endpoints and forms.
+
+Session safety: Implement secure cookies or tokens with rotation, expiration, and refresh flows.
+
+Transport & headers: Enforce HTTPS, add CSP, HSTS, X‑Frame‑Options, X‑Content‑Type‑Options, and CORS rules.
+
+Design system consolidation
+CSS architecture: Create global.css, variables.css, and component CSS; move page overrides out of globals.
+
+Variable coverage: Define tokens for colors, typography, spacing, radius, elevation, and breakpoints.
+
+Theming: Implement dark mode and theme switching via CSS variables.
+
+Legacy cleanup: Remove inline styles and duplicated rules; add utilities for spacing, layout, and states.
+
+Navigation and UI consolidation
+Single sidebar: Merge navigation artifacts into one modular sidebar component.
+
+Full coverage: Wire every page into the sidebar with SVG links; ensure logical order for onboarding.
+
+Accessibility: Add ARIA labels, focus states, keyboard navigation, and unique IDs.
+
+Interaction consistency: Standardize hover/glider behaviors and test across all pages.
+
+Data integration
+Supabase tables: Migrate playlists, FAQs, and announcements to DB with schemas and constraints.
+
+CRUD flows: Implement admin CRUD with optimistic UI and server validation.
+
+Profile management: Modularize profile read/write, avatar/handle updates, and error states.
+
+External signals: Automate Discord announcements, Twitch live status, and dynamic YouTube embeds via DB references.
+
+Documentation and onboarding
+Unified guide: Convert notes into a single onboarding document covering setup, env, build, and deploy.
+
+Design system docs: Document components, tokens, patterns, and usage rules.
+
+UI map: Provide page‑to‑component mapping and navigation structure for staff and collaborators.
+
+Runbooks: Add auth, deployment, and incident playbooks for operations.
+
+Testing and CI/CD
+Unit & integration: Write tests for auth, nav, playlists, forms, and DB interactions.
+
+Visual checks: Add CSS/visual regression tests for critical components.
+
+Pipelines: Run lint, format, tests, security scans, and build on every PR; gate merges on passing status.
+
+Artifacts: Produce preview builds with deployment diffs and test reports.
+
+Deployment configuration
+Netlify functions: Validate routing, environment injection, and cold start performance.
+
+Routing rules: Confirm redirects and headers in netlify.toml.
+
+Edge/CDN: Document Cloudflare caching, purge strategy, and security rules.
+
+Reproducible builds: Standardize scripts and lock versions for deterministic output.
+
+Feature completion
+Admin dashboard: Deliver full CRUD for playlists, FAQs, announcements, users, with RBAC tiers.
+
+Music player: Integrate DB‑driven playlists, support YouTube/SoundCloud/local, and add queue/persistence.
+
+Community tools: Moderation actions, flagged content review, and audit logs.
+
+Advanced authentication
+MFA: Add TOTP or WebAuthn for high‑risk actions and login.
+
+OAuth: Integrate Google, Discord, and Twitch providers.
+
+Recovery flows: Implement password reset, account recovery, and device management.
+
+Token lifecycle: Harden refresh token rotation and revoke on anomaly.
+
+Performance and scalability
+Bundles: Apply tree‑shaking, code splitting, and asset compression.
+
+Lazy loading: Defer heavy components (player, dashboards) and images.
+
+DB tuning: Add indexes, optimize queries, and enforce limits/pagination.
+
+Edge caching: Cache static assets and safe API responses with versioned keys.
+
+Observability and monitoring
+Structured logging: Add contextual logs for auth, DB, and external integrations.
+
+Error tracking: Integrate an error tracker with release sourcemaps and alerting.
+
+Performance SLOs: Track Web Vitals, set budgets, and fail CI on regression.
+
+Uptime: Monitor endpoints and deploys; add alerts and on‑call rotations.
+
+UX and accessibility
+WCAG compliance: Audit and fix issues to meet 2.1 AA.
+
+Keyboard & screen readers: Ensure full functionality without a mouse and with assistive tech.
+
+Onboarding refinement: Guided steps, tooltips, and progressive disclosure.
+
+Responsive design: Validate layouts across breakpoints and devices.
+
+Branding and creative layer
+Visual polish: Apply gradients, palettes, and consistent component styling.
+
+Interaction quality: Smooth transitions and micro‑interactions aligned with brand.
+
+Theme readiness: Prepare for seasonal or partner themes via token swaps.
+
+Governance and operations
+ADRs: Record major architectural decisions and tradeoffs.
+
+Contribution rules: Define review standards, branching, and semantic versioning.
+
+Release management: Automate changelogs, tags, and release notes.
+
+Security practices: Regular audits, dependency updates, and incident response procedures.
+
+Community rollout
+Pilot launch: Release to a controlled group; gather structured feedback.
+
+Iteration: Address issues found in pilot; ship fixes against tracked SLOs.
+
+Public launch: Announce broadly with stable features and support channels.
+
+Engagement: Enable comments, sharing, and community events with moderation.
+
+Growth and monetization
+Integrations: Evaluate adding Spotify, Bandcamp, or partners via clean abstractions.
+
+Plans: Define premium tiers, subscriptions, or sponsorships with clear value.
+
+Analytics: Build admin dashboards for engagement, retention, and revenue metrics.
+
+Scalability reviews: Schedule periodic performance and security reviews.
+
+Completion criteria (exit checklist)
+Zero known critical bugs: No open P0/P1 issues; lower‑priority items triaged with dates.
+
+Security clean bill: No exposed secrets, passing audits, least‑privilege validated.
+
+Design system enforced: All UI uses documented components and tokens; no ad‑hoc styles.
+
+Accessibility met: WCAG 2.1 AA verified with audit evidence.
+
+Tests green: Coverage thresholds met; CI gates protect main; rollback tested.
+
+Docs complete: Onboarding, runbooks, ADRs, API, and UI maps current and accurate.
+
+Performance within budgets: Web Vitals pass, bundle sizes within targets, DB queries optimized.
+
+Monitoring in place: Alerts, dashboards, and logging confirm operational health.
+
+Release process stable: Versioned, repeatable deployments with staging and rollback.
+
+User feedback addressed: Pilot and public launch issues resolved; engagement features active.
+
