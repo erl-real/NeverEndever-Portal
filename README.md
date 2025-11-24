@@ -97,7 +97,13 @@ Bug testers signup.
 Chat bridge to Discord.
 Twitch integrations (live status, Discord piggyback).
 
+-0--------------------------
+code bits
 
+<link rel="stylesheet" href="/styles/global.css">
+   <script src="/scripts/stateManager.js"></script>
+   <script src="/scripts/utils.js"></script>
+   <script src="/scripts/authManager.js"></script>
 
 
 
