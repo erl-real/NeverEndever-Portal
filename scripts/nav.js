@@ -54,12 +54,14 @@ function renderSidebar(user) {
 
   let navItems;
   if (!user) {
+    // Visitor → public nav
     navItems = NAV_CONFIG.public;
   } else {
-    const role = user.role || "artist"; // default role
-    const roleItems = NAV_CONFIG.loggedIn[role] || [];
+    // Logged-in → role-specific + shared
+    const role = user.role;
+    const roleItems = NAV_CONFIG.loggedIn[role] || []; // fallback empty if unknown
     const sharedItems = NAV_CONFIG.loggedIn.shared;
-    navItems = [...roleItems, ...sharedItems];
+    navItems = roleItems.length ? [...roleItems, ...sharedItems] : NAV_CONFIG.public;
   }
 
   navItems.forEach(item => {
