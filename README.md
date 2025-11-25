@@ -1,3 +1,9 @@
+<link rel="stylesheet" href="/styles/global.css">
+   <script src="/scripts/stateManager.js"></script>
+   <script src="/scripts/utils.js"></script>
+   <script src="/scripts/authManager.js"></script>
+
+
 What?
 www.neverendever.com v1.0 full platform launch
 
