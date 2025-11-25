@@ -14,16 +14,26 @@ const NAV_CONFIG = {
 
   loggedIn: {
     artist: [
-      { label: "Dashboard", icon: "fa-user-astronaut", href: "pages/dashboard/index.html" },
+      { label: "Artist Dashboard", icon: "fa-user-astronaut", href: "pages/dashboard/index.html" },
       { label: "Tracks", icon: "fa-music", href: "pages/dashboard/tracks.html" },
       { label: "Analytics", icon: "fa-chart-bar", href: "pages/dashboard/analytics.html" },
-      { label: "Settings", icon: "fa-cog", href: "pages/dashboard/settings.html" },
-      { label: "Logout", icon: "fa-sign-out-alt", action: () => Auth.logout() }
+      { label: "Settings", icon: "fa-cog", href: "pages/dashboard/settings.html" }
+    ],
+    staff: [
+      { label: "Staff Dashboard", icon: "fa-briefcase", href: "pages/staff/index.html" },
+      { label: "Moderation", icon: "fa-shield-alt", href: "pages/staff/moderation.html" },
+      { label: "Reports", icon: "fa-file-alt", href: "pages/staff/reports.html" }
     ],
     admin: [
       { label: "Admin Panel", icon: "fa-tools", href: "pages/admin/index.html" },
       { label: "User Management", icon: "fa-users", href: "pages/admin/users.html" },
-      { label: "Reports", icon: "fa-file-alt", href: "pages/admin/reports.html" },
+      { label: "System Settings", icon: "fa-cogs", href: "pages/admin/settings.html" },
+      { label: "Reports", icon: "fa-file-alt", href: "pages/admin/reports.html" }
+    ],
+    shared: [
+      { label: "Profile", icon: "fa-user", href: "pages/profile/index.html" },
+      { label: "Community", icon: "fa-comments", href: "pages/messageboard/index.html" },
+      { label: "Events", icon: "fa-calendar-alt", href: "pages/events/index.html" },
       { label: "Logout", icon: "fa-sign-out-alt", action: () => Auth.logout() }
     ]
   }
@@ -31,10 +41,7 @@ const NAV_CONFIG = {
 
 function renderSidebar(user) {
   const sidebar = document.getElementById("sidebar");
-  sidebar.innerHTML = "";
-
-  // Brand + toggle
-  sidebar.innerHTML += `
+  sidebar.innerHTML = `
     <div class="sidebar-header">
       <div class="brand">
         <i class="fas fa-star"></i> <span>Endever Live</span>
@@ -45,16 +52,16 @@ function renderSidebar(user) {
     </div>
   `;
 
-  // Decide which nav set to use
   let navItems;
   if (!user) {
     navItems = NAV_CONFIG.public;
   } else {
     const role = user.role || "artist"; // default role
-    navItems = NAV_CONFIG.loggedIn[role] || NAV_CONFIG.public;
+    const roleItems = NAV_CONFIG.loggedIn[role] || [];
+    const sharedItems = NAV_CONFIG.loggedIn.shared;
+    navItems = [...roleItems, ...sharedItems];
   }
 
-  // Build links
   navItems.forEach(item => {
     const link = document.createElement("a");
     link.className = "nav-item";
@@ -73,7 +80,6 @@ function renderSidebar(user) {
   });
 }
 
-// Initialize on page load
 document.addEventListener("DOMContentLoaded", () => {
   const userStr = localStorage.getItem("endever_user");
   const user = userStr ? JSON.parse(userStr) : null;
