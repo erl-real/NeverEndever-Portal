@@ -1,61 +1,141 @@
-<!DOCTYPE html>
-<html lang="en">
-<style>
-    /* Admin specific CSS for layout */
-    .admin-container { display: flex; height: 100vh; }
-    .admin-sidebar { width: 200px; padding: 20px; background: #0a0a0e; border-right: 1px solid #1a1a20; }
-    .admin-main { flex: 1; padding: 40px; overflow-y: auto; }
-    .admin-view { display: none; }
-    .admin-view.active { display: block; }
-    .admin-nav-btn { padding: 10px; margin-bottom: 10px; background: #1a1a20; color: #9ca3af; border-radius: 4px; width: 100%; text-align: left; cursor: pointer; }
-    .admin-nav-btn.active { background: #00f5d4; color: black; font-weight: bold; }
-    .store-admin-item { display: flex; justify-content: space-between; padding: 10px; background: #1a1b26; margin-bottom: 8px; border-radius: 4px; }
-</style>
-<body>
-    <div class="admin-container">
-        <div class="admin-sidebar">
-            <h3 style="color:#00f5d4;">Admin Control</h3>
-            <button class="admin-nav-btn active" data-tab="config">Global Config</button>
-            <button class="admin-nav-btn" data-tab="store">Store Management</button>
-            <button class="admin-nav-btn" data-tab="users">User Roles</button>
-        </div>
+/* --- Supabase Client Configuration (Copied from Artist_Dashboard.html) --- */
+const SUPABASE_URL = "https://imqfnxtornlvglwvkspi.supabase.co"; 
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImltcWZueHRvcm5sdmdsd3Zrc3BpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMxMzQyNjksImV4cCI6MjA3ODcxMDI2OX0.Is7G7NCKxTQDoefyitkfhREXAR8m8cBBTjohRiBKMs4";
+const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        <div class="admin-main">
-            <div id="view-config" class="admin-view active">
-                <h2>Global Site Configuration</h2>
-                <p style="color:#9ca3af;">Edit core settings that affect the entire platform.</p>
-                <div style="margin-top:20px;">
-                    <label>Hero Headline:</label>
-                    <textarea id="edit-hero-title" rows="3" style="width:100%; background:#050505; border:1px solid #1a1a20; color:white; padding:10px;"></textarea>
-                </div>
-                <div style="margin-top:20px;">
-                    <label>Primary Accent Color:</label>
-                    <input type="color" id="edit-color-emerald" style="width:100%; height:40px; border:1px solid #1a1a20;">
-                </div>
-                <div style="margin-top:20px;">
-                    <label>Next Stream Time (Human Readable):</label>
-                    <input type="text" id="edit-stream-time" style="width:100%; background:#050505; border:1px solid #1a1a20; color:white; padding:10px;">
-                </div>
-                <button id="save-global-config" style="margin-top: 30px; background:#00f5d4; color:black; padding:12px; font-weight:bold; width:100%;">SAVE ALL CONFIG</button>
-            </div>
+const AdminDashboard = {
+    // Current state and data management
+    state: {
+        currentTab: 'config',
+        configData: {},
+        storeItems: []
+    },
 
-            <div id="view-store" class="admin-view">
-                <h2>Aura Store Management</h2>
-                <p style="color:#9ca3af;">Add, remove, or modify prices of items in the Artist Dashboard Store.</p>
-                <div id="store-item-list" style="margin-top:20px;">
+    // --- INITIALIZATION ---
+    async init() {
+        console.log("Admin Dashboard Initializing...");
+        this.setupListeners();
+        // NOTE: You must implement an Admin Role Check here!
+        await this.loadAllData();
+        this.renderView();
+    },
+
+    setupListeners() {
+        // Simple tab switching for the admin panel
+        document.querySelectorAll('.admin-nav-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                this.state.currentTab = btn.getAttribute('data-tab');
+                this.renderView();
+            });
+        });
+
+        // Global Config Save Button (example)
+        document.getElementById('save-global-config').onclick = this.saveGlobalConfig;
+    },
+
+    // --- DATA FETCHING ---
+    async loadAllData() {
+        // Fetch Global Config
+        const { data: config, error: configError } = await supabase.from('site_config').select('*').single();
+        if (configError) console.error('Error loading config:', configError);
+        this.state.configData = config || { id: 1, hero_title: 'THE FUTURE OF MUSIC EVENTS IS HERE.', accent_primary: '#00f5d4' };
+
+        // Fetch Store Items
+        const { data: store, error: storeError } = await supabase.from('store_items').select('*');
+        if (storeError) console.error('Error loading store items:', storeError);
+        this.state.storeItems = store || [];
+    },
+
+    // --- DATA SAVING (CRUD) ---
+    async saveGlobalConfig() {
+        const updates = {
+            id: 1, // Assuming a single row with ID=1 for global config
+            hero_title: document.getElementById('edit-hero-title').value,
+            accent_primary: document.getElementById('edit-color-emerald').value,
+            next_stream_time: document.getElementById('edit-stream-time').value,
+            // ... add all other config fields
+        };
+
+        const { error } = await supabase.from('site_config').upsert(updates);
+
+        if (error) {
+            console.error('Failed to save config:', error);
+            alert('❌ ERROR: Failed to save config.');
+        } else {
+            alert('✅ Success: Global Configuration Updated!');
+            await AdminDashboard.loadAllData();
+            AdminDashboard.renderView();
+        }
+    },
+    
+    async saveStoreItem(itemId, form) {
+        const isNew = !itemId;
+        const updates = {
+            name: form.querySelector('#item-name').value,
+            price_aura: parseInt(form.querySelector('#item-price').value),
+            // ... other fields
+        };
+        
+        let error;
+        if(isNew) {
+             ({ error } = await supabase.from('store_items').insert(updates));
+        } else {
+             ({ error } = await supabase.from('store_items').update(updates).eq('item_id', itemId));
+        }
+        
+        if (error) {
+             console.error('Failed to save store item:', error);
+             alert('❌ ERROR: Failed to save store item.');
+        } else {
+            alert(`✅ Success: Store Item ${isNew ? 'Added' : 'Updated'}!`);
+            await AdminDashboard.loadAllData();
+            AdminDashboard.renderView();
+        }
+    },
+
+    // --- RENDERING ---
+    renderView() {
+        document.querySelectorAll('.admin-view').forEach(v => v.classList.remove('active'));
+        document.getElementById(`view-${this.state.currentTab}`).classList.add('active');
+        
+        document.querySelectorAll('.admin-nav-btn').forEach(b => b.classList.remove('active'));
+        document.querySelector(`.admin-nav-btn[data-tab="${this.state.currentTab}"]`).classList.add('active');
+
+
+        // 1. Render Global Config Tab
+        const cfg = this.state.configData;
+        if (this.state.currentTab === 'config') {
+            document.getElementById('edit-hero-title').value = cfg.hero_title || '';
+            document.getElementById('edit-color-emerald').value = cfg.accent_primary || '';
+            document.getElementById('edit-stream-time').value = cfg.next_stream_time || '';
+        }
+
+        // 2. Render Store Management Tab
+        if (this.state.currentTab === 'store') {
+            const list = document.getElementById('store-item-list');
+            list.innerHTML = '';
+            
+            this.state.storeItems.forEach(item => {
+                list.innerHTML += `
+                    <div class="store-admin-item">
+                        <span class="font-bold">${item.name}</span>
+                        <span>${item.price_aura} Aura</span>
+                        <button onclick="alert('Editing ${item.name}...')">Edit</button>
                     </div>
-            </div>
+                `;
+            });
+            
+            list.innerHTML += `<button onclick="alert('Creating new item form...')">➕ Add New Item</button>`;
+        }
+    }
+};
 
-            <div id="view-users" class="admin-view">
-                <h2>User & Role Management</h2>
-                <p style="color:#9ca3af;">Manually elevate users to Admin or Artist roles.</p>
-                </div>
-        </div>
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-        // PASTE THE JAVASCRIPT LOGIC HERE
-        // ... AdminDashboard object ...
-    </script>
-</body>
-</html>
+window.addEventListener('DOMContentLoaded', () => {
+    // Check local user role before starting (a quick local check)
+    const user = JSON.parse(localStorage.getItem('endever_user'));
+    if (user && (user.role === 'admin' || user.name === 'DEV_ADMIN')) {
+        AdminDashboard.init();
+    } else {
+        document.body.innerHTML = '<h1>ACCESS DENIED</h1><p>You must be an admin to view this page.</p>';
+    }
+});
