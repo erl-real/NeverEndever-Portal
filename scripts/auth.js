@@ -1,7 +1,7 @@
 // /scripts/auth.js
 // Centralized authentication logic for Endever Live
 
-import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+import { supabase } from './core.js';
 
 // Environment variables (set in mainkey.env or your hosting provider)
 // In Vite/Next.js/etc. these are exposed as import.meta.env.VITE_SUPABASE_URL / KEY
