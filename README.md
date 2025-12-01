@@ -1,10 +1,5 @@
 www.neverendever.com v1.0 full platform launch
-                              _______                          ___________           .______________                                         
-__  _  ____  _  ____  _  __   \      \   _______  __ __________\_   _____/ ____    __| _/\_   _____/__  __ ___________   ____  ____   _____  
-\ \/ \/ /\ \/ \/ /\ \/ \/ /   /   |   \_/ __ \  \/ // __ \_  __ \    __)_ /    \  / __ |  |    __)_\  \/ // __ \_  __ \_/ ___\/  _ \ /     \ 
- \     /  \     /  \     /   /    |    \  ___/\   /\  ___/|  | \/        \   |  \/ /_/ |  |        \\   /\  ___/|  | \/\  \__(  <_> )  Y Y  \
-  \/\_/    \/\_/    \/\_/ /\ \____|__  /\___  >\_/  \___  >__| /_______  /___|  /\____ | /_______  / \_/  \___  >__| /\ \___  >____/|__|_|  /
-                          \/         \/     \/          \/             \/     \/      \/         \/           \/     \/     \/            \/ 
+
 how we are doing it
 Centralize config:
 API keys, endpoints, constants → one .JS config file. (unless seperated for a reason like elo)
@@ -105,6 +100,81 @@ Twitch integrations (live status, Discord piggyback).
 
 
 
+
+with what
+apis
+Core Streaming & Catalog APIs
+Spotify API – Catalog, playlists, recommendations, user libraries
+
+Apple Music API – Official catalog, charts, playlists
+
+Deezer API – Streaming catalog, charts, playlists
+
+Napster API – Metadata, streaming catalog
+
+Audiomack API – Uploads, streams, playlists
+
+Bandcamp API – Artist storefronts, releases
+
+SoundCloud API – Uploads, streams, user libraries
+
+Jamendo API – Free music catalog under Creative Commons
+
+KKBOX API – Libraries, playlists, charts
+
+JioSaavn API – Song info, album metadata
+
+Lyrics & Metadata
+Musixmatch API – Lyrics, translations, sync data
+
+Genius API – Lyrics + annotations
+
+Lyrics.ovh / Lyrics Simple API – Lightweight lyric retrieval
+
+LRCLIB API – Lyric sync data
+
+MusicBrainz API – Open music encyclopedia
+
+Discogs API – Vinyl, releases, metadata
+
+TheAudioDB API – Artist/album metadata
+
+Vagalume API – Lyrics + metadata
+
+Artist & Fan Engagement
+Bandsintown API – Concert listings, fan notifications
+
+Songkick API – Tour dates, venues
+
+TasteDive API – Similar artist recommendations
+
+Openwhyd API – Curated playlists from YouTube/SoundCloud
+
+Last.fm API – Scrobbling, recommendations, charts
+
+Mixcloud API – DJ mixes, radio shows
+
+Phish.in API – Archive of live Phish recordings
+
+Audio Tools & AI
+Freesound API – Free sound samples
+
+Mubert API – AI-generated music streams
+
+AI Mastering API – Automated mastering service
+
+KSoft API – Lyrics + audio utilities
+
+Genrenator API – Genre generation tool
+
+Radio Browser API – Global radio streams
+
+Data & Analytics
+Soundcharts API – Unified music industry data (35+ sources)
+
+Bridge.audio APIs – Collaboration + licensing tools
+
+7digital API – Music store catalog + previews
 
 
 --------------------------------
