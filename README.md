@@ -1,331 +1,153 @@
-<link rel="stylesheet" href="/styles/global.css">
-   <script src="/scripts/stateManager.js"></script>
-   <script src="/scripts/utils.js"></script>
-   <script src="/scripts/authManager.js"></script>
-
-
-What?
-www.neverendever.com v1.0 full platform launch
-
-how we are doing it
-Centralize config:
-API keys, endpoints, constants → one .JS config file. (unless seperated for a reason like elo)
-
-Database-driven content:
-FAQs, announcements, playlists → Supabase tables or googlesheets or thirdparty hosting (yt), not hardcoded HTML if a free path.
-
-CSS variables/themes:
-Colors, gradients, fonts → one file, referenced everywhere.
-each page can have a color.css for personilizing pages
-
-Reusable JS modules:
-Auth, API calls, error handling → one place. 
+NeverEndever-Portal v-0.5 repository map and action plan
+You’re asking for precision and a path forward. Here’s the full breakdown your team can act on immediately.
 
+Repository overview and current state
+Structure: Mixed static HTML/CSS with TypeScript tooling and monorepo signals (pnpm workspaces, Lerna/Nx configs), plus Netlify functions and CI configs. Static pages include nav and sidebar demos; Supabase directory exists for DB/auth integration groundwork. A committed env file exists and must be removed and rotated immediately.
 
-why
-fast loading less network calls
-stays loaded between pages
-ez to edit parts to change whole
+Tooling footprint: Vite, Vitest, ESLint/Prettier/Stylelint configs, pnpm workspace, but also package-lock.json (npm) and lerna/nx configs—these conflict and need consolidation.
 
+Hosting/CI signals: netlify.toml present; .circleci and .github directories exist—choose one CI and one host to prevent drift.
 
+Folder-by-folder breakdown
+Project folders
+.circleci: CircleCI pipeline config. If you’re not using CircleCI, remove to reduce confusion; otherwise ensure it runs lint/test/build steps aligned with pnpm and Vitest.
 
+.github: GitHub-specific workflows/configs. Keep if adopting GitHub Actions; otherwise remove conflicting CI definitions.
 
-What’s Done
-Supabase connected for storage/auth (but not fully modularized).
-Cloudflare hosting set up (site deploys, but code not modular).
-GitHub repo exists (version control not in place,build on portal settle on depo frame).
-Basic UI elements: installed not using yet
-Music player widget: initial playlist integration (but hardcoded, not dynamic).
-Discord server: not linked to site.
-File structure: done
+.vscode: Shared editor settings. Keep minimal, avoid machine-specific paths or secrets.
 
-In Progress / Needs Refactor
-Nav + dashboard merge: redesining.
-Profile update system: redesign around settings and save state
-simple Admin todo list readme: concept exists, not implemented.
-Music playlist: coded version exists, but needs DB-driven dynamic playlists (Supabase table).
-Announcements: Discord/Twitch collab idea drafted, not automated.
+assets: Static assets (images, icons, etc.). Ensure only used assets remain after migrating UI components.
 
-llms.html: scattered notes, needs consolidation into one onboarding doc.
+docs: Documentation stubs. Centralize onboarding, architecture, and runbooks here; move scattered notes like llms.html content into docs.
 
-Left To Do (Major Features)
+examples/vite-css: Example Vite + CSS scaffolding. Either promote into the main app structure or remove after migration to avoid duplicate patterns.
 
-Frontend (HTML/CSS/JS)
-Modularize layout: finish all pages
-Shared nav/header/footer components.
-Centralized CSS variables/themes.
-JS modules for repeated logic (auth, API calls).
-Dashboard polish: unify nav + bar + dashboard.
-Profile update UI → connect to Supabase.
-FAQ, About Us, Contact Us pages.
-Sponsor Us, Hiring, Referral program sections.
-Bug report + tester signup page.
+netlify/functions: Serverless functions scaffolding for Netlify. Validate routing and environment injection if you choose Netlify; otherwise delete or migrate to Cloudflare Workers.
 
-Backend (Supabase/DB)
-Playlist DB integration (replace hardcoded arrays).
-Forums setup (Supabase tables + UI).
-Referral program logic (track invites).
-Sales rep intake form → Supabase table.
-Admin todo list → Supabase table + dashboard view.
-Report section → Supabase table + moderation tools.
+packages: Monorepo intent. Formalize into apps/lib packages or collapse into a single app if you’re not going full monorepo yet.
 
-Integrations
-Discord:
-Announcements automation (subs → Nitro).
-Chat bridge (site ↔ Discord).
+pages: Static HTML pages such as ELO.html, Home.Html, nav.html, staticsidebar.html. . These should be migrated into a framework router with shared layout components.
 
-Twitch:
-Integration to show when users are live.
-Possibly piggyback off Discord presence.
+scripts: Client-side JS modules referenced in README (stateManager.js, utils.js, authManager.js). Consolidate into src/lib with clear boundaries and TS types in the main app.
 
-YouTube:
-Playlist embedding or coded integration.
+styles: Global CSS and page-level styles like login.css. . Replace ad‑hoc styles with a design system (tokens + utilities) and component-scoped styles or Tailwind classes.
 
-taskdump (repeating info)
-Rhyme highlighter started need api links
-genre finder-matcher → “What do I try next” feature. not started
-Merge & prep nav + bar + dashboard.
-Music playlist (YouTube embed OR Supabase-coded).
-Announcements (Twitch/Discord collab, Nitro subs).
-Build llms.html prompt/README of plans + guidelines.
-Profile update (frontend + backend).
-Admin todo list (site + DB).
-Forums setup.
-Referral program.
-Sales rep intake spot.
-Sponsor us section.
-Hiring section.
-Update FAQ.
-About Us page.
-Contact Us page.
-Report section.
-Bug testers signup.
-Chat bridge to Discord.
-Twitch integrations (live status, Discord piggyback).
+supabase: Placeholder for DB/auth setup. Centralize client initialization here and wire auth/session management via a provider in the app.
 
--0--------------------------
-code bits
+test: Vitest scaffolding. Hook into src and enforce coverage thresholds for auth, utils, and data modules.
 
-<link rel="stylesheet" href="/styles/global.css">
-   <script src="/scripts/stateManager.js"></script>
-   <script src="/scripts/utils.js"></script>
-   <script src="/scripts/authManager.js"></script>
+utils: General helper modules. Move into src/lib, type with TS, and separate client/server concerns.
 
+Key top-level files
+README.md: High-level plan: centralized config, DB-driven content, CSS variables/themes, reusable JS modules, Cloudflare hosting intent. Treat this as the roadmap and convert into actionable tasks in docs/onboarding.
 
+AGENTS.md / CONTRIBUTING.md / SECURITY.md / CHANGELOG:* Process files present—update them to reflect the unified stack, pnpm, environment handling, and branch/PR rules.
 
+analysis_server.py: Legacy/experimental Python—archive under docs/legacy or remove if not part of the platform.
 
+eslint.config.mjs / prettier.config.mjs / stylelint.config.mjs: Ensure rules align with Vite + React + TS and your chosen styling system.
 
---------------------------------
+babel.config.mjs: Likely unnecessary with Vite; remove if not required by any specific transform.
 
+lerna.json / nx.json / pnpm-workspace.yaml: Conflicting monorepo managers. Standardize on pnpm workspaces (optionally Turborepo) and remove Lerna/Nx if not actively used.
 
+package.json / pnpm-lock.yaml / package-lock.json: Dual lockfiles present (pnpm and npm). Enforce pnpm, delete package-lock.json to prevent accidental npm installs.
 
+netlify.toml: Netlify routing/headers. Keep only if you choose Netlify; otherwise remove to avoid ambiguity.
 
+tailwind.config.js.txt: Misnamed Tailwind config; tooling won’t load it. Rename to tailwind.config.js or .cjs if adopting Tailwind.
 
+tsconfig.json / tsconfig.base.json: Root and base TS configs; unify once structure is settled.
 
-# Base UI
+vite.config.js / vitest.config.mts / vitest.shared.mts: Build/test configs. Validate paths and aliases after restructuring.
 
-From the creators of Radix, Floating UI, and Material UI, Base UI is an unstyled UI component library for building accessible user interfaces.
+ELO.html / Home.Html / nav.html / staticsidebar.html / login.css: Legacy UI artifacts—migrate to components and delete once parity is achieved.
 
----
+mainkey.env: Sensitive env committed. Remove from repo/history and rotate all affected keys immediately.
 
-## Documentation
+Critical issues and cleanup actions
+Secrets exposure: mainkey.env is committed. Action: remove file, add .env* to .gitignore, rotate Supabase and any other keys, and add .env.example for onboarding. Run a secret scan across history.
 
-To get started, check out the [Base UI documentation](https://base-ui.com/react/overview/quick-start).
+Tooling conflicts: Remove package-lock.json, lerna.json, nx.json unless explicitly used. Lock on pnpm workspaces. Update CONTRIBUTING.md with pnpm commands.
 
-## Contributing
+Misconfigured Tailwind: Rename tailwind.config.js.txt properly and configure if you adopt Tailwind. If you choose SCSS Modules, delete Tailwind config to avoid confusion.
 
-Read our [contributing guide](/CONTRIBUTING.md) to learn about our development process, how to propose bug fixes and improvements, and how to build and test your changes.
+Static duplication: nav/sidebar/content exists in multiple static pages. Migrate into a shared Layout/Nav/Sidebar component in a framework and remove duplicates.
 
-## Releases
+CI/CD ambiguity: .circleci, .github, netlify.toml coexist. Pick GitHub Actions + single host (Cloudflare Pages + Workers or Netlify) and delete unused configs.
 
-To see the latest updates, check out the [releases](https://base-ui.com/react/overview/releases).
+Recommended architecture and frameworks
+Modular, secure, and fast—aligned with your security-first and visual polish priorities.
 
-## Community
+Core stack selection
+Layer	Recommendation	Rationale
+Frontend	React + Vite + TypeScript	Fast dev, TS-first, excellent ecosystem for modular UI
+Styling	Tailwind CSS + CSS variables (tokens)	Speed + consistent theming; fits gradients/visual polish
+Components	Radix UI primitives or Base UI	Accessible headless primitives to style your brand uniquely
+Data	Supabase (Auth + Postgres + RLS)	Already planned; secure, scalable, SQL-first
+State	TanStack Query + minimal Context	Robust server-state, clean session handling
+Routing	React Router (Vite)	Simple and explicit route control
+Testing	Vitest + Testing Library	Modern testing aligned with Vite/TS
+CI/CD	GitHub Actions	Single provider, stable secrets management
+Hosting	Cloudflare Pages + Workers (or Netlify)	Edge delivery and simple deploys; choose one and standardize
+Sources:
 
-- **Discord** For community support, questions, and tips, join our [Discord](https://discord.gg/g6C3hUtuxz).
-- **X** To stay up-to-date on new releases and announcements follow [Base UI on X](https://x.com/base_ui).
-- **Bluesky** We're also on [Bluesky](https://bsky.app/profile/base-ui.com).
+Step-by-step migration guide
+Phase 0: Security triage (immediate)
+Remove secrets & rotate: Delete mainkey.env, purge from history if feasible, rotate Supabase and any exposed keys, add .env.example and .gitignore entries. Update SECURITY.md with secret handling and rotation runbook.
 
-## Team
+Lock tooling: Enforce pnpm; delete package-lock.json. . Remove lerna.json/nx.json unless actively adopting one. Confirm pnpm-workspace.yaml includes only the intended packages/apps.
 
-- **Colm Tuite** (Radix) [@colmtuite](https://x.com/colmtuite)
-- **James Nelson** (Floating UI) [@atomiksdev](https://x.com/atomiksdev)
-- **Michał Dudak** (Material UI) [@michaldudak](https://x.com/michaldudak)
-- **Marija Najdova** (Material UI + Fluent UI) [@marijanajdova](https://x.com/marijanajdova)
-- **Albert Yu** (Material UI) [@mj12albert](https://github.com/mj12albert)
-- **Lukas Tyla** (Material UI) [@LukasTy](https://github.com/LukasTy)
+Choose host/CI: Decide Cloudflare Pages + Workers or Netlify. If Cloudflare, delete netlify.toml. . Choose GitHub Actions; remove .circleci to avoid drift.
 
+Phase 1: App scaffold (Day 1–2)
+Create app: apps/portal with Vite + React + TS. Use src/components/Layout/Nav/Sidebar and src/pages for route views. Migrate content from ELO.html, Home.Html, nav.html, staticsidebar.html into components.
 
+Styling system: If Tailwind, fix tailwind.config.js (rename from .txt) and add src/styles/tokens.css with CSS variables (colors, spacing, radii, shadows). Convert login.css into component-scoped styles or Tailwind classes.
 
-----------------------------------------
-todo list
+Utilities: Move scripts/stateManager.js, utils.js, authManager.js into src/lib with TypeScript types. Centralize configuration (API endpoints, constants) into src/lib/config.ts as described in README.
 
+Phase 2: Auth and profile (Day 3–4)
+Supabase client: Create src/lib/supabase.ts that reads env from process.env with no hardcoding. Build an AuthProvider to manage sessions, protected routes, and sign-in/out flows.
 
-Foundation verification
-Repo directories: Verify and lock the presence of all core directories; add missing ones and remove unused stubs.
+Profile: Implement profile read/write with optimistic updates and validation. Persist avatar/handle; add error states. Use RLS policies for security at the row level.
 
-Configs: Validate every config file loads and is referenced in build/test; remove deprecated config keys.
+Phase 3: Content and playlists (Day 5–6)
+DB schemas: Define tables for playlists, FAQs, announcements. Replace hardcoded arrays with queries and client-side caching via TanStack Query.
 
-Docs baseline: Ensure README, CONTRIBUTING, SECURITY, LICENSE, CHANGELOG exist and are linked from README.
+Player: Build a player component with queue/persistence. Support YouTube embeds via stored IDs/URLs in DB, not hardcoded in HTML.
 
-Security hardening
-Secret hygiene: Remove committed secrets, add .env.example, enforce .gitignore, and run a secret scan on history.
+Phase 4: Admin and dashboards (Day 7–8)
+Admin CRUD: Build dashboards for playlists, FAQs, announcements, users with RBAC tiers. Implement CRUD with server-side validation and audit logging.
 
-Input defenses: Add validation, sanitization, and rate‑limiting for all endpoints and forms.
+Todo/report sections: Add admin todo list, report moderation tools, and bug tester signup forms writing to Supabase tables.
 
-Session safety: Implement secure cookies or tokens with rotation, expiration, and refresh flows.
+Phase 5: CI/CD, testing, docs (Day 9–10)
+Actions pipeline: Install, lint, typecheck, test, build, deploy. Cache pnpm. Inject env via provider secrets. Generate preview deploys on PRs.
 
-Transport & headers: Enforce HTTPS, add CSP, HSTS, X‑Frame‑Options, X‑Content‑Type‑Options, and CORS rules.
+Tests: Unit/integration tests for auth, nav, forms, and DB interactions. Set coverage gates in vitest.config.mts. . Add visual regression on critical components if feasible.
 
-Design system consolidation
-CSS architecture: Create global.css, variables.css, and component CSS; move page overrides out of globals.
+Docs: Consolidate llms.html content into docs/onboarding.md. Update CONTRIBUTING.md with pnpm commands, branch strategy, and code review standards. Add runbooks for auth, deploy, and incidents.
 
-Variable coverage: Define tokens for colors, typography, spacing, radius, elevation, and breakpoints.
+Phase 6: Integrations and hardening (Day 11–14)
+Discord/Twitch: Implement serverless functions to automate announcements and live status. Secure tokens, rate limit, and add monitoring.
 
-Theming: Implement dark mode and theme switching via CSS variables.
+Security headers: Enforce HTTPS, CSP, HSTS, X-Frame-Options, X-Content-Type-Options, and strict CORS. Add input validation and session safety with token rotation.
 
-Legacy cleanup: Remove inline styles and duplicated rules; add utilities for spacing, layout, and states.
+Observability: Add structured logs, error tracking, and performance SLOs tied to CI gates.
 
-Navigation and UI consolidation
-Single sidebar: Merge navigation artifacts into one modular sidebar component.
+Remove, rename, and move list
+Delete: package-lock.json, lerna.json, nx.json (unless adopted), analysis_server.py (if unused), legacy static HTML after migration (ELO.html, Home.Html, nav.html, staticsidebar.html), unused assets/scripts/styles.
 
-Full coverage: Wire every page into the sidebar with SVG links; ensure logical order for onboarding.
+Rename: tailwind.config.js.txt → tailwind.config.js or tailwind.config.cjs; ensure tsconfig.base.json and tsconfig.json are consistent with the final structure.
 
-Accessibility: Add ARIA labels, focus states, keyboard navigation, and unique IDs.
+Move: scripts/* → src/lib; styles/* → component-scoped or Tailwind; pages/* → src/pages under a React router; supabase client → src/lib/supabase.ts.
 
-Interaction consistency: Standardize hover/glider behaviors and test across all pages.
+Team briefing snapshot
+State: Mixed scaffolding; conflicting tooling; sensitive env committed; static UI duplicates.
 
-Data integration
-Supabase tables: Migrate playlists, FAQs, and announcements to DB with schemas and constraints.
+Decision: React + Vite + TS, Tailwind + tokens, Radix/Base UI primitives, Supabase, TanStack Query, GitHub Actions, Cloudflare Pages + Workers (or Netlify—choose one).
 
-CRUD flows: Implement admin CRUD with optimistic UI and server validation.
+Immediate: Remove secrets, standardize tooling, stand up app scaffold, migrate static pages to components, and unify CI/CD.
 
-Profile management: Modularize profile read/write, avatar/handle updates, and error states.
-
-External signals: Automate Discord announcements, Twitch live status, and dynamic YouTube embeds via DB references.
-
-Documentation and onboarding
-Unified guide: Convert notes into a single onboarding document covering setup, env, build, and deploy.
-
-Design system docs: Document components, tokens, patterns, and usage rules.
-
-UI map: Provide page‑to‑component mapping and navigation structure for staff and collaborators.
-
-Runbooks: Add auth, deployment, and incident playbooks for operations.
-
-Testing and CI/CD
-Unit & integration: Write tests for auth, nav, playlists, forms, and DB interactions.
-
-Visual checks: Add CSS/visual regression tests for critical components.
-
-Pipelines: Run lint, format, tests, security scans, and build on every PR; gate merges on passing status.
-
-Artifacts: Produce preview builds with deployment diffs and test reports.
-
-Deployment configuration
-Netlify functions: Validate routing, environment injection, and cold start performance.
-
-Routing rules: Confirm redirects and headers in netlify.toml.
-
-Edge/CDN: Document Cloudflare caching, purge strategy, and security rules.
-
-Reproducible builds: Standardize scripts and lock versions for deterministic output.
-
-Feature completion
-Admin dashboard: Deliver full CRUD for playlists, FAQs, announcements, users, with RBAC tiers.
-
-Music player: Integrate DB‑driven playlists, support YouTube/SoundCloud/local, and add queue/persistence.
-
-Community tools: Moderation actions, flagged content review, and audit logs.
-
-Advanced authentication
-MFA: Add TOTP or WebAuthn for high‑risk actions and login.
-
-OAuth: Integrate Google, Discord, and Twitch providers.
-
-Recovery flows: Implement password reset, account recovery, and device management.
-
-Token lifecycle: Harden refresh token rotation and revoke on anomaly.
-
-Performance and scalability
-Bundles: Apply tree‑shaking, code splitting, and asset compression.
-
-Lazy loading: Defer heavy components (player, dashboards) and images.
-
-DB tuning: Add indexes, optimize queries, and enforce limits/pagination.
-
-Edge caching: Cache static assets and safe API responses with versioned keys.
-
-Observability and monitoring
-Structured logging: Add contextual logs for auth, DB, and external integrations.
-
-Error tracking: Integrate an error tracker with release sourcemaps and alerting.
-
-Performance SLOs: Track Web Vitals, set budgets, and fail CI on regression.
-
-Uptime: Monitor endpoints and deploys; add alerts and on‑call rotations.
-
-UX and accessibility
-WCAG compliance: Audit and fix issues to meet 2.1 AA.
-
-Keyboard & screen readers: Ensure full functionality without a mouse and with assistive tech.
-
-Onboarding refinement: Guided steps, tooltips, and progressive disclosure.
-
-Responsive design: Validate layouts across breakpoints and devices.
-
-Branding and creative layer
-Visual polish: Apply gradients, palettes, and consistent component styling.
-
-Interaction quality: Smooth transitions and micro‑interactions aligned with brand.
-
-Theme readiness: Prepare for seasonal or partner themes via token swaps.
-
-Governance and operations
-ADRs: Record major architectural decisions and tradeoffs.
-
-Contribution rules: Define review standards, branching, and semantic versioning.
-
-Release management: Automate changelogs, tags, and release notes.
-
-Security practices: Regular audits, dependency updates, and incident response procedures.
-
-Community rollout
-Pilot launch: Release to a controlled group; gather structured feedback.
-
-Iteration: Address issues found in pilot; ship fixes against tracked SLOs.
-
-Public launch: Announce broadly with stable features and support channels.
-
-Engagement: Enable comments, sharing, and community events with moderation.
-
-Growth and monetization
-Integrations: Evaluate adding Spotify, Bandcamp, or partners via clean abstractions.
-
-Plans: Define premium tiers, subscriptions, or sponsorships with clear value.
-
-Analytics: Build admin dashboards for engagement, retention, and revenue metrics.
-
-Scalability reviews: Schedule periodic performance and security reviews.
-
-Completion criteria (exit checklist)
-Zero known critical bugs: No open P0/P1 issues; lower‑priority items triaged with dates.
-
-Security clean bill: No exposed secrets, passing audits, least‑privilege validated.
-
-Design system enforced: All UI uses documented components and tokens; no ad‑hoc styles.
-
-Accessibility met: WCAG 2.1 AA verified with audit evidence.
-
-Tests green: Coverage thresholds met; CI gates protect main; rollback tested.
-
-Docs complete: Onboarding, runbooks, ADRs, API, and UI maps current and accurate.
-
-Performance within budgets: Web Vitals pass, bundle sizes within targets, DB queries optimized.
-
-Monitoring in place: Alerts, dashboards, and logging confirm operational health.
-
-Release process stable: Versioned, repeatable deployments with staging and rollback.
-
-User feedback addressed: Pilot and public launch issues resolved; engagement features active.
-
+Next: DB-driven playlists/FAQs/announcements, profile/auth flows, admin CRUD, integrations, tests, and docs.
