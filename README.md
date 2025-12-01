@@ -195,6 +195,8 @@ Tour budget simulator (predict profit/loss).
 
 Sync licensing marketplace (TV/film placements).
 --------------------------------
+Universal analytics dashboard (Spotify + TikTok + IG).
+Interactive vinyl (AR overlays when scanned). links to site-advanced
 
 
 
